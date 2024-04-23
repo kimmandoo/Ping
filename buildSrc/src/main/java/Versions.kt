@@ -6,4 +6,5 @@ object Versions {
     const val CONSTRAINT_LAYOUT = "2.1.4"
     const val APPCOMPAT = "1.6.1"
     const val CORE_KTX = "1.12.0"
+    const val NAVIGATION = "2.7.7"
 }
