@@ -1,6 +1,7 @@
 package com.ping.app.presentation.ui.feature.main
 
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.ping.app.R
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.presentation.base.BaseFragment
