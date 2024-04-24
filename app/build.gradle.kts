@@ -52,7 +52,6 @@ dependencies {
     implementation(AndroidX.CONSTRAINT_LAYOUT)
     implementation(AndroidX.NAVIGATION_FRAGMENT)
     implementation(AndroidX.NAVIGATION_UI)
-
     testImplementation(UnitTest.TEST_JUNIT_CORE)
     androidTestImplementation(UnitTest.TEST_JUNIT)
     androidTestImplementation(UnitTest.ESPRESSO)
