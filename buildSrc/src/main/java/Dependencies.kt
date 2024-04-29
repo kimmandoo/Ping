@@ -8,6 +8,10 @@ object AndroidX {
     const val NAVIGATION_UI = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
 }
 
+object Naver{
+    const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
+}
+
 object UnitTest {
     const val TEST_JUNIT_CORE = "junit:junit:${Versions.JUNIT_CORE}"
     const val TEST_JUNIT = "androidx.test.ext:junit:${Versions.JUNIT}"

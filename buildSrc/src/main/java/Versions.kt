@@ -1,4 +1,5 @@
 object Versions {
+    const val NAVER_MAP = "3.18.0"
     const val MATERIAL = "1.11.0"
     const val ESPRESSO = "3.5.1"
     const val JUNIT = "1.1.5"

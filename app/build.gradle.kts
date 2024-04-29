@@ -46,7 +46,6 @@ android {
 
 dependencies {
     implementation(Material.MATERIAL)
-
     implementation(AndroidX.CORE_KTX)
     implementation(AndroidX.APPCOMPAT)
     implementation(AndroidX.CONSTRAINT_LAYOUT)
@@ -55,4 +54,5 @@ dependencies {
     testImplementation(UnitTest.TEST_JUNIT_CORE)
     androidTestImplementation(UnitTest.TEST_JUNIT)
     androidTestImplementation(UnitTest.ESPRESSO)
+    implementation(Naver.NAVER_MAP)
 }
