@@ -1,4 +1,5 @@
 object Versions {
+    const val GOOGLE_PLAY_SERVICE_LOCATION = "21.2.0"
     const val NAVER_MAP = "3.18.0"
     const val MATERIAL = "1.11.0"
     const val ESPRESSO = "3.5.1"

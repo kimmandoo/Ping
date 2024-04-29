@@ -12,6 +12,10 @@ object Naver{
     const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
 }
 
+object Google{
+    const val GOOGLE_PLAY_SERVICE_LOCATION = "com.google.android.gms:play-services-location:${Versions.GOOGLE_PLAY_SERVICE_LOCATION}"
+}
+
 object UnitTest {
     const val TEST_JUNIT_CORE = "junit:junit:${Versions.JUNIT_CORE}"
     const val TEST_JUNIT = "androidx.test.ext:junit:${Versions.JUNIT}"
