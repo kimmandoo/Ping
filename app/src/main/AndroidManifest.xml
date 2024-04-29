@@ -20,6 +20,14 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="${NAVER_MAP_CLIENT_ID}" />
+        <service
+            android:name="com.ping.app.data.remote.PingFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".presentation.ui.container.MainActivity"
             android:exported="true">
