@@ -45,7 +45,6 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.frag
                 isZoomControlEnabled = false
             }
         }
-        
     }
     
     override fun onStart() {
