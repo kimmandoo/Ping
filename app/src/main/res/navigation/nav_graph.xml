@@ -13,10 +13,17 @@
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.ping.app.presentation.ui.feature.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.ping.app.presentation.ui.feature.map.MapFragment"
+        android:label="MapFragment" />
 </navigation>
