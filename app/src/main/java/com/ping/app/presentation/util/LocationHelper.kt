@@ -16,6 +16,7 @@ import com.google.android.gms.location.Priority
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.ping.app.PingApplication
+import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "LocationHelper_싸피"
 

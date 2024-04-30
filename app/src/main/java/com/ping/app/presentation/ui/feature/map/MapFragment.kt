@@ -45,7 +45,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.frag
         lifecycleScope.launch {
             viewModel.userLocation.observe(viewLifecycleOwner) { currentLocation ->
                 currentLocation?.let {
-                    mapView.visibility = View.VISIBLE
+                    binding.mapFragmentView.visibility = View.VISIBLE
                     binding.mapProgress.visibility = View.GONE
                     binding.mapDistance.text =
                         String.format("%.2f", currentLocation.distanceTo(starbucks))
