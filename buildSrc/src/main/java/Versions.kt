@@ -1,4 +1,9 @@
 object Versions {
+    const val TED = "3.3.0"
+    const val FIREBASE_CLOUD_FUNCTION = "20.4.0"
+    const val GOOGLE_PLAY_SERVICE_AUTH = "21.1.0"
+    const val FIREBASE_BOM = "32.8.1"
+    const val GOOGLE_PLAY_SERVICE_LOCATION = "21.2.0"
     const val NAVER_MAP = "3.18.0"
     const val MATERIAL = "1.11.0"
     const val ESPRESSO = "3.5.1"

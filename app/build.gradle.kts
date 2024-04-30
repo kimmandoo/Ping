@@ -3,6 +3,7 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 fun getAppKey(propertyKey: String): String {
@@ -45,14 +46,24 @@ android {
 }
 
 dependencies {
-    implementation(Material.MATERIAL)
     implementation(AndroidX.CORE_KTX)
     implementation(AndroidX.APPCOMPAT)
     implementation(AndroidX.CONSTRAINT_LAYOUT)
     implementation(AndroidX.NAVIGATION_FRAGMENT)
     implementation(AndroidX.NAVIGATION_UI)
+    implementation(Google.MATERIAL)
+    implementation(Google.GOOGLE_PLAY_SERVICE_LOCATION)
+    implementation(platform(Google.FIREBASE_BOM))
+    implementation(platform(Google.FIREBASE_ANALYTICS))
     testImplementation(UnitTest.TEST_JUNIT_CORE)
     androidTestImplementation(UnitTest.TEST_JUNIT)
     androidTestImplementation(UnitTest.ESPRESSO)
     implementation(Naver.NAVER_MAP)
+    implementation(Google.FIREBASE_AUTH)
+    implementation(Google.GOOGLE_PLAY_SERVICE_AUTH)
+    implementation(Google.FIREBASE_FIRESTORE)
+    implementation(Google.FIREBASE_CLOUD_FUNCTION)
+    implementation(Google.FIREBASE_CLOUD_MESSAGING)
+    implementation(Permission.TED_NORMAL)
+    implementation(Permission.TED_COROUTINE)
 }
