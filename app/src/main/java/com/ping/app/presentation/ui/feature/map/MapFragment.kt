@@ -1,8 +1,11 @@
 package com.ping.app.presentation.ui.feature.map
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.annotation.UiThread
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
@@ -13,11 +16,12 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
 import com.ping.app.databinding.FragmentMapBinding
 import com.ping.app.presentation.base.BaseFragment
+import kotlinx.coroutines.launch
 
 
 class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.fragment_map),
     OnMapReadyCallback {
-    override val viewModel: MapViewModel by viewModels()
+    override val viewModel: MapViewModel by activityViewModels()
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -27,6 +31,23 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.frag
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
+        lifecycleScope.launch {
+            viewModel.userLocation.observe(viewLifecycleOwner) {
+                it?.let {
+                    Toast.makeText(requireContext(), "위치 갱신", Toast.LENGTH_SHORT).show()
+                    binding.mapDistance.text = it.toString()
+                    mapView.visibility = View.VISIBLE
+                    binding.mapProgress.visibility = View.GONE
+                    // 현재위치에서 가게까지의 거리 계산하기
+                    // 이게 초기 선언이고 map페이지 들어오면 실시간 검사 계속하게 하기
+                    updateDistance()
+                }
+            }
+        }
+    }
+    
+    private fun updateDistance() {
+    
     }
     
     @UiThread
