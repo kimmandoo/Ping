@@ -80,11 +80,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      */
     override fun initView(savedInstanceState: Bundle?) {
 
-//        authinit()
+        authinit()
 
         binding.apply {
             binding.loginButton.setOnClickListener {
-//                signIn()
+                signIn()
             }
         }
     }
@@ -96,85 +96,85 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      * 해당 문제를 해결하기 위해서는 project/gradle의 google service의 버전을 조정해주면 됩니다.
      * 본 프로젝트에서는 "4.3.13"로 설정을 하였습니다.
      */
-//    private fun authinit(){
-//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken(getString(R.string.default_web_client_id))
-//            .requestEmail()
-//            .build()
-//
-//        googleSignInClient = GoogleSignIn.getClient(this, gso)
-//
-//        auth = Firebase.auth
-//
-//    }
+    private fun authinit(){
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
 
-//    override fun onStart() {
-//        super.onStart()
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        val currentUser = auth.currentUser
-//        updateUI(currentUser)
-//    }
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
-    // [START onactivityresult]
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
+        auth = Firebase.auth
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
+    }
+
+//     [START onactivityresult]
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed@@@@@@@@@", e)
+            }
+        }
+    }
+//     [END onactivityresult]
 //
-//        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-//        if (requestCode == RC_SIGN_IN) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                // Google Sign In was successful, authenticate with Firebase
-//                val account = task.getResult(ApiException::class.java)!!
-//                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-//                Log.d(TAG, "firebaseAuthWithGoogle:" + account)
-//                firebaseAuthWithGoogle(account.idToken!!)
-//            } catch (e: ApiException) {
-//                // Google Sign In failed, update UI appropriately
-//                Log.w(TAG, "Google sign in failed@@@@@@@@@", e)
-//            }
-//        }
-//    }
-    // [END onactivityresult]
-
-    // [START auth_with_google]
-//    private fun firebaseAuthWithGoogle(idToken: String) {
-//        val credential = GoogleAuthProvider.getCredential(idToken, null)
-//        auth.signInWithCredential(credential)
-//            .addOnCompleteListener(this) { task ->
-//                if (task.isSuccessful) {
-//                    // Sign in success, update UI with the signed-in user's information
-//                    Log.d(TAG, "signInWithCredential:success")
-//                    val user = auth.currentUser
-//                    updateUI(user)
-//                } else {
-//                    // If sign in fails, display a message to the user.
-//                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-//                    updateUI(null)
-//                }
-//            }
-//    }
-    // [END auth_with_google]
-
-    // [START signin]
-//    private fun signIn() {
-//        val signInIntent = googleSignInClient.signInIntent
-//        startActivityForResult(signInIntent, RC_SIGN_IN)
-//    }
-    // [END signin]
-
-    // 인증 성공 여부에 따른 화면 처리
-//    private fun updateUI(user: FirebaseUser?) {
-//        if (user != null) {
+//     [START auth_with_google]
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = auth.currentUser
+                    updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    updateUI(null)
+                }
+            }
+    }
+//     [END auth_with_google]
 //
-//            binding.loginTv.setText(user.displayName.toString())
+//     [START signin]
+    private fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+//     [END signin]
 //
-//        } else {
-//            binding.loginTv.setText.setText("인증 실패")
-//        }
-//    }
+//     인증 성공 여부에 따른 화면 처리
+    private fun updateUI(user: FirebaseUser?) {
+        if (user != null) {
 
-//    companion object {
-//        private const val RC_SIGN_IN = 9001
-//    }
+            binding.loginTv.setText(user.displayName.toString())
+
+        } else {
+            binding.loginTv.setText("인증 실패")
+        }
+    }
+
+    companion object {
+        private const val RC_SIGN_IN = 9001
+    }
 
 }
