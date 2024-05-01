@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.launch
 
-class MapViewModel : ViewModel() {
+class PingMapViewModel : ViewModel() {
     private val _userLocation = MutableLiveData<LatLng>()
     val userLocation: LiveData<LatLng> = _userLocation
     

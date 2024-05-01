@@ -18,7 +18,7 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
-import com.ping.app.databinding.FragmentMapBinding
+import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.presentation.base.BaseFragment
 import com.ping.app.presentation.util.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.presentation.util.MAP_BOUNDS
@@ -29,9 +29,9 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "MapFragment 싸피"
 
-class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.fragment_map),
+class PingMapFragment : BaseFragment<FragmentPingMapBinding, PingMapViewModel>(R.layout.fragment_ping_map),
     OnMapReadyCallback {
-    override val viewModel: MapViewModel by activityViewModels()
+    override val viewModel: PingMapViewModel by activityViewModels()
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
@@ -39,7 +39,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapViewModel>(R.layout.frag
     override fun initView(savedInstanceState: Bundle?) {
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync(this@MapFragment)
+        mapView.getMapAsync(this@PingMapFragment)
         locationSource =
             FusedLocationSource(this, GPS_ENABLE_REQUEST_CODE)
         lifecycleScope.launch {

@@ -9,14 +9,14 @@ import com.naver.maps.geometry.LatLng
 import com.ping.app.R
 import com.ping.app.presentation.util.LocationHelper
 import com.ping.app.databinding.ActivityMainBinding
-import com.ping.app.presentation.ui.feature.map.MapViewModel
+import com.ping.app.presentation.ui.feature.map.PingMapViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var navController: NavController
-    private val mapViewModel: MapViewModel by viewModels()
+    private val pingMapViewModel: PingMapViewModel by viewModels()
     private val locationHelperInstance by lazy {
         LocationHelper.getInstance(this)
     }
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         locationHelperInstance.startLocationTracking()
         locationHelperInstance.listener = {
-            mapViewModel.setUserLocation(LatLng(it))
+            pingMapViewModel.setUserLocation(LatLng(it))
         }
         
         initView()

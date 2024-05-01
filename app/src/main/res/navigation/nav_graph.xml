@@ -24,6 +24,6 @@
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.ping.app.presentation.ui.feature.map.MapFragment"
+        android:name="com.ping.app.presentation.ui.feature.map.PingMapFragment"
         android:label="MapFragment" />
 </navigation>
