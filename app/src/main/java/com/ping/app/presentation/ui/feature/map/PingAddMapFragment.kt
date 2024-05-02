@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
@@ -30,7 +31,6 @@ import com.ping.app.presentation.util.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.presentation.util.LocationHelper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.io.IOException
 import java.util.Locale
 
 private const val TAG = "PingAddMapFragment_싸피"
@@ -65,7 +65,7 @@ class PingAddMapFragment :
                 fm.beginTransaction().add(R.id.map_add_view, it).commit()
             }
         mapFragment.getMapAsync(this)
-        
+
 //        mapView.onCreate(savedInstanceState)
 //        mapView.getMapAsync(this@PingAddMapFragment)
         locationSource =
@@ -84,6 +84,18 @@ class PingAddMapFragment :
                                 position =
                                     LatLng(currentLocation.latitude, currentLocation.longitude)
                             }
+                            binding.mapReset.visibility =
+                                if (naverMap.cameraPosition.target.distanceTo(
+                                        LatLng(
+                                            currentLocation.latitude,
+                                            currentLocation.longitude
+                                        )
+                                    ) > 150
+                                ) {
+                                    View.VISIBLE
+                                } else {
+                                    View.GONE
+                                }
                         }
                     }
                 }
@@ -105,6 +117,10 @@ class PingAddMapFragment :
                     map.cameraPosition.target.longitude
                 ), 16.0
             )
+            uiSettings.apply {
+                // zoom 버튼 제거하기
+                isZoomControlEnabled = false
+            }
         }
         val marker = Marker()
         marker.apply {
@@ -160,53 +176,51 @@ class PingAddMapFragment :
         }
         
         // 사용자 현재 위치 받아오기
-        var currentLocation: Location?
         locationHelperInstance.getClient().lastLocation
-            .addOnSuccessListener { location: Location? ->
-                currentLocation = location
+            .addOnSuccessListener { location: Location ->
                 map.locationOverlay.run {
                     isVisible = true
-                    position = LatLng(currentLocation!!.latitude, currentLocation!!.longitude)
+                    position = LatLng(location.latitude, location.longitude)
                 }
                 
-                // 카메라 현재위치로 이동
                 val cameraUpdate = CameraUpdate.scrollTo(
                     LatLng(
-                        currentLocation!!.latitude,
-                        currentLocation!!.longitude
+                        location.latitude,
+                        location.longitude
                     )
                 )
                 map.moveCamera(cameraUpdate)
                 
-                // 빨간색 마커 현재위치로 변경
                 marker.position = LatLng(
                     map.cameraPosition.target.latitude,
                     map.cameraPosition.target.longitude
                 )
             }
         
+        binding.mapReset.setOnClickListener {
+            if (::currentPosition.isInitialized) {
+                val resetCamera = CameraUpdate.scrollTo(currentPosition)
+                map.moveCamera(resetCamera.animate(CameraAnimation.Easing))
+            }
+        }
+        
     }
     
     private fun getAddress(lat: Double, lng: Double): String {
         val geoCoder = Geocoder(requireContext(), Locale.KOREA)
-        val address: ArrayList<Address>
         var addressResult = "주소를 가져 올 수 없습니다."
-        
-        try {
-            //세번째 파라미터는 좌표에 대해 주소를 리턴 받는 갯수로
-            //한좌표에 대해 두개이상의 이름이 존재할수있기에 주소배열을 리턴받기 위해 최대갯수 설정
-            address = geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-            if (address.size > 0) {
-                // 주소 받아오기
-                val currentLocationAddress = address[0].getAddressLine(0)
+        runCatching {
+            geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
+        }.onSuccess { response ->
+            if (response.size > 0) {
+                val currentLocationAddress = response[0].getAddressLine(0)
                     .toString()
                 addressResult = currentLocationAddress
-                
             }
-            
-        } catch (e: IOException) {
-            e.printStackTrace()
+        }.onFailure {
+            Log.d(TAG, "error: ${it.stackTrace}")
         }
+        
         return addressResult
     }
 }
