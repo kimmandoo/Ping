@@ -41,7 +41,7 @@ class PingMapFragment :
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private val locationHelperInstance by lazy {
-        LocationHelper.getInstance(requireContext())
+        LocationHelper.getInstance()
     }
     
     override fun initView(savedInstanceState: Bundle?) {

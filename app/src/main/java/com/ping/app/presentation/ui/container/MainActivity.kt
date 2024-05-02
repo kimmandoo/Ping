@@ -33,11 +33,15 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, arguments ->
                 when (destination.id) {
                     R.id.loginFragment ->{
-
+                        LocationHelper.getInstance().stopLocationTracking()
                     }
                     R.id.mainFragment ->{
-
+                        LocationHelper.getInstance().stopLocationTracking()
                     }
+                    R.id.pingAddMapFragment, R.id.pingMapFragment ->{
+                        LocationHelper.getInstance()
+                    }
+                    
 //                        View.INVISIBLE
 //                    else ->  View.VISIBLE
                 }
