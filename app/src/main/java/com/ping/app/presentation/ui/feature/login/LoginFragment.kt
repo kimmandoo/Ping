@@ -92,7 +92,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     /**
      * 해당 함수는 파이어베이스의 Authentication을 불러오는 기능을 하는 함수입니다.
      * 만일 "default_web_client_id"이 빨간색으로 뜰 경우
-     * res 파일이 생성이 않된 문제입니다.
+     * res 파일이 생성이 안된 문제입니다.
      * 해당 문제를 해결하기 위해서는 project/gradle의 google service의 버전을 조정해주면 됩니다.
      * 본 프로젝트에서는 "4.3.13"로 설정을 하였습니다.
      */
