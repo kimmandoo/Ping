@@ -1,21 +1,20 @@
 package com.ping.app.presentation.ui.feature.map
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PingMapViewModel : ViewModel() {
-    private val _userLocation = MutableLiveData<LatLng>()
-    val userLocation: LiveData<LatLng> = _userLocation
+    private val _userLocation = MutableStateFlow<LatLng?>(null)
+    val userLocation get() = _userLocation.asStateFlow()
     
     fun setUserLocation(currentLocation: LatLng?) {
-        viewModelScope.launch {
-            currentLocation?.let {
-                _userLocation.postValue(it)
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            _userLocation.emit(currentLocation)
         }
     }
 }

@@ -17,17 +17,10 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var navController: NavController
     private val pingMapViewModel: PingMapViewModel by viewModels()
-    private val locationHelperInstance by lazy {
-        LocationHelper.getInstance(this)
-    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        locationHelperInstance.startLocationTracking()
-        locationHelperInstance.listener = {
-            pingMapViewModel.setUserLocation(LatLng(it))
-        }
         
         initView()
     }
@@ -43,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     R.id.mainFragment ->{
-                        locationHelperInstance.startLocationTracking()
+
                     }
 //                        View.INVISIBLE
 //                    else ->  View.VISIBLE
