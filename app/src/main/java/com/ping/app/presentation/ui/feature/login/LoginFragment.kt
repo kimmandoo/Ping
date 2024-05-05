@@ -115,6 +115,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
         auth = Firebase.auth
 
+
     }
 
     override fun onStart() {

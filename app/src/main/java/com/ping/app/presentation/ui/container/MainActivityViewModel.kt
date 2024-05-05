@@ -11,6 +11,7 @@ class MainActivityViewModel: ViewModel() {
     val userUid : LiveData<String>
         get() = _userUid
 
+
     fun saveUserUid(uid: String){
         _userUid.postValue(uid)
     }
