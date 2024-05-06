@@ -218,6 +218,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 //                userMeetingGetQuery(UID)
 
 
+
             } else { // 해당 UID를 가지는 유저 테이블이 없는 경우
                 // 없을 경우 해당 테이블을 만들어야 함
 //                lifecycleScope.launch {
