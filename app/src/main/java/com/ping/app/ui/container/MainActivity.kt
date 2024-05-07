@@ -1,33 +1,25 @@
-package com.ping.app.presentation.ui.container
+package com.ping.app.ui.container
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.naver.maps.geometry.LatLng
 import com.ping.app.R
-import com.ping.app.presentation.util.LocationHelper
+import com.ping.app.ui.util.LocationHelper
 import com.ping.app.databinding.ActivityMainBinding
-import com.ping.app.presentation.ui.feature.map.MapViewModel
+import com.ping.app.ui.feature.map.PingMapViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var navController: NavController
-    private val mapViewModel: MapViewModel by viewModels()
-    private val locationHelperInstance by lazy {
-        LocationHelper.getInstance(this)
-    }
+    private val pingMapViewModel: PingMapViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        locationHelperInstance.startLocationTracking()
-        locationHelperInstance.listener = {
-            mapViewModel.setUserLocation(LatLng(it))
-        }
         
         initView()
     }
@@ -40,11 +32,15 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, arguments ->
                 when (destination.id) {
                     R.id.loginFragment ->{
-
+                        LocationHelper.getInstance().stopLocationTracking()
                     }
                     R.id.mainFragment ->{
-                        locationHelperInstance.startLocationTracking()
+                        LocationHelper.getInstance().stopLocationTracking()
                     }
+                    R.id.pingAddMapFragment, R.id.pingMapFragment ->{
+                        LocationHelper.getInstance()
+                    }
+                    
 //                        View.INVISIBLE
 //                    else ->  View.VISIBLE
                 }

@@ -1,4 +1,4 @@
-package com.ping.app.presentation.util
+package com.ping.app.ui.util
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,7 +16,7 @@ import com.google.android.gms.location.Priority
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.ping.app.PingApplication
-import kotlinx.coroutines.flow.Flow
+import com.ping.app.ui.util.Map.FASTEST_UPDATE_INTERVAL
 
 private const val TAG = "LocationHelper_싸피"
 
@@ -36,6 +36,10 @@ class LocationHelper private constructor(context: Context) {
     fun updateTimeInterval(timeInterval: Long) {
         this.timeInterval = timeInterval
         request = createRequest()
+    }
+    
+    fun getClient():FusedLocationProviderClient{
+        return locationClient
     }
     
     private fun createRequest(): LocationRequest =
@@ -88,7 +92,7 @@ class LocationHelper private constructor(context: Context) {
             val locationList = location.locations
             if (locationList.size > 0) {
                 currentLocation = locationList[locationList.size - 1]
-                currentLocation?.let{
+                currentLocation?.let {
                     listener(it)
                     Log.d(
                         TAG,
@@ -115,6 +119,10 @@ class LocationHelper private constructor(context: Context) {
                     }
                 }
             }
+            return instance!!
+        }
+        
+        fun getInstance(): LocationHelper {
             return instance!!
         }
     }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+    
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:padding="40dp">
+        
+        <TextView
+            android:id="@+id/add_post_tv_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_post_ti_where"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/add_post_tv_address">
+            
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_post_et_where"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="장소를 설명해주세요" />
+        </com.google.android.material.textfield.TextInputLayout>
+        
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="핑!"
+            android:textStyle="italic|bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_where" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

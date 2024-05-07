@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.login
+package com.ping.app.ui.feature.login
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -44,7 +44,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<TextView>(R.id.test).setOnClickListener {
 //            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            findNavController().navigate(R.id.action_loginFragment_to_mapFragment)
+//            findNavController().navigate(R.id.action_loginFragment_to_mapFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
         }
     }
 

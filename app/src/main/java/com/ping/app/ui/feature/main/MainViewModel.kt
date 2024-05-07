@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.main
+package com.ping.app.ui.feature.main
 
 import androidx.lifecycle.ViewModel
 
