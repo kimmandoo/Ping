@@ -29,7 +29,7 @@
         </service>
 
         <activity
-            android:name=".presentation.ui.container.MainActivity"
+            android:name=".ui.container.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

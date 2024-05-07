@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.ui.feature.main.MainFragment">
+        tools:context=".ui.feature.main.MainFragment">
 
         <TextView
             android:layout_width="match_parent"

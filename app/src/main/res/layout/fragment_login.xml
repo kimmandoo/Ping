@@ -12,6 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.ui.feature.login.LoginFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.feature.login.LoginFragment">
 
         <!-- TODO: Update blank fragment layout -->
 
