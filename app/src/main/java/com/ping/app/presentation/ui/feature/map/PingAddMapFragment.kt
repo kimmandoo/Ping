@@ -2,19 +2,18 @@ package com.ping.app.presentation.ui.feature.map
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.annotation.UiThread
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
@@ -27,11 +26,13 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
 import com.ping.app.presentation.base.BaseFragment
-import com.ping.app.presentation.util.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.presentation.util.LocationHelper
+import com.ping.app.presentation.util.Map.GPS_ENABLE_REQUEST_CODE
+import com.ping.app.presentation.util.Map.USER_POSITION_LAT
+import com.ping.app.presentation.util.Map.USER_POSITION_LNG
+import com.ping.app.presentation.util.getAddress
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 private const val TAG = "PingAddMapFragment_싸피"
 
@@ -84,18 +85,6 @@ class PingAddMapFragment :
                                 position =
                                     LatLng(currentLocation.latitude, currentLocation.longitude)
                             }
-                            binding.mapReset.visibility =
-                                if (naverMap.cameraPosition.target.distanceTo(
-                                        LatLng(
-                                            currentLocation.latitude,
-                                            currentLocation.longitude
-                                        )
-                                    ) > 150
-                                ) {
-                                    View.VISIBLE
-                                } else {
-                                    View.GONE
-                                }
                         }
                     }
                 }
@@ -149,13 +138,19 @@ class PingAddMapFragment :
 //                isEnabled = false
 //            }
         }
+        
         // 카메라의 움직임 종료에 대한 이벤트 리스너 인터페이스.
         map.addOnCameraIdleListener {
-            marker.position = LatLng(
-                map.cameraPosition.target.latitude,
-                map.cameraPosition.target.longitude
-            )
-            binding.mapJuso.text = getAddress(marker.position.latitude, marker.position.longitude)
+            val address = getAddress(marker.position.latitude, marker.position.longitude)
+            marker.apply {
+                position = LatLng(
+                    map.cameraPosition.target.latitude,
+                    map.cameraPosition.target.longitude
+                )
+                captionText = address
+                captionTextSize = 16.0f
+            }
+            
             Log.d(
                 TAG,
                 "onMapReady: ${getAddress(marker.position.latitude, marker.position.longitude)}"
@@ -197,11 +192,19 @@ class PingAddMapFragment :
                 )
             }
         
-        binding.mapReset.setOnClickListener {
-            if (::currentPosition.isInitialized) {
-                val resetCamera = CameraUpdate.scrollTo(currentPosition)
-                map.moveCamera(resetCamera.animate(CameraAnimation.Easing))
-            }
+        binding.mapAddBtn.setOnClickListener {
+            Log.d(TAG, "onMapReady: ${map.cameraPosition}")
+            val userPosition = bundleOf(
+                USER_POSITION_LAT to marker.position.latitude,
+                USER_POSITION_LNG to marker.position.longitude
+            )
+            val modal = PingAddPostFragment()
+            modal.arguments = userPosition
+            modal.show(childFragmentManager,"modal")
+//            findNavController().navigate(
+//                R.id.action_pingAddMapFragment_to_pingAddPostFragment,
+//                userPosition
+//            )
         }
         map.setOnMapLongClickListener { pointF, latLng ->
             marker.position = LatLng(
@@ -210,24 +213,5 @@ class PingAddMapFragment :
             )
             marker.captionText = getAddress(latLng.latitude, latLng.longitude)
         }
-        
-    }
-    
-    private fun getAddress(lat: Double, lng: Double): String {
-        val geoCoder = Geocoder(requireContext(), Locale.KOREA)
-        var addressResult = "주소를 가져 올 수 없습니다."
-        runCatching {
-            geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-        }.onSuccess { response ->
-            if (response.size > 0) {
-                val currentLocationAddress = response[0].getAddressLine(0)
-                    .toString()
-                addressResult = currentLocationAddress
-            }
-        }.onFailure {
-            Log.d(TAG, "error: ${it.stackTrace}")
-        }
-        
-        return addressResult
     }
 }

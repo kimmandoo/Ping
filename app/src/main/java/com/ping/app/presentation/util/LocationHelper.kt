@@ -16,6 +16,7 @@ import com.google.android.gms.location.Priority
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.ping.app.PingApplication
+import com.ping.app.presentation.util.Map.FASTEST_UPDATE_INTERVAL
 
 private const val TAG = "LocationHelper_싸피"
 

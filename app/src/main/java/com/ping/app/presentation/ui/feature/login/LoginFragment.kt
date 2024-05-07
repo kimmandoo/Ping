@@ -44,7 +44,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<TextView>(R.id.test).setOnClickListener {
 //            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            findNavController().navigate(R.id.action_loginFragment_to_mapFragment)
+//            findNavController().navigate(R.id.action_loginFragment_to_mapFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
         }
     }
 

@@ -22,9 +22,9 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.presentation.base.BaseFragment
-import com.ping.app.presentation.util.GPS_ENABLE_REQUEST_CODE
+import com.ping.app.presentation.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.presentation.util.LocationHelper
-import com.ping.app.presentation.util.MAP_BOUNDS
+import com.ping.app.presentation.util.Map.MAP_BOUNDS
 import com.ping.app.presentation.util.round
 import com.ping.app.presentation.util.starbucks
 import kotlinx.coroutines.flow.collectLatest
