@@ -1,9 +1,8 @@
-package com.ping.app.presentation.util
+package com.ping.app.ui.util
 
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import java.util.Locale
 import kotlin.math.pow

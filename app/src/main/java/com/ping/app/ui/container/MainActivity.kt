@@ -1,15 +1,14 @@
-package com.ping.app.presentation.ui.container
+package com.ping.app.ui.container
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.naver.maps.geometry.LatLng
 import com.ping.app.R
-import com.ping.app.presentation.util.LocationHelper
+import com.ping.app.ui.util.LocationHelper
 import com.ping.app.databinding.ActivityMainBinding
-import com.ping.app.presentation.ui.feature.map.PingMapViewModel
+import com.ping.app.ui.feature.map.PingMapViewModel
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy {

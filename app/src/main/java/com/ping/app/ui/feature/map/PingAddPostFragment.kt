@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.map
+package com.ping.app.ui.feature.map
 
 import android.os.Bundle
 import android.util.Log
@@ -6,10 +6,10 @@ import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingAddPostBinding
-import com.ping.app.presentation.base.BaseBottomSheetDialogFragment
-import com.ping.app.presentation.util.Map.USER_POSITION_LAT
-import com.ping.app.presentation.util.Map.USER_POSITION_LNG
-import com.ping.app.presentation.util.getAddress
+import com.ping.app.ui.base.BaseBottomSheetDialogFragment
+import com.ping.app.ui.util.Map.USER_POSITION_LAT
+import com.ping.app.ui.util.Map.USER_POSITION_LNG
+import com.ping.app.ui.util.getAddress
 
 private const val TAG = "PingAddPostFragment_싸피"
 

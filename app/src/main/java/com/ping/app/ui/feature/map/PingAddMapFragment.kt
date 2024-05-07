@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.map
+package com.ping.app.ui.feature.map
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
@@ -25,12 +24,12 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
-import com.ping.app.presentation.base.BaseFragment
-import com.ping.app.presentation.util.LocationHelper
-import com.ping.app.presentation.util.Map.GPS_ENABLE_REQUEST_CODE
-import com.ping.app.presentation.util.Map.USER_POSITION_LAT
-import com.ping.app.presentation.util.Map.USER_POSITION_LNG
-import com.ping.app.presentation.util.getAddress
+import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.util.LocationHelper
+import com.ping.app.ui.util.Map.GPS_ENABLE_REQUEST_CODE
+import com.ping.app.ui.util.Map.USER_POSITION_LAT
+import com.ping.app.ui.util.Map.USER_POSITION_LNG
+import com.ping.app.ui.util.getAddress
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

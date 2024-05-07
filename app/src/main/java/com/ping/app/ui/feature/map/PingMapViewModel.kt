@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.map
+package com.ping.app.ui.feature.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

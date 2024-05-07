@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.map
+package com.ping.app.ui.feature.map
 
 import android.graphics.Color
 import android.os.Bundle
@@ -21,12 +21,12 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapBinding
-import com.ping.app.presentation.base.BaseFragment
-import com.ping.app.presentation.util.Map.GPS_ENABLE_REQUEST_CODE
-import com.ping.app.presentation.util.LocationHelper
-import com.ping.app.presentation.util.Map.MAP_BOUNDS
-import com.ping.app.presentation.util.round
-import com.ping.app.presentation.util.starbucks
+import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.util.Map.GPS_ENABLE_REQUEST_CODE
+import com.ping.app.ui.util.LocationHelper
+import com.ping.app.ui.util.Map.MAP_BOUNDS
+import com.ping.app.ui.util.round
+import com.ping.app.ui.util.starbucks
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

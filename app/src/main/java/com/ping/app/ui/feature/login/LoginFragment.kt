@@ -1,4 +1,4 @@
-package com.ping.app.presentation.ui.feature.login
+package com.ping.app.ui.feature.login
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

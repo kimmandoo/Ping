@@ -1,4 +1,4 @@
-package com.ping.app.presentation.util
+package com.ping.app.ui.util
 
 import com.naver.maps.geometry.LatLng
 
