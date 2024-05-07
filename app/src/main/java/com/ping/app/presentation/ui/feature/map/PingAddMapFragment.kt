@@ -203,6 +203,13 @@ class PingAddMapFragment :
                 map.moveCamera(resetCamera.animate(CameraAnimation.Easing))
             }
         }
+        map.setOnMapLongClickListener { pointF, latLng ->
+            marker.position = LatLng(
+                latLng.latitude,
+                latLng.longitude
+            )
+            marker.captionText = getAddress(latLng.latitude, latLng.longitude)
+        }
         
     }
     
