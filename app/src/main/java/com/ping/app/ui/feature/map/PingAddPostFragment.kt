@@ -17,6 +17,7 @@ import com.ping.app.ui.util.Map.USER_POSITION_LNG
 import com.ping.app.ui.util.easyToast
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "PingAddPostFragment_싸피"
 
@@ -71,14 +72,22 @@ class PingAddPostFragment :
             val month = calendar.get(Calendar.MONTH)
             calendar.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
             addPostDp.maxDate = calendar.timeInMillis
-            var targetDay = 0
+            var targetDay = 0L
             addPostDp.setOnDateChangeListener { view, yy, mm, dd ->
-                calendar.set(yy, mm, dd)
+                val selectedCalendar = Calendar.getInstance()
+                selectedCalendar.set(yy, mm, dd)
+                val currentCalendar = Calendar.getInstance()
+                val differenceInMillis =
+                    selectedCalendar.timeInMillis - currentCalendar.timeInMillis
+                
+                targetDay = TimeUnit.MILLISECONDS.toDays(differenceInMillis)
             }
             addPostTp.apply {
                 setOnTimeChangedListener { view, hourOfDay, minute ->
-                    Log.d(TAG, "addDateDialog:$targetDay  ${hourOfDay * 60 + minute} < ${calendar.get(Calendar.HOUR_OF_DAY) * 60} + ${calendar.get(Calendar.MINUTE)}")
-                    if (hourOfDay * 60 + minute < calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)) {
+                    if ((targetDay * 24 + hourOfDay) * 60 + minute < calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(
+                            Calendar.MINUTE
+                        )
+                    ) {
                         context.easyToast("선택할 수 없는 시간입니다.")
                         this.hour = calendar.get(Calendar.HOUR_OF_DAY)
                         this.minute = calendar.get(Calendar.MINUTE)
