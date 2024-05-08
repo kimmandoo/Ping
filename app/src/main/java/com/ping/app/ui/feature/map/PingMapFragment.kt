@@ -19,6 +19,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.ui.base.BaseFragment
@@ -41,7 +42,7 @@ class PingMapFragment :
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private val locationHelperInstance by lazy {
-        LocationHelper.getInstance()
+        PingApplication.locationHelper
     }
     
     override fun initView(savedInstanceState: Bundle?) {

@@ -8,11 +8,12 @@ import com.ping.app.ui.util.LocationHelper
 class PingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        LocationHelper.initialize(this)
+        locationHelper = LocationHelper.initialize(this)
         pingMapRepo = PingMapRepoImpl.initialize(this)
     }
     
     companion object {
+        lateinit var locationHelper: LocationHelper
         lateinit var pingMapRepo: PingMapRepo
     }
 }

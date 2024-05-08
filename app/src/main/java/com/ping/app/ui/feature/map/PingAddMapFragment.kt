@@ -22,10 +22,10 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.util.LocationHelper
 import com.ping.app.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.util.Map.USER_POSITION_LNG
@@ -44,9 +44,8 @@ class PingAddMapFragment :
     private lateinit var locationSource: FusedLocationSource
     private lateinit var currentPosition: LatLng
     
-    private val locationHelperInstance by lazy {
-        LocationHelper.getInstance()
-    }
+    private val locationHelperInstance = PingApplication.locationHelper
+    private val pingMapInstance = PingApplication.pingMapRepo
     
     override fun initView(savedInstanceState: Bundle?) {
         // flow
@@ -140,7 +139,8 @@ class PingAddMapFragment :
         
         // 카메라의 움직임 종료에 대한 이벤트 리스너 인터페이스.
         map.addOnCameraIdleListener {
-            val address = getAddress(marker.position.latitude, marker.position.longitude)
+            val address =
+                pingMapInstance.requestAddress(marker.position.latitude, marker.position.longitude)
             marker.apply {
                 position = LatLng(
                     map.cameraPosition.target.latitude,
@@ -152,7 +152,7 @@ class PingAddMapFragment :
             
             Log.d(
                 TAG,
-                "onMapReady: ${getAddress(marker.position.latitude, marker.position.longitude)}"
+                "onMapReady: ${address}"
             )
 //            // 좌표 -> 주소 변환 텍스트 세팅, 버튼 활성화
 //            binding.tvLocation.run {
@@ -199,7 +199,7 @@ class PingAddMapFragment :
             )
             val modal = PingAddPostFragment()
             modal.arguments = userPosition
-            modal.show(childFragmentManager,"modal")
+            modal.show(childFragmentManager, "modal")
 //            findNavController().navigate(
 //                R.id.action_pingAddMapFragment_to_pingAddPostFragment,
 //                userPosition
