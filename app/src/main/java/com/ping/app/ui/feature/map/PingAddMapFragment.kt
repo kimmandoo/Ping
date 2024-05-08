@@ -29,7 +29,6 @@ import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.util.Map.USER_POSITION_LNG
-import com.ping.app.ui.util.getAddress
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -210,7 +209,7 @@ class PingAddMapFragment :
                 latLng.latitude,
                 latLng.longitude
             )
-            marker.captionText = getAddress(latLng.latitude, latLng.longitude)
+            marker.captionText = pingMapInstance.requestAddress(latLng.latitude, latLng.longitude)
         }
     }
 }

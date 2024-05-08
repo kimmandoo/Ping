@@ -8,11 +8,12 @@ import com.ping.app.data.dao.PingMapRepo
 import com.ping.app.data.model.Gathering
 import java.util.Locale
 
+private const val TAG = "PingMapRepoImpl_싸피"
 class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     private val appContext: Context = context
     
     override fun sendPingInfo(data: Gathering) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "sendPingInfo: $data")
     }
     
     override fun requestAddress(lat: Double, lng: Double): String {
