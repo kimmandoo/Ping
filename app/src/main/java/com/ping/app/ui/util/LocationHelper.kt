@@ -110,7 +110,7 @@ class LocationHelper private constructor(context: Context) {
     
     companion object {
         private var instance: LocationHelper? = null
-        fun getInstance(context: Context): LocationHelper {
+        fun initialize(context: Context): LocationHelper {
             if (instance == null) {
                 synchronized(LocationHelper::class.java) {
                     if (instance == null) {

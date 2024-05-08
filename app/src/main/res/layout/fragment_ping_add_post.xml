@@ -8,7 +8,7 @@
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         android:padding="40dp">
         
         <TextView
@@ -29,18 +29,75 @@
                 android:id="@+id/add_post_et_where"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="장소를 설명해주세요" />
+                android:hint="@string/ping_add_title" />
         </com.google.android.material.textfield.TextInputLayout>
         
-        <Button
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/add_post_ti_what"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_where">
+            
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_post_et_what"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/ping_add_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+        
+        <TextView
+            android:id="@+id/add_post_tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/add_post_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_what" />
+        
+        <TextView
+            android:id="@+id/add_post_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_add_post_dialog"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:text="날짜 고르기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/add_post_iv_dialog"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_post_tv_time" />
+        
+        <ImageView
+            android:id="@+id/add_post_iv_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_today"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/add_post_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/add_post_tv"
+            app:layout_constraintTop_toTopOf="@id/add_post_tv" />
+        
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="핑!"
+            android:id="@+id/add_post_btn_send"
             android:textStyle="italic|bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_where" />
+            app:layout_constraintTop_toBottomOf="@+id/add_post_tv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
