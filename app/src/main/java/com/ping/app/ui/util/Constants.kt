@@ -13,3 +13,7 @@ object Map{
 
 
 val starbucks = LatLng(36.107953, 128.418385)
+
+enum class userTableColunm{
+    NAME, EMAIL, REGION, MeetingManagerUID
+}
