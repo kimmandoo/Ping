@@ -2,6 +2,7 @@ package com.ping.app.data.repository.login
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,13 +26,23 @@ import kotlinx.coroutines.withContext
 import java.util.UUID
 
 private const val TAG = "LoginImpl_싸피"
-class LoginRepoImpl(context: Context): LoginRepo {
+
+class LoginRepoImpl(context: Context) : LoginRepo {
     private val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
-    lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
 
-    override fun getCurrentauth(): FirebaseAuth {
-        return auth
+    override fun getCurrentAuth(): FirebaseAuth? {
+        return if (::auth.isInitialized) auth else null
+    }
+
+    override fun getSignInIntent(): Intent {
+        return googleSignInClient.signInIntent
+    }
+
+    override fun logout() {
+        auth.signOut()
+        googleSignInClient.signOut()
     }
 
     /**
@@ -41,14 +52,13 @@ class LoginRepoImpl(context: Context): LoginRepo {
      * 해당 문제를 해결하기 위해서는 project/gradle의 google service의 버전을 조정해주면 됩니다.
      * 본 프로젝트에서는 "4.3.13"로 설정을 하였습니다.
      */
-    override fun authinit(activity: Activity){
+    override fun authInit(activity: Activity) {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(activity.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
-
         auth = Firebase.auth
     }
 
@@ -56,13 +66,13 @@ class LoginRepoImpl(context: Context): LoginRepo {
      * 해당 부분은 파이어 베이스의 Authentication에 접근하여 해당 유저의 데이터 값을 가져오는 함수로 추정돱니다.
      */
     override suspend fun firebaseAuthWithGoogle(idToken: String): FirebaseUser? {
-        var user : FirebaseUser? = null
+        var user: FirebaseUser? = null
         val credential = GoogleAuthProvider.getCredential(idToken, null)
 
         val getUser = CompletableDeferred<FirebaseUser?>()
 
         CoroutineScope(Dispatchers.IO).launch {
-             auth.signInWithCredential(credential)
+            auth.signInWithCredential(credential)
                 .addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
                         // Sign in success, update UI with the signed-in user's information
@@ -87,7 +97,7 @@ class LoginRepoImpl(context: Context): LoginRepo {
      * 해당 함수에서는 유저 테이블을 학인하고 테이블이 존재한다면 메인으로 넘어가는 함수입니다.
      * 다만 해당 유저의 테이블이 존재하지 않는 다면 해당 유저의 테이블을 만들어 주는 역할을 하는 함수입니다.
      */
-    override fun userTableCheck(user: FirebaseUser){
+    override fun userTableCheck(user: FirebaseUser) {
 //       테스트 용
 //        CoroutineScope(Dispatchers.IO).launch {
 //            createUserTable("1")
@@ -123,8 +133,6 @@ class LoginRepoImpl(context: Context): LoginRepo {
     }
 
 
-
-
     /**테스트를 완료하지 않았습니다.
      *
      * 아래의 함수는 Firestore에 접근하여 값을 리턴 받는 함수 입니다.
@@ -136,7 +144,7 @@ class LoginRepoImpl(context: Context): LoginRepo {
      * UID에 해당하는 유저 테이블이 없을 경우와 디비 접근에 실패 했을 경우에는 false를 반환합니다.
      *
      */
-    override suspend fun userTableCheckQuery(UID : String) : Boolean{
+    override suspend fun userTableCheckQuery(UID: String): Boolean {
         val getUserTable = CompletableDeferred<Task<DocumentSnapshot>>()
         val uidDocRef = db.collection("USER").document(UID)
 
@@ -149,7 +157,9 @@ class LoginRepoImpl(context: Context): LoginRepo {
         Log.d(TAG, "DocumentSnapshot data:${
             userTable.addOnSuccessListener {
                 Log.d(TAG, "userTableCheckQuery: ${it.data}")
-            }} ")
+            }
+        } "
+        )
 
         return true
     }
@@ -160,11 +170,16 @@ class LoginRepoImpl(context: Context): LoginRepo {
      * 아래의 함수는 만일 유저 테이블이 없을 경우 유저 테이블을 생성하는 함수 입니다.
      * 추후 UID 뿐만 아니라 USER 정보도 같이 input으로 들어옵니다.
      */
-    override suspend fun createUserTable(user: FirebaseUser) : Boolean {
+    override suspend fun createUserTable(user: FirebaseUser): Boolean {
         var result = false
 
 
-        var inputUser: User = User(user.displayName!!, user.email!!,"", UUID.randomUUID().mostSignificantBits.toString())
+        var inputUser: User = User(
+            user.displayName!!,
+            user.email!!,
+            "",
+            UUID.randomUUID().mostSignificantBits.toString()
+        )
 
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
@@ -184,7 +199,7 @@ class LoginRepoImpl(context: Context): LoginRepo {
     /**
      * 본 함수는 USER UID로 Meeting Table의 정보를 가져 올 수 있는지 확인 하는 함수입니다.
      */
-    override fun userMeetingGetQuery(UID : String){
+    override fun userMeetingGetQuery(UID: String) {
         val docRef = db.collection("MEETING").document(UID)
         docRef.get()
             .addOnSuccessListener { document ->
@@ -198,14 +213,14 @@ class LoginRepoImpl(context: Context): LoginRepo {
                 Log.d(TAG, "get failed with ", exception)
             }
     }
-    
-    companion object{
-        private var INSTANCE : LoginRepoImpl? =null
 
-        fun initialize(context: Context): LoginRepoImpl{
-            if(INSTANCE == null){
-                synchronized(LoginRepoImpl::class.java){
-                    if(INSTANCE == null){
+    companion object {
+        private var INSTANCE: LoginRepoImpl? = null
+
+        fun initialize(context: Context): LoginRepoImpl {
+            if (INSTANCE == null) {
+                synchronized(LoginRepoImpl::class.java) {
+                    if (INSTANCE == null) {
                         INSTANCE = LoginRepoImpl(context)
                     }
                 }
@@ -213,14 +228,8 @@ class LoginRepoImpl(context: Context): LoginRepo {
             return INSTANCE!!
         }
 
-        fun get() : LoginRepoImpl {
-            return INSTANCE ?:
-            throw IllegalStateException("NoteRepository must be initialized")
+        fun get(): LoginRepoImpl {
+            return INSTANCE!!
         }
-
-
-        const val RC_SIGN_IN = 9001
-
     }
-
 }

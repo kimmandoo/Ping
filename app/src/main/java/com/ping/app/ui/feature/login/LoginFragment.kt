@@ -3,8 +3,9 @@ package com.ping.app.ui.feature.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseUser
@@ -27,7 +28,8 @@ private const val TAG = "LoginFragment_싸피"
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
     override val viewModel: LoginViewModel by viewModels()
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
-
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
+    private val loginRepoInstance = LoginRepoImpl.get()
 
     /**
      * 로그인 프래그먼트의 시작 부분입니다.
@@ -35,73 +37,68 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      * 1. 사용자 인증을 초기화
      * 2, 로그인 버튼 클릭시 signIn() 함수가 호출됩니다.
      */
-    override fun initView(savedInstanceState: Bundle?) {
 
-        LoginRepoImpl.get().authinit(requireActivity())
-
-        binding.apply {
-            test2.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        googleSignInLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                googleSignIn(result.data)
             }
-            test.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
-            }
-            binding.loginButton.setOnClickListener {
-                signIn()
-            }
-        }
-
-
     }
 
+    override fun initView(savedInstanceState: Bundle?) {
+        loginRepoInstance.authInit(requireActivity())
+        binding.apply {
+            loginButton.setOnClickListener {
+                googleSignInLauncher.launch(loginRepoInstance.getSignInIntent())
+            }
+            logoutButton.setOnClickListener {
+                loginRepoInstance.logout()
+                updateUI(null)
+            }
+        }
+    }
 
+    /**
+     * onStart시에 user상태를 확인해서 자동로그인을 해주는 로직
+     */
     override fun onStart() {
         super.onStart()
-        val currentUser = LoginRepoImpl.get().getCurrentauth().currentUser
-        updateUI(currentUser)
-        getUserUid(currentUser)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)!!
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
-                Log.d(TAG, "firebaseAuthWithGoogle:" + account)
-                CoroutineScope(Dispatchers.Main).launch {
-                    val user = LoginRepoImpl.get().firebaseAuthWithGoogle(account.idToken!!)
-                    updateUI(user)
-                }
-
-            } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed@@@@@@@@@", e)
-            }
+        loginRepoInstance.getCurrentAuth()?.let { auth ->
+            updateUI(auth.currentUser)
+            getUserUid(auth.currentUser)
         }
     }
 
-    private fun signIn() {
-        val signInIntent = LoginRepoImpl.get().googleSignInClient.signInIntent
-        Log.d(TAG, "signIn: ${signInIntent}")
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-
+    /**
+     * onActivityResult대신에 registerForActivityResult를 사용한 구글 로그인 구현
+     * deprecated된 부분은 추후 수정
+     */
+    private fun googleSignIn(data: Intent?) {
+        runCatching {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            task.getResult(ApiException::class.java)
+        }.onSuccess { account ->
+            Log.d(TAG, "firebaseAuthWithGoogle:" + account.id + "||" + account.idToken)
+            CoroutineScope(Dispatchers.Main).launch {
+                val user = loginRepoInstance.firebaseAuthWithGoogle(account.idToken!!)
+                updateUI(user)
+            }
+        }.onFailure {
+            Log.w(TAG, "Google sign in failed@@@@@@@@@", it)
+        }
     }
 
     /**
      * 인증 여부에 따른 UI를 업데이트를 관리해주는 함수입니다.
      * 해당 함수에서 로그인한 유저의 테이블이 존재하는지 확인하고 존재 유무에 따라 테이블을 생성합니다.
      */
-    fun updateUI(user: FirebaseUser?) {
-        if (user != null) {
-            binding.loginTv.setText(user.displayName.toString())
-            LoginRepoImpl.get().userTableCheck(user)
+    private fun updateUI(user: FirebaseUser?) {
+        binding.loginTv.text = if (user != null) {
+            loginRepoInstance.userTableCheck(user)
+            user.displayName.toString()
         } else {
-            binding.loginTv.setText("인증 실패")
+            "인증 실패"
         }
     }
 
@@ -110,14 +107,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      * mainViewmodel에 넣은 이유는 user의 uid가 메인 액티비티가 살아있는 동안은 계속
      * 유지가 되어야 한다고 생각을 했기 때문입니다.
      */
-    fun getUserUid(user: FirebaseUser?){
+    private fun getUserUid(user: FirebaseUser?) {
         if (user != null) {
             mainActivityViewModel.saveUserUid(user.uid)
         }
     }
-
-    companion object {
-        private const val RC_SIGN_IN = 9001
-    }
-
 }

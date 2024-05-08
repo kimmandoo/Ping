@@ -1,12 +1,15 @@
 package com.ping.app.domain.dao
 
 import android.app.Activity
+import android.content.Intent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 interface LoginRepo {
-    fun getCurrentauth(): FirebaseAuth
-    fun authinit(activity: Activity)
+    fun getCurrentAuth(): FirebaseAuth?
+    fun authInit(activity: Activity)
+
+    fun logout()
 
     suspend fun firebaseAuthWithGoogle(idToken: String): FirebaseUser?
 
@@ -17,4 +20,5 @@ interface LoginRepo {
     fun userMeetingGetQuery(UID : String)
 
     fun userTableCheck(user: FirebaseUser)
+    fun getSignInIntent(): Intent
 }
