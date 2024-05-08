@@ -1,7 +1,7 @@
 package com.ping.app
 
 import android.app.Application
-import com.ping.app.data.dao.PingMapRepo
+import com.ping.app.domain.dao.PingMapRepo
 import com.ping.app.data.repository.PingMapRepoImpl
 import com.ping.app.ui.util.LocationHelper
 

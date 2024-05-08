@@ -4,8 +4,8 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
-import com.ping.app.data.dao.PingMapRepo
-import com.ping.app.data.model.Gathering
+import com.ping.app.domain.dao.PingMapRepo
+import com.ping.app.domain.model.Gathering
 import java.util.Locale
 
 private const val TAG = "PingMapRepoImpl_싸피"

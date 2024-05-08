@@ -1,6 +1,6 @@
-package com.ping.app.data.dao
+package com.ping.app.domain.dao
 
-import com.ping.app.data.model.Gathering
+import com.ping.app.domain.model.Gathering
 
 interface PingMapRepo {
     fun sendPingInfo(data: Gathering)

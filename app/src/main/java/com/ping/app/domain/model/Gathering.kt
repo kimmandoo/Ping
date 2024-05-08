@@ -1,4 +1,4 @@
-package com.ping.app.data.model
+package com.ping.app.domain.model
 
 data class Gathering(
     val uid: String, // 모임 id

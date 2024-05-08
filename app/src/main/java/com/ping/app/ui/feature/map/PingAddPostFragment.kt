@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
 import com.ping.app.R
-import com.ping.app.data.model.Gathering
+import com.ping.app.domain.model.Gathering
 import com.ping.app.databinding.DialogPingAddBinding
 import com.ping.app.databinding.FragmentPingAddPostBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
