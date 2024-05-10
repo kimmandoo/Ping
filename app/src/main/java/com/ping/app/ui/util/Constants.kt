@@ -11,6 +11,12 @@ object Map{
     const val USER_POSITION_LNG = "LNG"
 }
 
+object FCM{
+    const val CHANNEL_NAME= "ping"
+    const val CHANNEL_ID = "ping"
+    const val NOTIFICATION_ID = 1001
+}
+
 
 val starbucks = LatLng(36.107953, 128.418385)
 

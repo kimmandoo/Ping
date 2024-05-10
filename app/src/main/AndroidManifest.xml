@@ -20,6 +20,9 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="${NAVER_MAP_CLIENT_ID}" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_logo" />
         <service
             android:name="com.ping.app.data.remote.PingFirebaseMessagingService"
             android:exported="true">
