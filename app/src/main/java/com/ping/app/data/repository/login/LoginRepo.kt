@@ -1,15 +1,16 @@
 package com.ping.app.data.repository.login
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 interface LoginRepo {
     fun getCurrentAuth(): FirebaseAuth?
-    fun authInit(activity: Activity)
+    fun authInit()
 
-    fun logout()
+    suspend fun logout()
 
     suspend fun firebaseAuthWithGoogle(idToken: String): FirebaseUser?
 
@@ -20,5 +21,5 @@ interface LoginRepo {
     fun userMeetingGetQuery(UID : String)
 
     fun userTableCheck(user: FirebaseUser)
-    fun getSignInIntent(): Intent
+    suspend fun requestGoogleLogin(context: Context, successAction: (FirebaseUser?) -> Unit)
 }

@@ -16,6 +16,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.ping.app.R
+import com.ping.app.data.repository.login.LoginRepo
+import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.FCM
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        LoginRepoImpl.get().authInit()
         createNotificationChannel(FCM.CHANNEL_ID, FCM.CHANNEL_NAME)
         initView()
     }

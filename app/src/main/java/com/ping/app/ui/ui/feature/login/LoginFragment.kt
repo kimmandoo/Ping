@@ -2,22 +2,16 @@ package com.ping.app.ui.ui.feature.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseUser
 import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentLoginBinding
+import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.login.LoginViewModel
-import com.ping.app.ui.base.BaseFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -29,16 +23,9 @@ private const val TAG = "LoginFragment_싸피"
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
     override val viewModel: LoginViewModel by viewModels()
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
-    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
     private val loginRepoInstance = LoginRepoImpl.get()
-    
+
     override fun initView(savedInstanceState: Bundle?) {
-        loginRepoInstance.authInit(requireActivity())
-        lifecycleScope.launch {
-            loginRepoInstance.requestGoogleLogin(binding.root.context) { firebaseUser ->
-                updateUI(firebaseUser)
-            }
-        }
         binding.apply {
             loginButton.setOnClickListener {
                 lifecycleScope.launch {
@@ -48,8 +35,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                 }
             }
             logoutButton.setOnClickListener {
-                loginRepoInstance.logout()
-                updateUI(null)
+                lifecycleScope.launch {
+                    loginRepoInstance.logout()
+                }
             }
         }
     }
