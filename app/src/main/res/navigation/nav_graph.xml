@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.ping.app.ui.feature.login.LoginFragment"
+        android:name="com.ping.app.ui.ui.feature.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
@@ -22,16 +22,16 @@
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.ping.app.ui.feature.main.MainFragment"
+        android:name="com.ping.app.ui.ui.feature.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/pingMapFragment"
-        android:name="com.ping.app.ui.feature.map.PingMapFragment"
+        android:name="com.ping.app.ui.ui.feature.map.PingMapFragment"
         android:label="MapFragment" />
     <fragment
         android:id="@+id/pingAddMapFragment"
-        android:name="com.ping.app.ui.feature.map.PingAddMapFragment"
+        android:name="com.ping.app.ui.ui.feature.map.PingAddMapFragment"
         android:label="PingAddMapFragment" >
         <action
             android:id="@+id/action_pingAddMapFragment_to_pingAddPostFragment"
@@ -39,6 +39,6 @@
     </fragment>
     <fragment
         android:id="@+id/pingAddPostFragment"
-        android:name="com.ping.app.ui.feature.map.PingAddPostFragment"
+        android:name="com.ping.app.ui.ui.feature.map.PingAddPostFragment"
         android:label="PingAddPostFragment" />
 </navigation>
