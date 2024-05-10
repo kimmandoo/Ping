@@ -21,5 +21,5 @@ interface LoginRepo {
     fun userMeetingGetQuery(UID : String)
 
     fun userTableCheck(user: FirebaseUser)
-    suspend fun requestGoogleLogin(context: Context, successAction: (FirebaseUser?) -> Unit)
+    suspend fun requestGoogleLogin(context: Context, onSuccessListener: (FirebaseUser?) -> Unit)
 }
