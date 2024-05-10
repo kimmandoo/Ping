@@ -16,8 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ping.app.R
-import com.ping.app.domain.dao.LoginRepo
-import com.ping.app.domain.model.User
+import com.ping.app.data.model.User
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
