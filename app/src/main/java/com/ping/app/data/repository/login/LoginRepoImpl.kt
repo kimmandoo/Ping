@@ -4,10 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -29,56 +33,78 @@ private const val TAG = "LoginImpl_싸피"
 class LoginRepoImpl(context: Context) : LoginRepo {
     private val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
+    private val credentialManager = CredentialManager.create(context)
+    private val googleIdOption = GetGoogleIdOption.Builder()
+        .setFilterByAuthorizedAccounts(false)
+        .setAutoSelectEnabled(true)
+        .setServerClientId(context.getString(R.string.default_web_client_id))
+        .build()
+
+    private val credentialRequest: GetCredentialRequest = GetCredentialRequest.Builder()
+        .addCredentialOption(googleIdOption)
+        .build()
 
     override fun getCurrentAuth(): FirebaseAuth? {
         return if (::auth.isInitialized) auth else null
     }
 
-    override fun getSignInIntent(): Intent {
-        return googleSignInClient.signInIntent
-    }
-
-    override fun logout() {
+    override suspend fun logout() {
+        credentialManager.clearCredentialState(request = ClearCredentialStateRequest())
         auth.signOut()
-        googleSignInClient.signOut()
     }
 
     /**
      * 해당 함수는 파이어베이스의 Authentication을 불러오는 기능을 하는 함수입니다.
-     * 만일 "default_web_client_id"이 빨간색으로 뜰 경우
-     * res 파일이 생성이 안된 문제입니다.
-     * 해당 문제를 해결하기 위해서는 project/gradle의 google service의 버전을 조정해주면 됩니다.
-     * 본 프로젝트에서는 "4.3.13"로 설정을 하였습니다.
      */
-    override fun authInit(activity: Activity) {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(activity.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(activity, gso)
+    override fun authInit() {
         auth = Firebase.auth
     }
 
+    override suspend fun requestGoogleLogin(
+        context: Context,
+        onSuccessListener: (FirebaseUser?) -> Unit,
+    ) {
+        runCatching {
+            credentialManager.getCredential(
+                request = credentialRequest,
+                context = context,
+            )
+        }.onSuccess {
+            when (val credential = it.credential) {
+                is CustomCredential -> {
+                    if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                        runCatching {
+                            GoogleIdTokenCredential.createFrom(credential.data)
+                        }.onSuccess { googleIdTokenCredential ->
+                            onSuccessListener(
+                                firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
+                            )
+                        }.onFailure {
+                            Log.e(TAG, "Received an invalid google id token response", it)
+                        }
+                    }
+                }
+            }
+        }.onFailure {
+            Log.d(TAG, "requestGoogleLogin: ${it.localizedMessage ?: "unknown error"}")
+        }
+    }
+
     /**
-     * 해당 부분은 파이어 베이스의 Authentication에 접근하여 해당 유저의 데이터 값을 가져오는 함수로 추정돱니다.
+     * 해당 부분은 idToken이 유효할 때 파이어 베이스의 Authentication에 접근하여 해당 유저 데이터를 받아옵니다.
      */
     override suspend fun firebaseAuthWithGoogle(idToken: String): FirebaseUser? {
         var user: FirebaseUser? = null
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-
         val getUser = CompletableDeferred<FirebaseUser?>()
 
         CoroutineScope(Dispatchers.IO).launch {
             auth.signInWithCredential(credential)
                 .addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success")
                         user = auth.currentUser
-
-                        Log.d(TAG, "firebaseAuthWithGoogle2: ${user}")
+                        Log.d(TAG, "firebaseAuthWithGoogle: ${user}")
                         getUser.complete(user)
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -87,6 +113,7 @@ class LoginRepoImpl(context: Context) : LoginRepo {
         }
 
         getUser.await()
+        auth = Firebase.auth
 
         Log.d(TAG, "firebaseAuthWithGoogle1: ${user?.uid}")
         return user
@@ -108,8 +135,6 @@ class LoginRepoImpl(context: Context) : LoginRepo {
                 Log.d(TAG, "userTableCheck: user table mounted")
 
                 userMeetingGetQuery(user.uid)
-
-
             } else { // 해당 UID를 가지는 유저 테이블이 없는 경우
                 // 없을 경우 해당 테이블을 만들어야 함
                 CoroutineScope(Dispatchers.IO).launch {
