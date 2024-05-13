@@ -2,12 +2,14 @@ package com.ping.app.ui.ui.feature.map
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.UiThread
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
@@ -130,6 +132,13 @@ class PingMapFragment :
             iconTintColor = Color.RED
         }
         marker.map = naverMap
+        
+        binding.apply {
+            mapBtnGathering.setOnClickListener {
+                Log.d(TAG, "initView: ")
+                findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
+            }
+        }
     }
     
     override fun onStart() {

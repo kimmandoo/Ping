@@ -28,7 +28,11 @@
     <fragment
         android:id="@+id/pingMapFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingMapFragment"
-        android:label="MapFragment" />
+        android:label="MapFragment" >
+        <action
+            android:id="@+id/action_pingMapFragment_to_gatheringFragment"
+            app:destination="@id/gatheringFragment" />
+    </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddMapFragment"
@@ -41,4 +45,8 @@
         android:id="@+id/pingAddPostFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddPostFragment"
         android:label="PingAddPostFragment" />
+    <fragment
+        android:id="@+id/gatheringFragment"
+        android:name="com.ping.app.ui.ui.feature.gathering.GatheringFragment"
+        android:label="GatheringFragment" />
 </navigation>

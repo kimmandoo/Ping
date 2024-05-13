@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseUser
 import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
@@ -27,6 +28,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun initView(savedInstanceState: Bundle?) {
         binding.apply {
+            test.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_pingMapFragment)
+            }
             loginButton.setOnClickListener {
                 lifecycleScope.launch {
                     loginRepoInstance.requestGoogleLogin(binding.root.context) { firebaseUser ->
