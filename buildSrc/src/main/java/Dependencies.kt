@@ -25,6 +25,10 @@ object Google {
     const val FIREBASE_CLOUD_MESSAGING = "com.google.firebase:firebase-messaging-ktx"
     const val FIREBASE_CLOUD_FUNCTION =
         "com.google.firebase:firebase-functions-ktx:${Versions.FIREBASE_CLOUD_FUNCTION}"
+    const val CREDENTIAL = "androidx.credentials:credentials:${Versions.CREDENTIAL}"
+    const val CREDENTIAL_PLAY_SERVICE =
+        "androidx.credentials:credentials-play-services-auth:${Versions.CREDENTIAL}"
+    const val GOOGLE_ID="com.google.android.libraries.identity.googleid:googleid:${Versions.GOOGLE_ID}"
 }
 
 object Permission {

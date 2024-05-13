@@ -9,8 +9,8 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.ping.app.R
-import com.ping.app.ui.container.MainActivity
-import com.ping.app.ui.util.FCM
+import com.ping.app.ui.ui.container.MainActivity
+import com.ping.app.ui.ui.util.FCM
 
 private const val TAG = "PingFirebaseMessagingSe_싸피"
 

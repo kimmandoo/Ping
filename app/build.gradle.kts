@@ -64,6 +64,9 @@ dependencies {
     implementation(Google.FIREBASE_FIRESTORE)
     implementation(Google.FIREBASE_CLOUD_FUNCTION)
     implementation(Google.FIREBASE_CLOUD_MESSAGING)
+    implementation(Google.CREDENTIAL_PLAY_SERVICE)
+    implementation(Google.CREDENTIAL)
+    implementation(Google.GOOGLE_ID)
     implementation(Permission.TED_NORMAL)
     implementation(Permission.TED_COROUTINE)
 }

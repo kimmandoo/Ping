@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.feature.main.MainFragment">
+        tools:context=".ui.ui.feature.main.MainFragment">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/main_frag_toolbar"
             android:layout_width="match_parent"
@@ -36,6 +36,7 @@
                 tools:text="이름이 들어와요"
                 android:textSize="30dp"
             />
+
 
             <TextView
                 android:id="@+id/main_frag_linear_email_tv"
