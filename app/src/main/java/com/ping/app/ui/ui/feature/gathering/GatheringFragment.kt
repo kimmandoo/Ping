@@ -5,6 +5,7 @@ import androidx.fragment.app.viewModels
 import com.ping.app.R
 import com.ping.app.databinding.FragmentGatheringBinding
 import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.presentation.gathering.GatheringViewModel
 
 class GatheringFragment: BaseFragment<FragmentGatheringBinding, GatheringViewModel>(R.layout.fragment_gathering) {
     

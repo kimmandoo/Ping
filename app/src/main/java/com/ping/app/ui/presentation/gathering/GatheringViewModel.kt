@@ -1,4 +1,4 @@
-package com.ping.app.ui.ui.feature.gathering
+package com.ping.app.ui.presentation.gathering
 
 import androidx.lifecycle.ViewModel
 
