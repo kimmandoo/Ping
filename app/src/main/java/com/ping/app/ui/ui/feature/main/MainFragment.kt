@@ -1,4 +1,4 @@
-package com.ping.app.ui.feature.main
+package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
 import com.ping.app.R
+import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.FragmentMainBinding
-import com.ping.app.domain.model.Gathering
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.feature.map.PingMapViewModel
+import com.ping.app.ui.feature.main.MainAdapter
+import com.ping.app.ui.presentation.main.MainViewModel
+import com.ping.app.ui.presentation.map.PingMapViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

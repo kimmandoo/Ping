@@ -1,12 +1,11 @@
-package com.ping.app.data.repository.Main
+package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.ping.app.domain.dao.MainRepo
-import com.ping.app.domain.model.Gathering
+import com.ping.app.data.model.Gathering
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
@@ -46,7 +45,8 @@ class MainRepoImpl(context: Context): MainRepo {
                 val DefferResult = documents
                 for(value in documents.documents){
                     Log.d(TAG, "getMeetingTable: ${value.data?.get("title")}")
-                    meetingTableResult.add(Gathering(uid = value.data?.get("uid").toString(),
+                    meetingTableResult.add(
+                        Gathering(uid = value.data?.get("uid").toString(),
                                                     uuid =  value.data?.get("uuid").toString(),
                                                     gatheringTime =  value.data?.get("gatheringTime").toString(),
                                                     content = value.data?.get("content").toString(),

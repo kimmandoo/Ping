@@ -1,4 +1,4 @@
-package com.ping.app.ui.container
+package com.ping.app.ui.ui.container
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -11,21 +11,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.naver.maps.geometry.LatLng
-import com.ping.app.PingApplication
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.naver.maps.geometry.LatLng
+import com.ping.app.PingApplication
 import com.ping.app.R
-import com.ping.app.data.repository.login.LoginRepo
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
-import com.ping.app.ui.feature.map.PingMapViewModel
-import com.ping.app.ui.util.LocationHelper
-import com.ping.app.ui.util.FCM
-import com.ping.app.ui.util.LocationHelper
-import com.ping.app.ui.util.easyToast
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.FCM
 import com.ping.app.ui.ui.util.LocationHelper

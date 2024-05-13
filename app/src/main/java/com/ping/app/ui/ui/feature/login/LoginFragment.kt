@@ -1,13 +1,9 @@
 package com.ping.app.ui.ui.feature.login
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseUser
 import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
@@ -46,7 +42,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             }
             test.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
+//                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
             }
         }
     }
