@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseUser
@@ -55,6 +56,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             logoutButton.setOnClickListener {
                 loginRepoInstance.logout()
                 updateUI(null)
+            }
+            test2.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            }
+            test.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
             }
         }
     }

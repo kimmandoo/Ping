@@ -108,7 +108,7 @@ class LoginRepoImpl(context: Context) : LoginRepo {
                 // 테이블이 있다면 메인 프래그먼트로 넘어 감
                 Log.d(TAG, "userTableCheck: user table mounted")
 
-                userMeetingGetQuery(user.uid)
+//                userMeetingGetQuery(user.uid)
 
 
             } else { // 해당 UID를 가지는 유저 테이블이 없는 경우
