@@ -2,12 +2,13 @@ package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
 import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
@@ -15,9 +16,9 @@ import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.feature.main.MainAdapter
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
+import com.ping.app.ui.ui.feature.map.PingMapFragmentDirections
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -67,6 +68,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
             Log.d(TAG, "initView: ${it}")
+            val action = MainFragmentDirections.actionMainFragmentToPingMapFragment(pingData = it)
+            findNavController().navigate(action)
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter

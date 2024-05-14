@@ -24,7 +24,12 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_pingMapFragment"
-            app:destination="@id/pingMapFragment" />
+            app:destination="@id/pingMapFragment">
+            <argument
+                android:name="ping_data"
+                app:argType="com.ping.app.data.model.Gathering"
+                app:nullable="true"/>
+        </action>
         <action
             android:id="@+id/action_mainFragment_to_pingAddMapFragment"
             app:destination="@id/pingAddMapFragment" />
@@ -33,6 +38,10 @@
         android:id="@+id/pingMapFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingMapFragment"
         android:label="MapFragment" >
+        <argument
+            android:name="ping_data"
+            app:argType="com.ping.app.data.model.Gathering"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_pingMapFragment_to_gatheringFragment"
             app:destination="@id/gatheringFragment" />
