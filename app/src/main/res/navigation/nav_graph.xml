@@ -44,7 +44,8 @@
             app:nullable="true"/>
         <action
             android:id="@+id/action_pingMapFragment_to_gatheringFragment"
-            app:destination="@id/gatheringFragment" />
+            app:destination="@id/gatheringFragment"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"

@@ -92,6 +92,7 @@ class PingMapFragment :
 
     @UiThread
     override fun onMapReady(map: NaverMap) {
+        val pingAlert = PingAlertDialog(binding.root.context)
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
         naverMap.locationSource = locationSource
@@ -151,7 +152,15 @@ class PingMapFragment :
         binding.apply {
             mapBtnGathering.setOnClickListener {
                 Log.d(TAG, "initView: ")
-                findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
+                pingAlert.showDialog()
+                pingAlert.alertDialog.apply {
+                    setOnCancelListener {
+                        lifecycleScope.launch {
+                            // 모임에 참여시키는 로직 들어가면 됨
+                            findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
+                        }
+                    }
+                }
             }
         }
     }
