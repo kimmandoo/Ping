@@ -1,6 +1,8 @@
 package com.ping.app.ui.ui.feature.login
 
 import android.os.Bundle
+import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -26,9 +28,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun initView(savedInstanceState: Bundle?) {
         binding.apply {
-            test.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_pingMapFragment)
-            }
             loginButton.setOnClickListener {
                 lifecycleScope.launch {
                     loginRepoInstance.requestGoogleLogin(binding.root.context) { firebaseUser ->
@@ -45,7 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             }
             test.setOnClickListener {
-//                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
+                findNavController().navigate(R.id.action_loginFragment_to_gatheringFragment)
             }
         }
     }
@@ -58,6 +57,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         loginRepoInstance.getCurrentAuth()?.let { auth ->
             updateUI(auth.currentUser)
             getUserUid(auth.currentUser)
+            Log.d(TAG, "onStart: ${auth.currentUser?.uid}")
+            
         }
     }
 

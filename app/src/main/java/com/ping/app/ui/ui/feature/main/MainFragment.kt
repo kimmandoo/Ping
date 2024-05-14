@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
  */
 private const val TAG = "MainFragment_싸피"
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
+    
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
@@ -70,9 +71,9 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
 
         binding.mainFragRecyclerview.adapter = mainAdapter
         binding.mainFragRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-        viewModel.meetingList.observe(viewLifecycleOwner, Observer { it ->
+        viewModel.meetingList.observe(viewLifecycleOwner) { it ->
             it?.let { mainAdapter.submitList(it) }
-        })
+        }
         
         binding.mainFragFab.setOnClickListener {
             Log.d(TAG, "initView: add ${it}")

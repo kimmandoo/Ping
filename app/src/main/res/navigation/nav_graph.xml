@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_gatheringFragment"
+            app:destination="@id/gatheringFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
