@@ -15,8 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.naver.maps.geometry.LatLng
+import com.ping.app.PingApplication
 import com.ping.app.R
-import com.ping.app.data.repository.login.LoginRepo
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
 import com.ping.app.ui.presentation.map.PingMapViewModel
@@ -32,10 +33,14 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var navController: NavController
     private val pingMapViewModel: PingMapViewModel by viewModels()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        PingApplication.locationHelper.startLocationTracking()
+        PingApplication.locationHelper.listener = {
+            pingMapViewModel.setUserLocation(LatLng(it))
+        }
         LoginRepoImpl.get().authInit()
         createNotificationChannel(FCM.CHANNEL_ID, FCM.CHANNEL_NAME)
         initView()
@@ -51,11 +56,11 @@ class MainActivity : AppCompatActivity() {
                     R.id.loginFragment -> {
                         LocationHelper.getInstance().stopLocationTracking()
                     }
-                    
+
                     R.id.mainFragment -> {
                         LocationHelper.getInstance().stopLocationTracking()
                     }
-                    
+
                     R.id.pingAddMapFragment, R.id.pingMapFragment -> {
                         LocationHelper.getInstance()
                     }

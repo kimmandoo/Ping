@@ -1,10 +1,12 @@
 package com.ping.app
 
 import android.app.Application
-import com.ping.app.data.repository.map.PingMapRepoImpl
-import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.login.LoginRepo
+import com.ping.app.data.repository.login.LoginRepoImpl
+import com.ping.app.data.repository.main.MainRepo
+import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.data.repository.map.PingMapRepo
+import com.ping.app.data.repository.map.PingMapRepoImpl
 import com.ping.app.ui.ui.util.LocationHelper
 
 class PingApplication : Application() {
@@ -13,11 +15,13 @@ class PingApplication : Application() {
         locationHelper = LocationHelper.initialize(this)
         pingMapRepo = PingMapRepoImpl.initialize(this)
         loginRepo = LoginRepoImpl.initialize(this)
+        mainRepo = MainRepoImpl.initialize(this)
     }
 
     companion object {
         lateinit var locationHelper: LocationHelper
         lateinit var pingMapRepo: PingMapRepo
         lateinit var loginRepo: LoginRepo
+        lateinit var mainRepo: MainRepo
     }
 }

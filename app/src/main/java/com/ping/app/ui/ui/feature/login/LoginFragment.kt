@@ -1,8 +1,6 @@
 package com.ping.app.ui.ui.feature.login
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -43,9 +41,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                     loginRepoInstance.logout()
                 }
             }
+            test2.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            }
+            test.setOnClickListener {
+//                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
+            }
         }
     }
-    
+
     /**
      * onStart시에 user상태를 확인해서 자동로그인을 해주는 로직
      */
@@ -69,7 +73,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             "인증 실패"
         }
     }
-    
+
     /**
      * 해당 함수는 유저의 Uid를 MainActivity의 Viewmodel에 저장하는 기능을 가진 함수입니다.
      * mainViewmodel에 넣은 이유는 user의 uid가 메인 액티비티가 살아있는 동안은 계속
