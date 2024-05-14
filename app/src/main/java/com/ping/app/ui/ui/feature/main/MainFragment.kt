@@ -8,8 +8,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
@@ -65,7 +65,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             initMeetingList(lat, lng)
         }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
-            Log.d(TAG, "initView: ${it}")
+            findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
@@ -75,40 +75,13 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         })
         
         binding.mainFragFab.setOnClickListener {
-            Log.d(TAG, "initView: add ${it}")
+            findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
         }
 
 
-        Log.d(TAG, "initView: ${viewModel.meetingList.value}")
-//        Log.d(TAG, "initView:2222 ${MainRepoImpl.get().getMeetingTable(lat, lng)}")
     }
 
-    private suspend fun initLatLng() : Pair<Double, Double>{
-        val loadlatlng = CompletableDeferred<LatLng?>()
 
-        var lat = 0.0
-        var lng = 0.0
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                pingMapViewModel.userLocation.collectLatest { currentLocation ->
-                    Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
-                    if (currentLocation != null) {
-                        lat = currentLocation.latitude
-                        lng = currentLocation.longitude
-                        loadlatlng.complete(currentLocation)
-                    }
-                }
-            }
-        }
-
-
-
-        loadlatlng.await()
-
-
-        Log.d(TAG, "initLatLng: ${lat} ${lng}")
-        return Pair(lat, lng)
-    }
 
     suspend fun initMeetingList(lat: Double, lng: Double){
         
