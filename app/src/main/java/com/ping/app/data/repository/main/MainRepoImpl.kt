@@ -25,40 +25,34 @@ class MainRepoImpl(context: Context): MainRepo {
 
         val getMeeingTableDeffer = CompletableDeferred<QuerySnapshot>()
 
-
         val result = meetingTable
-            .whereLessThan("latitude", lat + 0.02)
-
-        result
-            .whereGreaterThan("latitude", lat -0.02)
-
-        result
-            .whereLessThan("longitude", lng + 0.02)
-
-        result
-            .whereGreaterThan("longitude", lng - 0.02)
 
 
         result
             .get()
             .addOnSuccessListener {documents ->
-                val DefferResult = documents
+                val meetingDefferResult = documents
                 for(value in documents.documents){
-                    Log.d(TAG, "getMeetingTable: ${value.data?.get("title")}")
-                    meetingTableResult.add(
-                        Gathering(uid = value.data?.get("uid").toString(),
-                                                    uuid =  value.data?.get("uuid").toString(),
-                                                    gatheringTime =  value.data?.get("gatheringTime").toString(),
-                                                    content = value.data?.get("content").toString(),
-                                                    title = value.data?.get("title").toString(),
-                                                    latitude = value.data?.get("latitude").toString().toDouble(),
-                                                    longitude = value.data?.get("longitude").toString().toDouble()
+                    val valuelat = value.data?.get("latitude").toString().toDouble()
+                    val valuelng = value.data?.get("longitude").toString().toDouble()
 
+                    if(lat-0.02 < valuelat && valuelat < lat + 0.02 && lng-0.02 < valuelng && valuelng < lng + 0.02 ) {
+                        meetingTableResult.add(
+                            Gathering(
+                                uid = value.data?.get("uid").toString(),
+                                uuid = value.data?.get("uuid").toString(),
+                                gatheringTime = value.data?.get("gatheringTime").toString(),
+                                content = value.data?.get("content").toString(),
+                                title = value.data?.get("title").toString(),
+                                latitude = value.data?.get("latitude").toString().toDouble(),
+                                longitude = value.data?.get("longitude").toString().toDouble()
+
+                            )
                         )
-                    )
+                    }
                 }
 
-                getMeeingTableDeffer.complete(DefferResult)
+                getMeeingTableDeffer.complete(meetingDefferResult)
 
             }
 

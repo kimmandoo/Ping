@@ -51,9 +51,11 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                  pingMapViewModel.userLocation.collectLatest { currentLocation ->
                     Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
-                    if (currentLocation != null) {
-                        lat = currentLocation.latitude
-                        lng = currentLocation.longitude
+                    if (lat == 0.0 && lng == 0.0) {
+                        if (currentLocation != null) {
+                            lat = currentLocation.latitude
+                            lng = currentLocation.longitude
+                        }
 
                         initMeetingList(lat, lng)
                     }
@@ -70,9 +72,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
-        binding.mainFragRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-        viewModel.meetingList.observe(viewLifecycleOwner, Observer { it ->
-            it?.let { mainAdapter.submitList(it) }
+        viewModel.meetingList.observe(viewLifecycleOwner, Observer { meetinglist ->
+            meetinglist?.let { mainAdapter.submitList(meetinglist) }
         })
         
         binding.mainFragFab.setOnClickListener {
@@ -80,7 +81,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
 
     }
-    
+
+
     suspend fun initMeetingList(lat: Double, lng: Double){
 
         val updateList = CompletableDeferred<List<Gathering>>()
