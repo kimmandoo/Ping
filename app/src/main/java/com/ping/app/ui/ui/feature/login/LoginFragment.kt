@@ -2,6 +2,8 @@ package com.ping.app.ui.ui.feature.login
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,7 @@ import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.login.LoginViewModel
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 
 private const val TAG = "LoginFragment_싸피"
@@ -28,24 +31,24 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     override fun initView(savedInstanceState: Bundle?) {
         binding.apply {
-            loginButton.setOnClickListener {
+            loginBtnGoogleLogin.setOnClickListener {
                 lifecycleScope.launch {
                     loginRepoInstance.requestGoogleLogin(binding.root.context) { firebaseUser ->
                         updateUI(firebaseUser)
                     }
                 }
             }
-            logoutButton.setOnClickListener {
-                lifecycleScope.launch {
-                    loginRepoInstance.logout()
-                }
-            }
-            test2.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            }
-            test.setOnClickListener {
-//                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
-            }
+//            logoutButton.setOnClickListener {
+//                lifecycleScope.launch {
+//                    loginRepoInstance.logout()
+//                }
+//            }
+//            test2.setOnClickListener {
+//                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+//            }
+//            test.setOnClickListener {
+////                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
+//            }
         }
     }
 
@@ -54,7 +57,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      */
     override fun onStart() {
         super.onStart()
-
         loginRepoInstance.getCurrentAuth()?.let { auth ->
             updateUI(auth.currentUser)
             getUserUid(auth.currentUser)
@@ -67,9 +69,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      * 해당 함수에서 로그인한 유저의 테이블이 존재하는지 확인하고 존재 유무에 따라 테이블을 생성합니다.
      */
     private fun updateUI(user: FirebaseUser?) {
-        binding.loginTv.text = if (user != null) {
+        if (user != null) {
             loginRepoInstance.userTableCheck(user)
-            user.displayName.toString()
+            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+//            user.displayName.toString()
         } else {
             "인증 실패"
         }

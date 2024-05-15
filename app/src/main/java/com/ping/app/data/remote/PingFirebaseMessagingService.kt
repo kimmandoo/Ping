@@ -35,7 +35,7 @@ class PingFirebaseMessagingService : FirebaseMessagingService() {
             
             val builder = NotificationCompat.Builder(this, FCM.CHANNEL_ID)
                 .setContentIntent(pIntent)
-                .setSmallIcon(R.drawable.ic_logo)
+                .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
