@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ping.app.data.model.Gathering
+import com.ping.app.data.model.GatheringDetail
 import java.util.Locale
 
 private const val TAG = "PingMapRepoImpl_싸피"
@@ -21,11 +22,14 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
             .add(data)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                makeMeetingDetailTable(data)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
     }
+
+
     
     override fun requestAddress(lat: Double, lng: Double): String {
         val geoCoder = Geocoder(appContext, Locale.KOREA)
@@ -45,7 +49,24 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         return addressResult
     }
 
-    
+    override fun makeMeetingDetailTable(data: Gathering) {
+
+
+
+
+
+        db.collection("DETAILMEETING")
+            .document(data.uuid)
+            .set(GatheringDetail(10, arrayListOf(data.uid)))
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+    }
+
+
     companion object {
         private var instance: PingMapRepoImpl? = null
         fun initialize(context: Context): PingMapRepoImpl {
