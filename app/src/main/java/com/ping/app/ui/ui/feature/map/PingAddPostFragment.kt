@@ -3,6 +3,7 @@ package com.ping.app.ui.ui.feature.map
 import android.app.AlertDialog
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
@@ -10,13 +11,15 @@ import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.DialogPingAddBinding
 import com.ping.app.databinding.FragmentPingAddPostBinding
-import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
+import com.ping.app.ui.presentation.MainActivityViewModel
+import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LNG
 import com.ping.app.ui.ui.util.easyToast
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "PingAddPostFragment_싸피"
@@ -26,6 +29,10 @@ class PingAddPostFragment :
         R.layout.fragment_ping_add_post
     ) {
     override val viewModel: PingMapViewModel by activityViewModels()
+
+    /** mainActivityViewModel 분리 해야함
+     */
+    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
     private val pingMapInstance = PingApplication.pingMapRepo
     private lateinit var gatheringTime: String
     override fun initView(savedInstanceState: Bundle?) {
@@ -40,13 +47,15 @@ class PingAddPostFragment :
                 addDateDialog()
             }
             addPostBtnSend.setOnClickListener {
+
+                Log.d(TAG, "initViUUUUUUUUUew: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
                     pingMapInstance.sendPingInfo(
                         Gathering(
-                            uid = "",
-                            uuid = "",
+                            uid = mainActivityViewModel.userUid.value.toString(),
+                            uuid = UUID.randomUUID().toString(),
                             gatheringTime = gatheringTime,
                             title = title,
                             content = content,
