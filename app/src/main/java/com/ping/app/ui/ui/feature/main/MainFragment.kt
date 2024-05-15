@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
  */
 private const val TAG = "MainFragment_싸피"
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
-    
+
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
@@ -53,9 +53,11 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                  pingMapViewModel.userLocation.collectLatest { currentLocation ->
                     Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
-                    if (currentLocation != null) {
-                        lat = currentLocation.latitude
-                        lng = currentLocation.longitude
+                    if (lat == 0.0 && lng == 0.0) {
+                        if (currentLocation != null) {
+                            lat = currentLocation.latitude
+                            lng = currentLocation.longitude
+                        }
 
                         initMeetingList(lat, lng)
                     }
@@ -73,46 +75,16 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
-        binding.mainFragRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-        viewModel.meetingList.observe(viewLifecycleOwner) { it ->
-            it?.let { mainAdapter.submitList(it) }
-        }
+        viewModel.meetingList.observe(viewLifecycleOwner, Observer { meetinglist ->
+            meetinglist?.let { mainAdapter.submitList(meetinglist) }
+        })
         
         binding.mainFragFab.setOnClickListener {
             Log.d(TAG, "initView: add ${it}")
         }
 
-
-        Log.d(TAG, "initView: ${viewModel.meetingList.value}")
-//        Log.d(TAG, "initView:2222 ${MainRepoImpl.get().getMeetingTable(lat, lng)}")
     }
 
-    private suspend fun initLatLng() : Pair<Double, Double>{
-        val loadlatlng = CompletableDeferred<LatLng?>()
-
-        var lat = 0.0
-        var lng = 0.0
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                pingMapViewModel.userLocation.collectLatest { currentLocation ->
-                    Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
-                    if (currentLocation != null) {
-                        lat = currentLocation.latitude
-                        lng = currentLocation.longitude
-                        loadlatlng.complete(currentLocation)
-                    }
-                }
-            }
-        }
-
-
-
-        loadlatlng.await()
-
-
-        Log.d(TAG, "initLatLng: ${lat} ${lng}")
-        return Pair(lat, lng)
-    }
 
     suspend fun initMeetingList(lat: Double, lng: Double){
         

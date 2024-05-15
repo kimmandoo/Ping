@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     R.id.mainFragment -> {
-                        LocationHelper.getInstance().stopLocationTracking()
                     }
 
                     R.id.pingAddMapFragment, R.id.pingMapFragment -> {
