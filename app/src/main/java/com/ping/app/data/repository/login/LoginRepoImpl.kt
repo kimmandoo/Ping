@@ -121,10 +121,6 @@ class LoginRepoImpl(context: Context) : LoginRepo {
      * 다만 해당 유저의 테이블이 존재하지 않는 다면 해당 유저의 테이블을 만들어 주는 역할을 하는 함수입니다.
      */
     override fun userTableCheck(user: FirebaseUser) {
-//       테스트 용
-//        CoroutineScope(Dispatchers.IO).launch {
-//            createUserTable("1")
-//        }
 
         CoroutineScope(Dispatchers.IO).launch {
             if (userTableCheckQuery(user.uid) == true) { // 해당 UID를 가지는 유저 테이블이 있을 경우
@@ -154,7 +150,7 @@ class LoginRepoImpl(context: Context) : LoginRepo {
     }
 
 
-    /**테스트를 완료하지 않았습니다.
+    /**
      *
      * 아래의 함수는 Firestore에 접근하여 값을 리턴 받는 함수 입니다.
      *
@@ -168,6 +164,7 @@ class LoginRepoImpl(context: Context) : LoginRepo {
     override suspend fun userTableCheckQuery(UID: String): Boolean {
         val getUserTable = CompletableDeferred<Task<DocumentSnapshot>>()
         val uidDocRef = db.collection("USER").document(UID)
+        var userTableChecker = false
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = uidDocRef.get()
@@ -175,14 +172,12 @@ class LoginRepoImpl(context: Context) : LoginRepo {
         }
 
         val userTable = getUserTable.await()
-        Log.d(TAG, "DocumentSnapshot data:${
-            userTable.addOnSuccessListener {
-                Log.d(TAG, "userTableCheckQuery: ${it.data}")
-            }
-        } "
-        )
 
-        return true
+        userTable.addOnSuccessListener {
+            userTableChecker = true
+        }
+
+        return userTableChecker
     }
 
 
@@ -224,7 +219,7 @@ class LoginRepoImpl(context: Context) : LoginRepo {
         val docRef = db.collection("MEETING").document(UID)
         docRef.get()
             .addOnSuccessListener { document ->
-                if (document != null) {
+                if (document.data != null) {
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                 } else {
                     Log.d(TAG, "No such document")

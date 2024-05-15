@@ -2,6 +2,7 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -10,6 +11,7 @@ import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
 class MainRepoImpl(context: Context): MainRepo {
+
     private val db = Firebase.firestore
 
     /**
@@ -40,8 +42,6 @@ class MainRepoImpl(context: Context): MainRepo {
         result
             .get()
             .addOnSuccessListener {documents ->
-//                Log.d(TAG, "getMeetingTable: ${documents.documents.get(0).data}")
-//                Log.d(TAG, "getMeetingTable: ${documents.documents.size}")
                 val DefferResult = documents
                 for(value in documents.documents){
                     Log.d(TAG, "getMeetingTable: ${value.data?.get("title")}")
@@ -62,15 +62,33 @@ class MainRepoImpl(context: Context): MainRepo {
 
             }
 
-
         getMeeingTableDeffer.await()
-        Log.d(TAG, "getMeetingTable: ${meetingTableResult}")
-
 
         return meetingTableResult
 
     }
 
+    /**
+     * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
+     *
+     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
+     */
+    override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
+
+        val meetingDetailTable = db.collection("DETAILMEETING")
+        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayUnion(userUid))
+    }
+
+    /**
+     * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
+     *
+     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
+     */
+    override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
+
+        val meetingDetailTable = db.collection("DETAILMEETING")
+        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayRemove(userUid))
+    }
 
 
     companion object{
@@ -91,6 +109,4 @@ class MainRepoImpl(context: Context): MainRepo {
             return INSTANCE!!
         }
     }
-
-
 }

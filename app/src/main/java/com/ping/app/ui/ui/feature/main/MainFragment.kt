@@ -16,6 +16,7 @@ import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.feature.main.MainAdapter
+import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import kotlinx.coroutines.CompletableDeferred
@@ -40,12 +41,11 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
+    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
     override fun initView(savedInstanceState: Bundle?) {
+
         var lat = 0.0
         var lng = 0.0
-        
-        
-        
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -66,6 +66,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
             findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
+            mainInstance.participantsMeetingDetailTable(it, mainActivityViewModel.userUid.value.toString())
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
@@ -78,13 +79,9 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
         }
 
-
     }
-
-
-
+    
     suspend fun initMeetingList(lat: Double, lng: Double){
-        
 
         val updateList = CompletableDeferred<List<Gathering>>()
         var getGathering = listOf<Gathering>()
@@ -96,8 +93,4 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         viewModel.updateMeetingList(getGathering)
 
     }
-
-
-
-
 }

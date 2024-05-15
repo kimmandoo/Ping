@@ -49,11 +49,10 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         return addressResult
     }
 
+    /**
+     * 해당 함수는 주최자가 meeting을 생성한 경우 그에 따른 DetailTable도 만들어 주는 함수입니다.
+     */
     override fun makeMeetingDetailTable(data: Gathering) {
-
-
-
-
 
         db.collection("DETAILMEETING")
             .document(data.uuid)
