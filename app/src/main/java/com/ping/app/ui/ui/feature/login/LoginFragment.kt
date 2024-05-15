@@ -2,7 +2,7 @@ package com.ping.app.ui.ui.feature.login
 
 import android.os.Bundle
 import android.util.Log
-import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -23,7 +23,7 @@ private const val TAG = "LoginFragment_싸피"
  */
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
     override val viewModel: LoginViewModel by viewModels()
-    private val mainActivityViewModel: MainActivityViewModel by viewModels()
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val loginRepoInstance = LoginRepoImpl.get()
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                 findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             }
             test.setOnClickListener {
-                findNavController().navigate(R.id.action_loginFragment_to_gatheringFragment)
+//                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
             }
         }
     }
@@ -54,11 +54,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
      */
     override fun onStart() {
         super.onStart()
+
         loginRepoInstance.getCurrentAuth()?.let { auth ->
             updateUI(auth.currentUser)
             getUserUid(auth.currentUser)
-            Log.d(TAG, "onStart: ${auth.currentUser?.uid}")
-            
+            Log.d(TAG, "onStart:${auth.currentUser} ")
         }
     }
 
@@ -83,6 +83,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     private fun getUserUid(user: FirebaseUser?) {
         if (user != null) {
             mainActivityViewModel.saveUserUid(user.uid)
+            Log.d(TAG, "getUserUid: ${mainActivityViewModel.userUid.value}")
         }
     }
 }
