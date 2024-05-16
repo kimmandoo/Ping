@@ -37,6 +37,14 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             mainFragTitleHello.text =
                 getString(R.string.main_user, user.displayName)
             Glide.with(binding.root.context).load(user.photoUrl).circleCrop().into(mainFragProfile)
+            binding.logout.setOnClickListener {
+                lifecycleScope.launch {
+                    Log.d(TAG, "initView: 로그아웃 시작")
+                    LoginRepoImpl.get().logout()
+                    Log.d(TAG, "initView: 로그아웃 완료")
+                    findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
+                }
+            }
         }
         
         lifecycleScope.launch {
