@@ -53,12 +53,14 @@
                 
                 <RadioButton
                     android:id="@+id/ping_add_post_cb_friend"
+                    style="@style/Ping.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="입장코드" />
                 
                 <RadioButton
                     android:id="@+id/ping_add_post_cb_all"
+                    style="@style/Ping.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="모두" />
@@ -66,6 +68,7 @@
             
             <EditText
                 android:id="@+id/add_post_code"
+                style="@style/Ping.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_et_radius_16"
@@ -82,6 +85,7 @@
             
             <EditText
                 android:id="@+id/add_post_et_where"
+                style="@style/Ping.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_et_radius_16"
@@ -97,6 +101,7 @@
             
             <EditText
                 android:id="@+id/add_post_et_what"
+                style="@style/Ping.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_et_radius_16"
@@ -117,45 +122,40 @@
                 
                 <TextView
                     android:id="@+id/add_post_tv"
-                    style="@style/Ping.Subtitle"
+                    style="@style/Ping.Body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_add_post_dialog"
+                    android:background="@drawable/bg_et_radius_16"
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="8dp"
-                    android:text="언제 모이시나요?"
-                    android:textColor="@color/white" />
+                    android:text="언제 모이시나요?" />
                 
                 <ImageView
                     android:id="@+id/add_post_iv_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_today"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center"
+                    android:layout_marginStart="4dp"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_calendar" />
             </LinearLayout>
-        
+            
+            <ImageView
+                android:id="@+id/add_post_btn_send"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:maxLines="1"
+                android:src="@mipmap/ic_launcher"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
         </LinearLayout>
-        
-        <ImageView
-            android:id="@+id/add_post_btn_send"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_margin="20dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:maxLines="1"
-            android:src="@mipmap/ic_launcher"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_ll" />
+    
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

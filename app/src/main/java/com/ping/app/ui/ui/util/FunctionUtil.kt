@@ -4,11 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.location.Location
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.isVisible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.NaverMap
@@ -39,6 +40,8 @@ fun NaverMap.init() {
         )
         uiSettings.apply {
             isZoomControlEnabled = false
+            logoGravity = Gravity.START and Gravity.TOP
+            setLogoMargin(20, 20, 0, 0)
         }
     }
 }
@@ -77,13 +80,22 @@ fun Marker.init(map: NaverMap) {
 }
 
 @SuppressLint("MissingPermission")
-fun FusedLocationProviderClient.init(map: NaverMap, marker: Marker) {
+fun FusedLocationProviderClient.init(
+    map: NaverMap,
+    marker: Marker,
+    locationBtn: View? = null,
+) {
     lastLocation.addOnSuccessListener { location: Location ->
         map.locationOverlay.run {
             isVisible = true
             position = LatLng(location.latitude, location.longitude)
         }
         
+        locationBtn?.setOnClickListener {
+            val resetCamera =
+                CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
+            map.moveCamera(resetCamera.animate(CameraAnimation.Easing))
+        }
         val cameraUpdate = CameraUpdate.scrollTo(
             LatLng(
                 location.latitude,

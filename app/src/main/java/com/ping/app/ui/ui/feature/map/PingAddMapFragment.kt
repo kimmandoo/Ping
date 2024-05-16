@@ -51,13 +51,14 @@ class PingAddMapFragment :
         marker.init(map)
         marker.map = map
         map.withMarker(marker, binding.pingAddView)
-        locationHelperInstance.getClient().init(map, marker)
+        locationHelperInstance.getClient().init(map, marker, binding.location)
         binding.mapAddBtn.setOnClickListener {
             createPing(map, marker)
         }
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        
     }
     
     private fun createPing(map: NaverMap, marker: Marker) {

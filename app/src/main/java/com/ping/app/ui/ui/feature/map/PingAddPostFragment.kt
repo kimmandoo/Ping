@@ -5,6 +5,7 @@ import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
@@ -61,7 +62,7 @@ class PingAddPostFragment :
             }
             
             addPostBtnSend.setOnClickListener {
-                Log.d(TAG, "initViUUUUUUUUUew: ${mainActivityViewModel.userUid.value.toString()}")
+                Log.d(TAG, "addPostBtnSend: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
@@ -83,7 +84,7 @@ class PingAddPostFragment :
                                 )
                             )
                         } else {
-                            binding.root.context.easyToast("빈칸을 채워주세요")
+                            binding.root.context.easyToast(getString(R.string.blank_et))
                         }
                     } else {
                         // 모두 참여가능
@@ -100,7 +101,8 @@ class PingAddPostFragment :
                             )
                         )
                     }
-                    
+                } else {
+                    binding.root.context.easyToast(getString(R.string.blank_et))
                 }
             }
         }
@@ -162,6 +164,13 @@ class PingAddPostFragment :
                         (calendar.time.time + dialogBinding.addPostTp.hour * 60 * 60 + dialogBinding.addPostTp.minute * 60).toString()
                     binding.addPostTv.text = formattedDateString
                 }.create()
+        dialog.window!!.setBackgroundDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
+                R.drawable.bg_white_radius_20,
+                null
+            )
+        )
         dialog.show()
     }
 }
