@@ -124,7 +124,6 @@
                 android:id="@+id/guideline"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:text="@string/hello_blank_fragment"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.naver.maps.map.MapView

@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
@@ -29,12 +31,13 @@ class PingAddPostFragment :
         R.layout.fragment_ping_add_post
     ) {
     override val viewModel: PingMapViewModel by activityViewModels()
-
+    
     /** mainActivityViewModel 분리 해야함
      */
-    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val pingMapInstance = PingApplication.pingMapRepo
     private lateinit var gatheringTime: String
+    
     override fun initView(savedInstanceState: Bundle?) {
         val pingPosition = LatLng(
             requireArguments().getDouble(USER_POSITION_LAT),
@@ -46,23 +49,60 @@ class PingAddPostFragment :
             addPostIvDialog.setOnClickListener {
                 addDateDialog()
             }
+            pingAddRg.setOnCheckedChangeListener { group, checkedId ->
+                when (checkedId) {
+                    R.id.ping_add_post_cb_all -> {
+                        binding.addPostCode.visibility = View.GONE
+                    }
+                    
+                    R.id.ping_add_post_cb_friend -> {
+                        binding.addPostCode.visibility = View.VISIBLE
+                    }
+                }
+            }
+            
             addPostBtnSend.setOnClickListener {
-
-                Log.d(TAG, "initViUUUUUUUUUew: ${mainActivityViewModel.userUid.value.toString()}")
+                Log.d(TAG, "addPostBtnSend: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
-                    pingMapInstance.sendPingInfo(
-                        Gathering(
-                            uid = mainActivityViewModel.userUid.value.toString(),
-                            uuid = UUID.randomUUID().toString(),
-                            gatheringTime = gatheringTime,
-                            title = title,
-                            content = content,
-                            longitude = pingPosition.longitude,
-                            latitude = pingPosition.latitude
+                    
+                    if (binding.addPostCode.visibility == View.VISIBLE) {
+                        // 코드가 있을때만 참여가능
+                        val enterCode = binding.addPostCode.text.toString()
+                        if (enterCode.isNotEmpty()) {
+                            pingMapInstance.sendPingInfo(
+                                Gathering(
+                                    uid = mainActivityViewModel.userUid.value.toString(),
+                                    uuid = UUID.randomUUID().toString(),
+                                    enterCode = enterCode,
+                                    gatheringTime = gatheringTime,
+                                    title = title,
+                                    content = content,
+                                    longitude = pingPosition.longitude,
+                                    latitude = pingPosition.latitude
+                                )
+                            )
+                        } else {
+                            binding.root.context.easyToast(getString(R.string.blank_et))
+                        }
+                    } else {
+                        // 모두 참여가능
+                        pingMapInstance.sendPingInfo(
+                            Gathering(
+                                uid = mainActivityViewModel.userUid.value.toString(),
+                                uuid = UUID.randomUUID().toString(),
+                                enterCode = "",
+                                gatheringTime = gatheringTime,
+                                title = title,
+                                content = content,
+                                longitude = pingPosition.longitude,
+                                latitude = pingPosition.latitude
+                            )
                         )
-                    )
+                    }
+                } else {
+                    binding.root.context.easyToast(getString(R.string.blank_et))
                 }
             }
         }
@@ -124,6 +164,13 @@ class PingAddPostFragment :
                         (calendar.time.time + dialogBinding.addPostTp.hour * 60 * 60 + dialogBinding.addPostTp.minute * 60).toString()
                     binding.addPostTv.text = formattedDateString
                 }.create()
+        dialog.window!!.setBackgroundDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
+                R.drawable.bg_white_radius_20,
+                null
+            )
+        )
         dialog.show()
     }
 }

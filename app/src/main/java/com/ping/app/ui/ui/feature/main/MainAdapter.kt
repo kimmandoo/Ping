@@ -1,4 +1,4 @@
-package com.ping.app.ui.feature.main
+package com.ping.app.ui.ui.feature.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.MainItemBinding
 
-class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit): ListAdapter<Gathering, MainAdapter.MainHolder>(diffUtil) {
+class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit): ListAdapter<Gathering, MainAdapter.MainHolder>(
+    diffUtil
+) {
     inner class MainHolder(private val binding: MainItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindInfo(position : Int){
             val item = currentList.get(position)
