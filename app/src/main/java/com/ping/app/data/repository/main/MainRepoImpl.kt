@@ -85,23 +85,30 @@ class MainRepoImpl(context: Context): MainRepo {
         meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayRemove(userUid))
     }
 
-    override suspend fun meetingsToAttend(userUid: String) {
+
+    /**
+     * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
+     * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
+     */
+    override suspend fun meetingsToAttend(userUid: String) : Gathering {
         
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        lateinit var test : Gathering
-        test = Gathering("","","","","",0.0,0.0)
-
+        lateinit var meetingsToAttendResult : Gathering
+        meetingsToAttendResult = Gathering("","","","","",0.0,0.0)
 
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
             .get()
             .addOnSuccessListener { resultDetailMeetingTable ->
+                // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
                 for (detailMeetingDocument in resultDetailMeetingTable) {
 
                     val data = detailMeetingDocument.data["Participants"] as? List<String>
                     if (data != null) {
                         for (i in 1..<data.size) {
                             if (userUid == data[i]) {
+
+                                // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
                                 val meetingTable = db.collection("MEETING")
 
                                 meetingTable
@@ -111,8 +118,7 @@ class MainRepoImpl(context: Context): MainRepo {
                                             val dataUUID =
                                                 meetingDocument.data["uuid"] as? String
                                             if (detailMeetingDocument.id == dataUUID) {
-
-                                                test = Gathering(meetingDocument.data["uid"].toString(),
+                                                meetingsToAttendResult = Gathering(meetingDocument.data["uid"].toString(),
                                                                 meetingDocument.data["uuid"].toString(),
                                                                 meetingDocument.data["gatheringTime"].toString(),
                                                                 meetingDocument.data["title"].toString(),
@@ -126,6 +132,7 @@ class MainRepoImpl(context: Context): MainRepo {
                                             }
                                         }
                                     }
+
                             }
                         }
                     } else {
@@ -134,14 +141,12 @@ class MainRepoImpl(context: Context): MainRepo {
 
                 }
             }
-
-
         meetingsToAttendTable.await()
 
-
-        Log.d(TAG, "meetingsToAttend213123123: ${test}")
-
+        return meetingsToAttendResult
     }
+
+
 
 
     companion object{

@@ -42,9 +42,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
     override fun initView(savedInstanceState: Bundle?) {
 
-
         lifecycleScope.launch {
-            mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
+            val gatheringTable = mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
         }
 
 
@@ -66,9 +65,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
         }
 
-        lifecycleScope.launch {
-            initMeetingList(lat, lng)
-        }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
             findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
             mainInstance.participantsMeetingDetailTable(it, mainActivityViewModel.userUid.value.toString())
