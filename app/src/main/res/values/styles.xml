@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     
     <style name="Ping.Title1" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="fontFamily">@font/suit_semibold</item>
         <item name="android:textSize">32sp</item>
     </style>
+    
     <style name="Ping.Title2" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="fontFamily">@font/suit_semibold</item>
         <item name="android:textSize">18sp</item>
@@ -21,5 +22,6 @@
     <style name="Ping.Light" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/suit_extralight</item>
     </style>
+    
     
 </resources>

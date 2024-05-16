@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
@@ -29,12 +30,13 @@ class PingAddPostFragment :
         R.layout.fragment_ping_add_post
     ) {
     override val viewModel: PingMapViewModel by activityViewModels()
-
+    
     /** mainActivityViewModel 분리 해야함
      */
-    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val pingMapInstance = PingApplication.pingMapRepo
     private lateinit var gatheringTime: String
+    
     override fun initView(savedInstanceState: Bundle?) {
         val pingPosition = LatLng(
             requireArguments().getDouble(USER_POSITION_LAT),
@@ -46,23 +48,59 @@ class PingAddPostFragment :
             addPostIvDialog.setOnClickListener {
                 addDateDialog()
             }
+            pingAddRg.setOnCheckedChangeListener { group, checkedId ->
+                when (checkedId) {
+                    R.id.ping_add_post_cb_all -> {
+                        binding.addPostCode.visibility = View.GONE
+                    }
+                    
+                    R.id.ping_add_post_cb_friend -> {
+                        binding.addPostCode.visibility = View.VISIBLE
+                    }
+                }
+            }
+            
             addPostBtnSend.setOnClickListener {
                 Log.d(TAG, "initViUUUUUUUUUew: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
-                    pingMapInstance.sendPingInfo(
-                        Gathering(
-                            uid = mainActivityViewModel.userUid.value.toString(),
-                            uuid = UUID.randomUUID().toString(),
-                            friendOnly = false, // 체크박스에서 받게
-                            gatheringTime = gatheringTime,
-                            title = title,
-                            content = content,
-                            longitude = pingPosition.longitude,
-                            latitude = pingPosition.latitude
+                    
+                    if (binding.addPostCode.visibility == View.VISIBLE) {
+                        // 코드가 있을때만 참여가능
+                        val enterCode = binding.addPostCode.text.toString()
+                        if (enterCode.isNotEmpty()) {
+                            pingMapInstance.sendPingInfo(
+                                Gathering(
+                                    uid = mainActivityViewModel.userUid.value.toString(),
+                                    uuid = UUID.randomUUID().toString(),
+                                    enterCode = enterCode,
+                                    gatheringTime = gatheringTime,
+                                    title = title,
+                                    content = content,
+                                    longitude = pingPosition.longitude,
+                                    latitude = pingPosition.latitude
+                                )
+                            )
+                        } else {
+                            binding.root.context.easyToast("빈칸을 채워주세요")
+                        }
+                    } else {
+                        // 모두 참여가능
+                        pingMapInstance.sendPingInfo(
+                            Gathering(
+                                uid = mainActivityViewModel.userUid.value.toString(),
+                                uuid = UUID.randomUUID().toString(),
+                                enterCode = "",
+                                gatheringTime = gatheringTime,
+                                title = title,
+                                content = content,
+                                longitude = pingPosition.longitude,
+                                latitude = pingPosition.latitude
+                            )
                         )
-                    )
+                    }
+                    
                 }
             }
         }
