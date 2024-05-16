@@ -9,95 +9,153 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="40dp">
+        android:background="@drawable/bg_white_radius_20"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp">
         
-        <TextView
-            android:id="@+id/add_post_tv_address"
+        <LinearLayout
+            android:id="@+id/add_post_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_post_ti_where"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_tv_address">
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
             
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
+                style="@style/Ping.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주소" />
+            
+            <TextView
+                android:id="@+id/add_post_tv_address"
+                style="@style/Ping.Title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_et_radius_16"
+                android:padding="12dp"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+                style="@style/Ping.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="참여 가능 범위" />
+            
+            <RadioGroup
+                android:id="@+id/ping_add_rg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_post_tv_address">
+                
+                <RadioButton
+                    android:id="@+id/ping_add_post_cb_friend"
+                    style="@style/Ping.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="입장코드" />
+                
+                <RadioButton
+                    android:id="@+id/ping_add_post_cb_all"
+                    style="@style/Ping.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모두" />
+            </RadioGroup>
+            
+            <EditText
+                android:id="@+id/add_post_code"
+                style="@style/Ping.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_et_radius_16"
+                android:hint="입장코드를 설정해주세요"
+                android:padding="12dp"
+                android:visibility="gone" />
+            
+            <TextView
+                style="@style/Ping.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="장소" />
+            
+            <EditText
                 android:id="@+id/add_post_et_where"
+                style="@style/Ping.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/ping_add_title" />
-        </com.google.android.material.textfield.TextInputLayout>
-        
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/add_post_ti_what"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_where">
+                android:background="@drawable/bg_et_radius_16"
+                android:hint="@string/ping_add_title"
+                android:padding="12dp" />
             
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
+                style="@style/Ping.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="모임내용" />
+            
+            <EditText
                 android:id="@+id/add_post_et_what"
+                style="@style/Ping.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/ping_add_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-        
-        <TextView
-            android:id="@+id/add_post_tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/add_post_tv"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_ti_what" />
-        
-        <TextView
-            android:id="@+id/add_post_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_add_post_dialog"
-            android:gravity="center"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:text="날짜 고르기"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/add_post_iv_dialog"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_post_tv_time" />
-        
-        <ImageView
-            android:id="@+id/add_post_iv_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_menu_today"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/add_post_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/add_post_tv"
-            app:layout_constraintTop_toTopOf="@id/add_post_tv" />
-        
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="핑!"
-            android:id="@+id/add_post_btn_send"
-            android:textStyle="italic|bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_post_tv" />
+                android:background="@drawable/bg_et_radius_16"
+                android:hint="@string/ping_add_content"
+                android:padding="12dp" />
+            
+            <TextView
+                style="@style/Ping.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/add_post_tv" />
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                
+                <TextView
+                    android:id="@+id/add_post_tv"
+                    style="@style/Ping.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_et_radius_16"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:text="언제 모이시나요?" />
+                
+                <ImageView
+                    android:id="@+id/add_post_iv_dialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="4dp"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_calendar" />
+            </LinearLayout>
+            
+            <ImageView
+                android:id="@+id/add_post_btn_send"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:maxLines="1"
+                android:src="@mipmap/ic_launcher"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+    
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

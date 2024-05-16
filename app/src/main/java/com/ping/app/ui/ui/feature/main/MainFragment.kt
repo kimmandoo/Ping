@@ -21,61 +21,46 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-/**
- * 툴바 (일단 나중에 하는 걸로)
- *
- * 마이 페이지? 같은
- * - 이룸
- * - 이메일
- *
- * 리사이클러뷰 (list adapter 작성 완)
- * MEETING TABLE에서 값을 가져 와야함
- * 해당 값은 ViewModel에 넣아서 observer로 관리
- *
- *
- */
 private const val TAG = "MainFragment_싸피"
+
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
 
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
-    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     override fun initView(savedInstanceState: Bundle?) {
-
+        
         var lat = 0.0
         var lng = 0.0
         
-        
-        
-
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
+                pingMapViewModel.userLocation.collectLatest { currentLocation ->
                     Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
                     if (lat == 0.0 && lng == 0.0) {
                         if (currentLocation != null) {
                             lat = currentLocation.latitude
                             lng = currentLocation.longitude
                         }
-
+                        
                         initMeetingList(lat, lng)
                     }
                 }
             }
         }
-
+        
         lifecycleScope.launch {
             initMeetingList(lat, lng)
         }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
-//            Log.d(TAG, "initView: ${it}")
-//            val action = MainFragmentDirections.actionMainFragmentToPingMapFragment(pingData = it)
-//            findNavController().navigate(action)
             findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
-            mainInstance.participantsMeetingDetailTable(it, mainActivityViewModel.userUid.value.toString())
+            mainInstance.participantsMeetingDetailTable(
+                it,
+                mainActivityViewModel.userUid.value.toString()
+            )
         })
-
+        
         binding.mainFragRecyclerview.adapter = mainAdapter
         viewModel.meetingList.observe(viewLifecycleOwner, Observer { meetinglist ->
             meetinglist?.let { mainAdapter.submitList(meetinglist) }
@@ -84,12 +69,12 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         binding.mainFragFab.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
         }
-
+        
     }
-
-
-    suspend fun initMeetingList(lat: Double, lng: Double){
-
+    
+    
+    suspend fun initMeetingList(lat: Double, lng: Double) {
+        
         val updateList = CompletableDeferred<List<Gathering>>()
         var getGathering = listOf<Gathering>()
         lifecycleScope.launch {
@@ -98,6 +83,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
         updateList.await()
         viewModel.updateMeetingList(getGathering)
-
+        
     }
 }
