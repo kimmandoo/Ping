@@ -50,6 +50,11 @@ class PingAddMapFragment :
         map.init()
         marker.init(map)
         marker.map = map
+        map.setOnSymbolClickListener {
+            marker.captionText = it.caption
+            marker.position = it.position
+            true
+        }
         map.withMarker(marker, binding.pingAddView)
         locationHelperInstance.getClient().init(map, marker, binding.location)
         binding.mapAddBtn.setOnClickListener {
@@ -65,7 +70,8 @@ class PingAddMapFragment :
         Log.d(TAG, "createPing: ${map.cameraPosition}")
         val userPosition = bundleOf(
             USER_POSITION_LAT to marker.position.latitude,
-            USER_POSITION_LNG to marker.position.longitude
+            USER_POSITION_LNG to marker.position.longitude,
+            "symbol" to marker.captionText
         )
         val modal = PingAddPostFragment()
         modal.arguments = userPosition

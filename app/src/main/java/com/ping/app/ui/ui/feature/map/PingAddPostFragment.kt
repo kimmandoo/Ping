@@ -43,7 +43,11 @@ class PingAddPostFragment :
             requireArguments().getDouble(USER_POSITION_LAT),
             requireArguments().getDouble(USER_POSITION_LNG)
         )
+        val symbol = requireArguments().getString("symbol")
         binding.apply {
+            if(symbol.toString().isNotEmpty()){
+                addPostEtWhere.setText(symbol)
+            }
             addPostTvAddress.text =
                 pingMapInstance.requestAddress(pingPosition.latitude, pingPosition.longitude)
             addPostIvDialog.setOnClickListener {
