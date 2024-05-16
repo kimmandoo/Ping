@@ -16,7 +16,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit): 
                 onMoveDetailedConfirmation(item)
             }
             binding.mainItemTitle.text = item.title
-            binding.mainItemContent.text = item.content
+//            binding.mainItemContent.text = item.content
             binding.mainItemTimeRemaining.text = item.gatheringTime
         }
 
