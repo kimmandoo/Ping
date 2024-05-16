@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <style name="Ping.Title1" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@font/suit_semibold</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+    <style name="Ping.Title2" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@font/suit_semibold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    
+    <style name="Ping.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/suit_regular</item>
+    </style>
+    
+    <style name="Ping.Subtitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/suit_light</item>
+    </style>
+    
+    <style name="Ping.Light" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/suit_extralight</item>
+    </style>
+    
+</resources>

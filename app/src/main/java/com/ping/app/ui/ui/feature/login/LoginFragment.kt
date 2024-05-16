@@ -38,17 +38,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                     }
                 }
             }
-//            logoutButton.setOnClickListener {
-//                lifecycleScope.launch {
-//                    loginRepoInstance.logout()
-//                }
-//            }
-//            test2.setOnClickListener {
-//                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-//            }
-//            test.setOnClickListener {
-////                findNavController().navigate(R.id.action_loginFragment_to_pingAddMapFragment)
-//            }
         }
     }
 
@@ -71,7 +60,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
             loginRepoInstance.userTableCheck(user)
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+//            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
 //            user.displayName.toString()
         } else {
             "인증 실패"
