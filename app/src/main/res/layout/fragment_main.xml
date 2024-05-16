@@ -49,11 +49,11 @@
                 <ImageView
                     android:id="@+id/main_frag_profile"
                     android:layout_width="48dp"
-                    android:padding="8dp"
-                    android:background="@drawable/bg_iv_profile"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_iv_profile"
+                    android:padding="8dp" />
                 
                 <TextView
                     android:id="@+id/main_frag_title_hello"
@@ -68,11 +68,11 @@
             <TextView
                 android:id="@+id/main_frag_linear_planned_participation"
                 style="@style/Ping.Subtitle"
-                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/main_user_detail" />
+                android:text="@string/main_user_detail"
+                android:textSize="16sp" />
             
             <TextView
                 android:id="@+id/main_frag_linear_planned_participation_result"
@@ -97,9 +97,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:src="@drawable/baseline_add_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_map_add"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@null" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
