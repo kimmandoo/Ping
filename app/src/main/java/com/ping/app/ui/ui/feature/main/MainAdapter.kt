@@ -34,7 +34,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
                 flow {
                     while (true) {
                         emit(targetTime - System.currentTimeMillis())
-                        delay(1000)
+                        delay(1000*60)
                     }
                 }.takeWhile {
                     remainingMillis -> remainingMillis > 0
