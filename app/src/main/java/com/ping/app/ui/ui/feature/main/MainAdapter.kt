@@ -7,6 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.ItemMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
     ListAdapter<Gathering, MainAdapter.MainHolder>(
@@ -21,7 +28,17 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
             }
             binding.mainItemTitle.text = item.title
 //            binding.mainItemTimeRemaining.text = item.content
-            binding.mainItemTimeRemaining.text = item.gatheringTime
+            CoroutineScope(Dispatchers.Default).launch {
+                val targetTime = item.gatheringTime.toLong()
+                withContext(Dispatchers.Main) {
+                    val format = SimpleDateFormat("DD일 hh시 mm분 뒤", Locale.KOREA)
+                    binding.mainItemTimeRemaining.text = format.format(
+                        Date(
+                            (targetTime - System.currentTimeMillis())
+                        )
+                    )
+                }
+            }
         }
         
     }

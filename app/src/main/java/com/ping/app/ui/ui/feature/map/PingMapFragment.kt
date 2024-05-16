@@ -48,6 +48,7 @@ class PingMapFragment :
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var dataFromMain: Gathering
+    private lateinit var latlngFromMain: LatLng
     private val args: PingMapFragmentArgs by navArgs()
     private val locationHelperInstance by lazy {
         PingApplication.locationHelper
@@ -57,8 +58,8 @@ class PingMapFragment :
         args.pingData?.let {
             Log.d(TAG, "initView: $it")
             dataFromMain = it
+            latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
         }
-
         locationHelperInstance.startLocationTracking()
         locationHelperInstance.listener = {
             viewModel.setUserLocation(LatLng(it))
@@ -76,7 +77,7 @@ class PingMapFragment :
                         binding.mapFragmentView.visibility = View.VISIBLE
                         binding.mapProgress.visibility = View.GONE
                         binding.mapDistance.text =
-                            String.format("%.2f", currentLocation.distanceTo(starbucks))
+                            String.format("%.2f", currentLocation.distanceTo(latlngFromMain))
                         if (::naverMap.isInitialized) {
                             naverMap.locationOverlay.run {
                                 isVisible = true
@@ -122,8 +123,8 @@ class PingMapFragment :
             addOnCameraIdleListener {
                 val scale = round(cameraPosition.zoom - 16.0, 1) * MAP_BOUNDS
                 extent = LatLngBounds(
-                    starbucks.offset(-(MAP_BOUNDS + scale), -(MAP_BOUNDS + scale)),
-                    starbucks.offset((MAP_BOUNDS + scale), (MAP_BOUNDS + scale))
+                    pingPosition.offset(-(MAP_BOUNDS + scale), -(MAP_BOUNDS + scale)),
+                    pingPosition.offset((MAP_BOUNDS + scale), (MAP_BOUNDS + scale))
                 )
                 // 핑 찍힌 위치에서 150m이상 멀어지면 카메라 이동 버튼 활성화
                 binding.mapReset.visibility =
