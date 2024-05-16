@@ -25,11 +25,13 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
-import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LNG
+import com.ping.app.ui.ui.util.init
+import com.ping.app.ui.ui.util.withMarker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -95,20 +97,7 @@ class PingAddMapFragment :
     override fun onMapReady(map: NaverMap) {
         naverMap = map
         map.locationSource = locationSource
-        map.apply {
-            minZoom = 14.0
-            maxZoom = 18.0
-            cameraPosition = CameraPosition(
-                LatLng(
-                    map.cameraPosition.target.latitude,
-                    map.cameraPosition.target.longitude
-                ), 16.0
-            )
-            uiSettings.apply {
-                // zoom 버튼 제거하기
-                isZoomControlEnabled = false
-            }
-        }
+        map.init()
         val marker = Marker()
         marker.apply {
             position = LatLng(
@@ -119,55 +108,7 @@ class PingAddMapFragment :
             iconTintColor = Color.RED
         }
         marker.map = map
-        map.addOnCameraChangeListener { type, animated ->
-            marker.position = LatLng(
-                // 현재 보이는 네이버맵의 정중앙 가운데로 마커 이동
-                map.cameraPosition.target.latitude,
-                map.cameraPosition.target.longitude
-            )
-            // 주소 텍스트 세팅 및 확인 버튼 비활성화
-//            binding.tvLocation.run {
-//                text = "위치 이동 중"
-//                setTextColor(Color.parseColor("#c4c4c4"))
-//            }
-//            binding.btnConfirm.run {
-//                setBackgroundResource(R.drawable.rect_round_c4c4c4_radius_8)
-//                setTextColor(Color.parseColor("#ffffff"))
-//                isEnabled = false
-//            }
-        }
-        
-        // 카메라의 움직임 종료에 대한 이벤트 리스너 인터페이스.
-        map.addOnCameraIdleListener {
-            val address =
-                pingMapInstance.requestAddress(marker.position.latitude, marker.position.longitude)
-            marker.apply {
-                position = LatLng(
-                    map.cameraPosition.target.latitude,
-                    map.cameraPosition.target.longitude
-                )
-                captionText = address
-                captionTextSize = 16.0f
-            }
-            
-            Log.d(
-                TAG,
-                "onMapReady: ${address}"
-            )
-//            // 좌표 -> 주소 변환 텍스트 세팅, 버튼 활성화
-//            binding.tvLocation.run {
-//                text = getAddress(
-//                    naverMap.cameraPosition.target.latitude,
-//                    naverMap.cameraPosition.target.longitude
-//                )
-//                setTextColor(Color.parseColor("#2d2d2d"))
-//            }
-//            binding.btnConfirm.run {
-//                setBackgroundResource(R.drawable.rect_round_ffd464_radius_8)
-//                setTextColor(Color.parseColor("#FF000000"))
-//                isEnabled = true
-//            }
-        }
+        map.withMarker(marker)
         
         // 사용자 현재 위치 받아오기
         locationHelperInstance.getClient().lastLocation
@@ -192,25 +133,27 @@ class PingAddMapFragment :
             }
         
         binding.mapAddBtn.setOnClickListener {
-            Log.d(TAG, "onMapReady: ${map.cameraPosition}")
-            val userPosition = bundleOf(
-                USER_POSITION_LAT to marker.position.latitude,
-                USER_POSITION_LNG to marker.position.longitude
-            )
-            val modal = PingAddPostFragment()
-            modal.arguments = userPosition
-            modal.show(childFragmentManager, "modal")
-//            findNavController().navigate(
-//                R.id.action_pingAddMapFragment_to_pingAddPostFragment,
-//                userPosition
-//            )
+            createPing(map, marker)
         }
         map.setOnMapLongClickListener { pointF, latLng ->
-            marker.position = LatLng(
-                latLng.latitude,
-                latLng.longitude
-            )
-            marker.captionText = pingMapInstance.requestAddress(latLng.latitude, latLng.longitude)
+            marker.apply {
+                position = LatLng(
+                    latLng.latitude,
+                    latLng.longitude
+                )
+            }
+            createPing(map, marker)
         }
+    }
+    
+    private fun createPing(map: NaverMap, marker: Marker){
+        Log.d(TAG, "onMapReady: ${map.cameraPosition}")
+        val userPosition = bundleOf(
+            USER_POSITION_LAT to marker.position.latitude,
+            USER_POSITION_LNG to marker.position.longitude
+        )
+        val modal = PingAddPostFragment()
+        modal.arguments = userPosition
+        modal.show(childFragmentManager, "modal")
     }
 }

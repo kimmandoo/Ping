@@ -15,15 +15,13 @@ import com.ping.app.databinding.FragmentLoginBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.login.LoginViewModel
+import com.ping.app.ui.ui.util.easyToast
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
 
 
 private const val TAG = "LoginFragment_싸피"
 
-/**
- * 본 프래그먼트는 로그인 기능을 하는 프래그먼트입니다.
- */
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
     override val viewModel: LoginViewModel by viewModels()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
@@ -54,16 +52,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     }
 
     /**
-     * 인증 여부에 따른 UI를 업데이트를 관리해주는 함수입니다.
+     * 인증 여부에 따른 UI를 업데이트를 관리해주는 함수
      * 해당 함수에서 로그인한 유저의 테이블이 존재하는지 확인하고 존재 유무에 따라 테이블을 생성합니다.
      */
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
             loginRepoInstance.userTableCheck(user)
-//            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-//            user.displayName.toString()
+            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
         } else {
-            "인증 실패"
+            binding.root.context.easyToast(getString(R.string.login_failed))
         }
     }
 
