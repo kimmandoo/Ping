@@ -45,7 +45,7 @@ class PingAddPostFragment :
         )
         val symbol = requireArguments().getString("symbol")
         binding.apply {
-            if(symbol.toString().isNotEmpty()){
+            if (symbol.toString().isNotEmpty()) {
                 addPostEtWhere.setText(symbol)
             }
             addPostTvAddress.text =
@@ -117,14 +117,15 @@ class PingAddPostFragment :
      */
     private fun addDateDialog() {
         // dialog 띄운다.
-        val calendar = Calendar.getInstance()
         val dialogBinding = DialogPingAddBinding.inflate(layoutInflater)
         dialogBinding.apply {
+            val calendar = Calendar.getInstance()
             addPostDp.minDate = calendar.timeInMillis
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
-            calendar.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
-            addPostDp.maxDate = calendar.timeInMillis
+            val max = Calendar.getInstance()
+            max.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
+            addPostDp.maxDate = max.timeInMillis
             var targetDay = 0L
             addPostDp.setOnDateChangeListener { view, yy, mm, dd ->
                 val selectedCalendar = Calendar.getInstance()
@@ -137,13 +138,14 @@ class PingAddPostFragment :
             }
             addPostTp.apply {
                 setOnTimeChangedListener { view, hourOfDay, minute ->
-                    if ((targetDay * 24 + hourOfDay) * 60 + minute < calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(
+                    val currentCalendar = Calendar.getInstance()
+                    if ((targetDay * 24 + hourOfDay) * 60 + minute < currentCalendar.get(Calendar.HOUR_OF_DAY) * 60 + currentCalendar.get(
                             Calendar.MINUTE
                         )
                     ) {
                         context.easyToast("선택할 수 없는 시간입니다.")
-                        this.hour = calendar.get(Calendar.HOUR_OF_DAY)
-                        this.minute = calendar.get(Calendar.MINUTE)
+                        this.hour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+                        this.minute = currentCalendar.get(Calendar.MINUTE)
                     }
                 }
             }
@@ -161,11 +163,12 @@ class PingAddPostFragment :
                     } else {
                         "오전 $h"
                     }
+                    val currentTime = Calendar.getInstance().time
                     val formattedDateString = "${
-                        SimpleDateFormat(format, Locale.KOREA).format(calendar.time)
+                        SimpleDateFormat(format, Locale.KOREA).format(currentTime)
                     } ${hour}시 ${dialogBinding.addPostTp.minute}분"
                     gatheringTime =
-                        (calendar.time.time + dialogBinding.addPostTp.hour * 60 * 60 + dialogBinding.addPostTp.minute * 60).toString()
+                        (currentTime.time + dialogBinding.addPostTp.hour * 60 * 60 + dialogBinding.addPostTp.minute * 60).toString()
                     binding.addPostTv.text = formattedDateString
                 }.create()
         dialog.window!!.setBackgroundDrawable(

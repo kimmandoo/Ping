@@ -33,9 +33,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
                 withContext(Dispatchers.Main) {
                     val format = SimpleDateFormat("DD일 hh시 mm분 뒤", Locale.KOREA)
                     binding.mainItemTimeRemaining.text = format.format(
-                        Date(
-                            (targetTime - System.currentTimeMillis())
-                        )
+                        Date((targetTime - System.currentTimeMillis()))
                     )
                 }
             }
