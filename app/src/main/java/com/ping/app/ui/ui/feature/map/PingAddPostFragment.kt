@@ -47,7 +47,6 @@ class PingAddPostFragment :
                 addDateDialog()
             }
             addPostBtnSend.setOnClickListener {
-
                 Log.d(TAG, "initViUUUUUUUUUew: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
@@ -56,6 +55,7 @@ class PingAddPostFragment :
                         Gathering(
                             uid = mainActivityViewModel.userUid.value.toString(),
                             uuid = UUID.randomUUID().toString(),
+                            friendOnly = false, // 체크박스에서 받게
                             gatheringTime = gatheringTime,
                             title = title,
                             content = content,

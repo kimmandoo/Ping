@@ -7,4 +7,5 @@
     <string name="ping_add_content">어떤 모임인가요?</string>
     <string name="add_post_tv">일정을 알려주세요</string>
     <string name="login_failed">인증 실패</string>
+    <string name="ping_add_post">이 장소에서 모임을 열까요?</string>
 </resources>

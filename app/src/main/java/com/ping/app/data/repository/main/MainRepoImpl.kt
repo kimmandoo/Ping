@@ -41,12 +41,12 @@ class MainRepoImpl(context: Context): MainRepo {
                             Gathering(
                                 uid = value.data?.get("uid").toString(),
                                 uuid = value.data?.get("uuid").toString(),
+                                friendOnly = value.data?.get("friendOnly").toString().toBoolean(),
                                 gatheringTime = value.data?.get("gatheringTime").toString(),
                                 content = value.data?.get("content").toString(),
                                 title = value.data?.get("title").toString(),
                                 latitude = value.data?.get("latitude").toString().toDouble(),
                                 longitude = value.data?.get("longitude").toString().toDouble()
-
                             )
                         )
                     }
