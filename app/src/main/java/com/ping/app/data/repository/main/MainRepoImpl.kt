@@ -18,7 +18,6 @@ class MainRepoImpl(context: Context): MainRepo {
      * 현재 사용자의 위치를 기준으로 모든 반경에서 1km 위치에 포함되는 모든 좌표들을 보여줘야함
      */
     override suspend fun getMeetingTable(lng:Double, lat:Double) : List<Gathering> {
-        Log.d(TAG, "getMeetingTable: ")
         val meetingTable = db.collection("MEETING")
         lateinit var meetingTableResult: MutableList<Gathering>
         meetingTableResult = arrayListOf()
@@ -36,7 +35,7 @@ class MainRepoImpl(context: Context): MainRepo {
                     val valuelat = value.data?.get("latitude").toString().toDouble()
                     val valuelng = value.data?.get("longitude").toString().toDouble()
 
-                    if(lat-0.02 < valuelat && valuelat < lat + 0.02 && lng-0.02 < valuelng && valuelng < lng + 0.02 ) {
+                    if(lat-0.02 < valuelat && valuelat < lat + 0.02 && lng-0.02 < valuelng && valuelng < lng + 0.02) {
                         meetingTableResult.add(
                             Gathering(
                                 uid = value.data?.get("uid").toString(),
@@ -62,6 +61,8 @@ class MainRepoImpl(context: Context): MainRepo {
 
     }
 
+
+
     /**
      * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
      *
@@ -82,6 +83,64 @@ class MainRepoImpl(context: Context): MainRepo {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
         meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayRemove(userUid))
+    }
+
+    override suspend fun meetingsToAttend(userUid: String) {
+        
+        val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
+        lateinit var test : Gathering
+        test = Gathering("","","","","",0.0,0.0)
+
+
+        val detailMeetingTable = db.collection("DETAILMEETING")
+        detailMeetingTable
+            .get()
+            .addOnSuccessListener { resultDetailMeetingTable ->
+                for (detailMeetingDocument in resultDetailMeetingTable) {
+
+                    val data = detailMeetingDocument.data["Participants"] as? List<String>
+                    if (data != null) {
+                        for (i in 1..<data.size) {
+                            if (userUid == data[i]) {
+                                val meetingTable = db.collection("MEETING")
+
+                                meetingTable
+                                    .get()
+                                    .addOnSuccessListener { resultMeetingTable ->
+                                        for (meetingDocument in resultMeetingTable) {
+                                            val dataUUID =
+                                                meetingDocument.data["uuid"] as? String
+                                            if (detailMeetingDocument.id == dataUUID) {
+
+                                                test = Gathering(meetingDocument.data["uid"].toString(),
+                                                                meetingDocument.data["uuid"].toString(),
+                                                                meetingDocument.data["gatheringTime"].toString(),
+                                                                meetingDocument.data["title"].toString(),
+                                                                meetingDocument.data["content"].toString(),
+                                                                meetingDocument.data["longitude"].toString().toDouble(),
+                                                                meetingDocument.data["latitude"].toString().toDouble(),
+                                                )
+                                                meetingsToAttendTable.complete(
+                                                    resultMeetingTable
+                                                )
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                    } else {
+                        Log.d(TAG, "No participants found")
+                    }
+
+                }
+            }
+
+
+        meetingsToAttendTable.await()
+
+
+        Log.d(TAG, "meetingsToAttend213123123: ${test}")
+
     }
 
 

@@ -1,7 +1,6 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -9,7 +8,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
@@ -44,13 +42,18 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
     override fun initView(savedInstanceState: Bundle?) {
 
+
+        lifecycleScope.launch {
+            mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
+        }
+
+
         var lat = 0.0
         var lng = 0.0
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                  pingMapViewModel.userLocation.collectLatest { currentLocation ->
-                    Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
                     if (lat == 0.0 && lng == 0.0) {
                         if (currentLocation != null) {
                             lat = currentLocation.latitude
