@@ -71,4 +71,5 @@ dependencies {
     implementation(Google.GOOGLE_ID)
     implementation(Permission.TED_NORMAL)
     implementation(Permission.TED_COROUTINE)
+    implementation(Square.GLIDE)
 }

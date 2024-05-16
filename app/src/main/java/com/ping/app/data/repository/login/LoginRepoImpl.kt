@@ -56,6 +56,10 @@ class LoginRepoImpl(context: Context) : LoginRepo {
     override fun authInit() {
         auth = Firebase.auth
     }
+    
+    override fun getUserInfo(): FirebaseUser? {
+        return auth.currentUser
+    }
 
     override suspend fun requestGoogleLogin(
         context: Context,
