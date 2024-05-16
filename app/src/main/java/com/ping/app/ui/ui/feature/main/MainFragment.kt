@@ -54,7 +54,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             initMeetingList(lat, lng)
         }
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
-            findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
+            val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(it)
+            findNavController().navigate(actionMainToMap)
             mainInstance.participantsMeetingDetailTable(
                 it,
                 mainActivityViewModel.userUid.value.toString()
