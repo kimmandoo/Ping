@@ -10,14 +10,15 @@ import com.ping.app.data.model.Gathering
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
-class MainRepoImpl(context: Context): MainRepo {
+
+class MainRepoImpl(context: Context) : MainRepo {
 
     private val db = Firebase.firestore
 
     /**
      * 현재 사용자의 위치를 기준으로 모든 반경에서 1km 위치에 포함되는 모든 좌표들을 보여줘야함
      */
-    override suspend fun getMeetingTable(lng:Double, lat:Double) : List<Gathering> {
+    override suspend fun getMeetingTable(lng: Double, lat: Double): List<Gathering> {
         val meetingTable = db.collection("MEETING")
         lateinit var meetingTableResult: MutableList<Gathering>
         meetingTableResult = arrayListOf()
@@ -29,13 +30,13 @@ class MainRepoImpl(context: Context): MainRepo {
 
         result
             .get()
-            .addOnSuccessListener {documents ->
+            .addOnSuccessListener { documents ->
                 val meetingDefferResult = documents
-                for(value in documents.documents){
+                for (value in documents.documents) {
                     val valuelat = value.data?.get("latitude").toString().toDouble()
                     val valuelng = value.data?.get("longitude").toString().toDouble()
 
-                    if(lat-0.02 < valuelat && valuelat < lat + 0.02 && lng-0.02 < valuelng && valuelng < lng + 0.02) {
+                    if (lat - 0.02 < valuelat && valuelat < lat + 0.02 && lng - 0.02 < valuelng && valuelng < lng + 0.02) {
                         meetingTableResult.add(
                             Gathering(
                                 uid = value.data?.get("uid").toString(),
@@ -62,7 +63,6 @@ class MainRepoImpl(context: Context): MainRepo {
     }
 
 
-
     /**
      * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
      *
@@ -71,7 +71,8 @@ class MainRepoImpl(context: Context): MainRepo {
     override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayUnion(userUid))
+        meetingDetailTable.document(data.uuid)
+            .update("Participants", FieldValue.arrayUnion(userUid))
     }
 
     /**
@@ -82,7 +83,8 @@ class MainRepoImpl(context: Context): MainRepo {
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayRemove(userUid))
+        meetingDetailTable.document(data.uuid)
+            .update("Participants", FieldValue.arrayRemove(userUid))
     }
 
 
@@ -90,11 +92,11 @@ class MainRepoImpl(context: Context): MainRepo {
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
      */
-    override suspend fun meetingsToAttend(userUid: String) : Gathering {
-        
+    override suspend fun meetingsToAttend(userUid: String): Gathering {
+
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        lateinit var meetingsToAttendResult : Gathering
-        meetingsToAttendResult = Gathering("","","","","",0.0,0.0)
+        lateinit var meetingsToAttendResult: Gathering
+        meetingsToAttendResult = Gathering("", "", "", "", "", 0.0, 0.0)
 
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
@@ -118,13 +120,16 @@ class MainRepoImpl(context: Context): MainRepo {
                                             val dataUUID =
                                                 meetingDocument.data["uuid"] as? String
                                             if (detailMeetingDocument.id == dataUUID) {
-                                                meetingsToAttendResult = Gathering(meetingDocument.data["uid"].toString(),
-                                                                meetingDocument.data["uuid"].toString(),
-                                                                meetingDocument.data["gatheringTime"].toString(),
-                                                                meetingDocument.data["title"].toString(),
-                                                                meetingDocument.data["content"].toString(),
-                                                                meetingDocument.data["longitude"].toString().toDouble(),
-                                                                meetingDocument.data["latitude"].toString().toDouble(),
+                                                meetingsToAttendResult = Gathering(
+                                                    meetingDocument.data["uid"].toString(),
+                                                    meetingDocument.data["uuid"].toString(),
+                                                    meetingDocument.data["gatheringTime"].toString(),
+                                                    meetingDocument.data["title"].toString(),
+                                                    meetingDocument.data["content"].toString(),
+                                                    meetingDocument.data["longitude"].toString()
+                                                        .toDouble(),
+                                                    meetingDocument.data["latitude"].toString()
+                                                        .toDouble(),
                                                 )
                                                 meetingsToAttendTable.complete(
                                                     resultMeetingTable
@@ -147,15 +152,13 @@ class MainRepoImpl(context: Context): MainRepo {
     }
 
 
+    companion object {
+        private var INSTANCE: MainRepoImpl? = null
 
-
-    companion object{
-        private var INSTANCE : MainRepoImpl? = null
-
-        fun initialize(context: Context) : MainRepoImpl{
-            if(INSTANCE == null){
-                synchronized(MainRepoImpl::class.java){
-                    if(INSTANCE == null){
+        fun initialize(context: Context): MainRepoImpl {
+            if (INSTANCE == null) {
+                synchronized(MainRepoImpl::class.java) {
+                    if (INSTANCE == null) {
                         INSTANCE = MainRepoImpl(context)
                     }
                 }
@@ -163,7 +166,7 @@ class MainRepoImpl(context: Context): MainRepo {
             return INSTANCE!!
         }
 
-        fun get():MainRepoImpl{
+        fun get(): MainRepoImpl {
             return INSTANCE!!
         }
     }
