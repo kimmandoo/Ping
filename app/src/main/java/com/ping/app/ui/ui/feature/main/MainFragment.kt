@@ -44,9 +44,9 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             Glide.with(binding.root.context).load(user.photoUrl).circleCrop().into(mainFragProfile)
             logout.setOnClickListener {
                 lifecycleScope.launch {
-                    Log.d(TAG, "initView: 로그아웃 시작")
+                    logout.isEnabled = false
                     LoginRepoImpl.get().logout()
-                    Log.d(TAG, "initView: 로그아웃 완료")
+                    logout.isEnabled = true
                     findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
                 }
             }
