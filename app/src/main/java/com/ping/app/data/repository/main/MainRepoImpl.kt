@@ -2,11 +2,15 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import com.ping.app.data.model.Gathering
+import com.ping.app.ui.ui.container.MainActivity
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
@@ -65,12 +69,14 @@ class MainRepoImpl(context: Context) : MainRepo {
 
     /**
      * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
-     *
      * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
      */
     override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
+        FirebaseMessaging.getInstance().subscribeToTopic(data.uuid).addOnSuccessListener {
+            Log.d(TAG, "participantsMeetingDetailTable: success subscribed")
+        }
         meetingDetailTable.document(data.uuid)
             .update("Participants", FieldValue.arrayUnion(userUid))
     }

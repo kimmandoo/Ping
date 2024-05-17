@@ -105,6 +105,7 @@ class PingAddPostFragment :
                                 latitude = pingPosition.latitude
                             )
                         )
+                        dismiss()
                     }
                 } else {
                     binding.root.context.easyToast(getString(R.string.blank_et))

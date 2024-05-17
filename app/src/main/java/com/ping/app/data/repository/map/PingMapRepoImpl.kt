@@ -6,6 +6,7 @@ import android.location.Geocoder
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.model.GatheringDetail
 import java.util.Locale
@@ -58,6 +59,9 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
             .document(data.uuid)
             .set(GatheringDetail(10, arrayListOf(data.uid)))
             .addOnSuccessListener { documentReference ->
+                FirebaseMessaging.getInstance().subscribeToTopic(data.uuid).addOnSuccessListener {
+                    Log.d(TAG, "participantsMeetingDetailTable: success subscribed")
+                }
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference}")
             }
             .addOnFailureListener { e ->
