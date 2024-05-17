@@ -31,6 +31,11 @@
                 android:name="ping_data"
                 app:argType="com.ping.app.data.model.Gathering"
                 app:nullable="true"/>
+            <argument
+                android:name="ping_data_test"
+                app:argType="boolean"
+                app:nullable="false"
+                />
         </action>
         <action
             android:id="@+id/action_mainFragment_to_pingAddMapFragment"

@@ -16,4 +16,5 @@
     <string name="ping_map_distance">현재 위치에서의 거리: %s</string>
     <string name="ping_map_open_user">주최자: %s</string>
     <string name="ping_map_content">내용: %s</string>
+    <string name="main_participation_result">현재 참여중인 Ping이 존재합니다</string>
 </resources>

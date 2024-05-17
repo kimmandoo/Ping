@@ -2,6 +2,7 @@ package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -36,6 +37,17 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
 
         lifecycleScope.launch {
             val gatheringTable = mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
+            gatheringTable.apply {
+                binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
+            }
+            
+            binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
+                Log.d(TAG, "initView: ${gatheringTable}")
+
+                val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gatheringTable, true)
+                findNavController().navigate(actionMainToMap)
+
+            }
         }
 
 
@@ -68,7 +80,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
 
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
-            val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(it)
+            val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(it,false)
             findNavController().navigate(actionMainToMap)
         }, onEnterCodeDialog = {gathering->
 
@@ -78,7 +90,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             mainDialog.alertDialog.apply {
                 setOnCancelListener {
                     lifecycleScope.launch {
-                        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
+                        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering,false)
                         findNavController().navigate(actionMainToMap)
                     }
                 }

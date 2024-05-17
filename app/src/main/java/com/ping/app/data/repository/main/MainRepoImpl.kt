@@ -101,7 +101,7 @@ class MainRepoImpl(context: Context) : MainRepo {
                             }
                         }
                     } else {
-                        Log.d(TAG, "No participants found")
+//                        Log.d(TAG, "No participants found")
                     }
 
                 }
@@ -122,6 +122,7 @@ class MainRepoImpl(context: Context) : MainRepo {
                     meetingDocument.data["longitude"].toString().toDouble(),
                     meetingDocument.data["latitude"].toString().toDouble(),
                 )
+                break
             }
         }
 

@@ -57,6 +57,7 @@ class PingMapFragment :
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
+
         args.pingData?.let {
             Log.d(TAG, "initView: $it")
             dataFromMain = it
