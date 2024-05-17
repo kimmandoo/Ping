@@ -42,72 +42,41 @@
                 android:id="@+id/map_location_fixed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="장소:"
+                android:text="@string/ping_map_location"
                 android:textSize="24dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/map_detail_fixed" />
-            
-            <TextView
-                android:id="@+id/map_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24dp"
-                app:layout_constraintStart_toEndOf="@+id/map_location_fixed"
-                app:layout_constraintTop_toBottomOf="@+id/map_detail_fixed"
-                tools:text="장소가 들어옵니다." />
+
             
             <TextView
                 android:id="@+id/map_distance_fixed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="현재 위치에서의 거리:"
+                android:text="@string/ping_map_distance"
                 android:textSize="24dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/map_location_fixed" />
-            
-            <TextView
-                android:id="@+id/map_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24dp"
-                app:layout_constraintStart_toEndOf="@+id/map_distance_fixed"
-                app:layout_constraintTop_toBottomOf="@id/map_location_fixed" />
+
             
             <TextView
                 android:id="@+id/map_organizer_fixed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="주최자:"
+                android:text="@string/ping_map_open_user"
                 android:textSize="24dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/map_distance_fixed" />
-            
-            <TextView
-                android:id="@+id/map_organizer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24dp"
-                app:layout_constraintStart_toStartOf="@+id/map_organizer_fixed"
-                app:layout_constraintTop_toBottomOf="@+id/map_distance_fixed"
-                tools:text="" />
+
             
             <TextView
                 android:id="@+id/map_content_fixed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="내용:"
+                android:text="@string/ping_map_content"
                 android:textSize="24dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/map_organizer_fixed" />
-            
-            <TextView
-                android:id="@+id/map_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24dp"
-                app:layout_constraintStart_toStartOf="@+id/map_content_fixed"
-                app:layout_constraintTop_toBottomOf="@+id/map_organizer_fixed"
-                tools:text="내용입니다." />
+
             
             
             <View

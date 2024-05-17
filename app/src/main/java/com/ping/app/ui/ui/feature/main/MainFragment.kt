@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "MainFragment_싸피"
 
-class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
+class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main){
 
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
@@ -57,7 +57,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
-                    Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
                     currentLocation?.let {
                         val lat = currentLocation.latitude
                         val lng = currentLocation.longitude
@@ -71,10 +70,19 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
             val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(it)
             findNavController().navigate(actionMainToMap)
-            mainInstance.participantsMeetingDetailTable(
-                it,
-                mainActivityViewModel.userUid.value.toString()
-            )
+        }, onEnterCodeDialog = {gathering->
+
+            val mainDialog = MainAlertDialog(binding.root.context, gathering)
+
+            mainDialog.showDialog()
+            mainDialog.alertDialog.apply {
+                setOnCancelListener {
+                    lifecycleScope.launch {
+                        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
+                        findNavController().navigate(actionMainToMap)
+                    }
+                }
+            }
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
@@ -98,4 +106,5 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         viewModel.updateMeetingList(updateList.await())
 
     }
+    
 }
