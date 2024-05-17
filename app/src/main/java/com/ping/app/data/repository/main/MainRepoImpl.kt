@@ -2,7 +2,6 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -60,31 +59,6 @@ class MainRepoImpl(context: Context) : MainRepo {
 
         return meetingTableResult
 
-    }
-
-
-    /**
-     * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
-     *
-     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
-     */
-    override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
-
-        val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid)
-            .update("Participants", FieldValue.arrayUnion(userUid))
-    }
-
-    /**
-     * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
-     *
-     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
-     */
-    override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
-
-        val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid)
-            .update("Participants", FieldValue.arrayRemove(userUid))
     }
 
 
