@@ -8,12 +8,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
+import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.feature.main.MainAdapter
 import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
@@ -21,25 +22,14 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-/**
- * 툴바 (일단 나중에 하는 걸로)
- *
- * 마이 페이지? 같은
- * - 이룸
- * - 이메일
- *
- * 리사이클러뷰 (list adapter 작성 완)
- * MEETING TABLE에서 값을 가져 와야함
- * 해당 값은 ViewModel에 넣아서 observer로 관리
- *
- *
- */
 private const val TAG = "MainFragment_싸피"
+
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
+
     override val viewModel: MainViewModel by viewModels()
     private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
-    private val mainActivityViewModel : MainActivityViewModel by activityViewModels()
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     override fun initView(savedInstanceState: Bundle?) {
 
         lifecycleScope.launch {
@@ -50,14 +40,28 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         var lat = 0.0
         var lng = 0.0
 
+        val user = LoginRepoImpl.get().getUserInfo()!!
+        binding.apply {
+            mainFragTitleHello.text =
+                getString(R.string.main_user, user.displayName)
+            Glide.with(binding.root.context).load(user.photoUrl).circleCrop().into(mainFragProfile)
+            binding.logout.setOnClickListener {
+                lifecycleScope.launch {
+                    Log.d(TAG, "initView: 로그아웃 시작")
+                    LoginRepoImpl.get().logout()
+                    Log.d(TAG, "initView: 로그아웃 완료")
+                    findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
+                }
+            }
+        }
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
-                    if (lat == 0.0 && lng == 0.0) {
-                        if (currentLocation != null) {
-                            lat = currentLocation.latitude
-                            lng = currentLocation.longitude
-                        }
+                pingMapViewModel.userLocation.collectLatest { currentLocation ->
+                    Log.d(TAG, "init@@@@@@@@@View: ${currentLocation}")
+                    currentLocation?.let {
+                        val lat = currentLocation.latitude
+                        val lng = currentLocation.longitude
 
                         initMeetingList(lat, lng)
                     }
@@ -66,8 +70,12 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
 
         val mainAdapter = MainAdapter(onMoveDetailedConfirmation = {
-            findNavController().navigate(R.id.action_mainFragment_to_pingMapFragment)
-            mainInstance.participantsMeetingDetailTable(it, mainActivityViewModel.userUid.value.toString())
+            val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(it)
+            findNavController().navigate(actionMainToMap)
+            mainInstance.participantsMeetingDetailTable(
+                it,
+                mainActivityViewModel.userUid.value.toString()
+            )
         })
 
         binding.mainFragRecyclerview.adapter = mainAdapter
@@ -82,8 +90,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
 
 
-    suspend fun initMeetingList(lat: Double, lng: Double){
-
+    suspend fun initMeetingList(lat: Double, lng: Double) {
         val updateList = CompletableDeferred<List<Gathering>>()
         var getGathering = listOf<Gathering>()
         lifecycleScope.launch {

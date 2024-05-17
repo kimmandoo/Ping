@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">핑</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_required_title">안녕하세요.</string>
+    <string name="login_required_detail">서비스 이용을 위해 로그인 해주세요.</string>
     <string name="ping_add_title">장소를 설명해주세요</string>
     <string name="ping_add_content">어떤 모임인가요?</string>
-    <string name="add_post_tv">일정을 알려주세요</string>
+    <string name="add_post_tv">일정</string>
+    <string name="login_failed">인증 실패</string>
+    <string name="ping_add_post">이 장소에서 모임을 열까요?</string>
+    <string name="ping_add_post_hint">마커를 움직이거나 이름을 터치하세요</string>
+    <string name="blank_et">빈칸을 채워주세요</string>
+    <string name="main_user">환영합니다\n%s님</string>
+    <string name="main_user_detail">현재 내 주변의 핑들을 보여드릴게요</string>
 </resources>

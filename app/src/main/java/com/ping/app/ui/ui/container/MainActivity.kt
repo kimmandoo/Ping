@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, arguments ->
                 when (destination.id) {
                     R.id.loginFragment -> {
-                        LocationHelper.getInstance().stopLocationTracking()
+
                     }
 
                     R.id.mainFragment -> {
