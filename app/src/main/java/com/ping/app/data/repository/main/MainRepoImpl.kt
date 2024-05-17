@@ -96,7 +96,7 @@ class MainRepoImpl(context: Context) : MainRepo {
 
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
         lateinit var meetingsToAttendResult: Gathering
-        meetingsToAttendResult = Gathering("", "", "", "", "", 0.0, 0.0)
+        meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
 
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
@@ -123,13 +123,12 @@ class MainRepoImpl(context: Context) : MainRepo {
                                                 meetingsToAttendResult = Gathering(
                                                     meetingDocument.data["uid"].toString(),
                                                     meetingDocument.data["uuid"].toString(),
+                                                    meetingDocument.data["enterCode"].toString(),
                                                     meetingDocument.data["gatheringTime"].toString(),
                                                     meetingDocument.data["title"].toString(),
                                                     meetingDocument.data["content"].toString(),
-                                                    meetingDocument.data["longitude"].toString()
-                                                        .toDouble(),
-                                                    meetingDocument.data["latitude"].toString()
-                                                        .toDouble(),
+                                                    meetingDocument.data["longitude"].toString().toDouble(),
+                                                    meetingDocument.data["latitude"].toString().toDouble(),
                                                 )
                                                 meetingsToAttendTable.complete(
                                                     resultMeetingTable
@@ -147,6 +146,8 @@ class MainRepoImpl(context: Context) : MainRepo {
                 }
             }
         meetingsToAttendTable.await()
+
+        Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
     }

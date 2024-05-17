@@ -1,6 +1,7 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+
 private const val TAG = "MainFragment_싸피"
 
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
@@ -36,9 +38,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             val gatheringTable = mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
         }
 
-
-        var lat = 0.0
-        var lng = 0.0
 
         val user = LoginRepoImpl.get().getUserInfo()!!
         binding.apply {
