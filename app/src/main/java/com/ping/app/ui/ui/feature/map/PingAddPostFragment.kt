@@ -43,7 +43,11 @@ class PingAddPostFragment :
             requireArguments().getDouble(USER_POSITION_LAT),
             requireArguments().getDouble(USER_POSITION_LNG)
         )
+        val symbol = requireArguments().getString("symbol")
         binding.apply {
+            if (symbol.toString().isNotEmpty()) {
+                addPostEtWhere.setText(symbol)
+            }
             addPostTvAddress.text =
                 pingMapInstance.requestAddress(pingPosition.latitude, pingPosition.longitude)
             addPostIvDialog.setOnClickListener {
@@ -83,6 +87,7 @@ class PingAddPostFragment :
                                     latitude = pingPosition.latitude
                                 )
                             )
+                            dismiss()
                         } else {
                             binding.root.context.easyToast(getString(R.string.blank_et))
                         }
@@ -113,56 +118,61 @@ class PingAddPostFragment :
      */
     private fun addDateDialog() {
         // dialog 띄운다.
-        val calendar = Calendar.getInstance()
+        var targetDay = 0L
         val dialogBinding = DialogPingAddBinding.inflate(layoutInflater)
         dialogBinding.apply {
+            val calendar = Calendar.getInstance()
             addPostDp.minDate = calendar.timeInMillis
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
-            calendar.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
-            addPostDp.maxDate = calendar.timeInMillis
-            var targetDay = 0L
+            val max = Calendar.getInstance()
+            max.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
+            addPostDp.maxDate = max.timeInMillis
+
+            // Initialize targetDay with the current date
+            targetDay = calendar.timeInMillis
+
             addPostDp.setOnDateChangeListener { view, yy, mm, dd ->
                 val selectedCalendar = Calendar.getInstance()
                 selectedCalendar.set(yy, mm, dd)
-                val currentCalendar = Calendar.getInstance()
-                val differenceInMillis =
-                    selectedCalendar.timeInMillis - currentCalendar.timeInMillis
-                
-                targetDay = TimeUnit.MILLISECONDS.toDays(differenceInMillis)
+                targetDay = selectedCalendar.timeInMillis
             }
+
             addPostTp.apply {
                 setOnTimeChangedListener { view, hourOfDay, minute ->
-                    if ((targetDay * 24 + hourOfDay) * 60 + minute < calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(
-                            Calendar.MINUTE
-                        )
-                    ) {
+                    val currentCalendar = Calendar.getInstance()
+                    val targetCalendar = Calendar.getInstance().apply {
+                        timeInMillis = targetDay
+                        set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        set(Calendar.MINUTE, minute)
+                    }
+                    if (targetCalendar.before(currentCalendar)) {
                         context.easyToast("선택할 수 없는 시간입니다.")
-                        this.hour = calendar.get(Calendar.HOUR_OF_DAY)
-                        this.minute = calendar.get(Calendar.MINUTE)
+                        this.hour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+                        this.minute = currentCalendar.get(Calendar.MINUTE)
                     }
                 }
             }
         }
-        
+
         val dialog =
             AlertDialog.Builder(binding.root.context).setView(dialogBinding.root)
                 .setNegativeButton("취소") { dialog, which ->
                     dialog.dismiss()
                 }.setPositiveButton("확인") { dialog, which ->
                     val format = "M월 d일"
-                    val h = dialogBinding.addPostTp.hour
-                    val hour = if (h > 12) {
-                        "오후 ${h - 12}"
-                    } else {
-                        "오전 $h"
+                    val selectedCalendar = Calendar.getInstance().apply {
+                        timeInMillis = targetDay
+                        set(Calendar.HOUR_OF_DAY, dialogBinding.addPostTp.hour)
+                        set(Calendar.MINUTE, dialogBinding.addPostTp.minute)
                     }
-                    val formattedDateString = "${
-                        SimpleDateFormat(format, Locale.KOREA).format(calendar.time)
-                    } ${hour}시 ${dialogBinding.addPostTp.minute}분"
-                    gatheringTime =
-                        (calendar.time.time + dialogBinding.addPostTp.hour * 60 * 60 + dialogBinding.addPostTp.minute * 60).toString()
+                    val formattedDateString = "${SimpleDateFormat(format, Locale.KOREA).format(selectedCalendar.time)} " +
+                            "${if (selectedCalendar.get(Calendar.HOUR_OF_DAY) > 12) "오후 ${selectedCalendar.get(Calendar.HOUR_OF_DAY) - 12}" else "오전 ${selectedCalendar.get(Calendar.HOUR_OF_DAY)}"}시 " +
+                            "${selectedCalendar.get(Calendar.MINUTE)}분"
                     binding.addPostTv.text = formattedDateString
+
+                    // Save the selected date and time
+                    gatheringTime = selectedCalendar.timeInMillis.toString()
                 }.create()
         dialog.window!!.setBackgroundDrawable(
             ResourcesCompat.getDrawable(

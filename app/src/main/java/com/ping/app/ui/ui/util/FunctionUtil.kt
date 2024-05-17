@@ -53,6 +53,7 @@ fun NaverMap.withMarker(marker: Marker, view: View? = null) {
             this@withMarker.cameraPosition.target.latitude,
             this@withMarker.cameraPosition.target.longitude
         )
+        marker.captionText = ""
         view?.visibility = View.GONE
     }
     
@@ -64,6 +65,7 @@ fun NaverMap.withMarker(marker: Marker, view: View? = null) {
                 this@withMarker.cameraPosition.target.latitude,
                 this@withMarker.cameraPosition.target.longitude
             )
+            captionText = ""
         }
     }
 }

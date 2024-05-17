@@ -67,6 +67,14 @@
                     android:gravity="center"
                     android:text="@string/ping_add_post" />
                 
+                <TextView
+                    style="@style/Ping.Subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="@string/ping_add_post_hint" />
+                
                 <ImageView
                     android:id="@+id/map_add_btn"
                     android:layout_width="40dp"

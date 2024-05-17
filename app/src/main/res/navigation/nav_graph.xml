@@ -12,7 +12,12 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_gatheringFragment"
+            app:destination="@id/gatheringFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -21,15 +26,34 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_pingMapFragment"
-            app:destination="@id/pingMapFragment" />
+            app:destination="@id/pingMapFragment">
+            <argument
+                android:name="ping_data"
+                app:argType="com.ping.app.data.model.Gathering"
+                app:nullable="true"/>
+        </action>
         <action
             android:id="@+id/action_mainFragment_to_pingAddMapFragment"
             app:destination="@id/pingAddMapFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/pingMapFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingMapFragment"
-        android:label="MapFragment" />
+        android:label="MapFragment" >
+        <argument
+            android:name="ping_data"
+            app:argType="com.ping.app.data.model.Gathering"
+            app:nullable="true"/>
+        <action
+            android:id="@+id/action_pingMapFragment_to_gatheringFragment"
+            app:destination="@id/gatheringFragment"
+            app:popUpTo="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddMapFragment"
@@ -42,4 +66,8 @@
         android:id="@+id/pingAddPostFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddPostFragment"
         android:label="PingAddPostFragment" />
+    <fragment
+        android:id="@+id/gatheringFragment"
+        android:name="com.ping.app.ui.ui.feature.gathering.GatheringFragment"
+        android:label="GatheringFragment" />
 </navigation>
