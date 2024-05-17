@@ -87,7 +87,9 @@ class MainRepoImpl(context: Context) : MainRepo {
      * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
      */
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
-
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
+            Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
+        }
         val meetingDetailTable = db.collection("DETAILMEETING")
         meetingDetailTable.document(data.uuid)
             .update("Participants", FieldValue.arrayRemove(userUid))
@@ -104,8 +106,7 @@ class MainRepoImpl(context: Context) : MainRepo {
         var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
 
         var resultDetailMeetingDocument = ""
-
-
+        
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
             .get()
