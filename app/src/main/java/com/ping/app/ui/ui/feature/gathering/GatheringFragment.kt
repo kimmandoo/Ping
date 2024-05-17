@@ -16,9 +16,7 @@ class GatheringFragment: BaseFragment<FragmentGatheringBinding, GatheringViewMod
     
     override fun initView(savedInstanceState: Bundle?) {
         binding.apply {
-            // 이 페이지가 열릴 때 기준으로 모임시간까지 남은 시간을 보여줌
-            // 일-시-분 남았다고 표시해야됨
-            viewModel.getLeftTime()
+        
         }
     }
 }
