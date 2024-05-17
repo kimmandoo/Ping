@@ -4,11 +4,13 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.model.GatheringDetail
+import kotlinx.coroutines.CompletableDeferred
 import java.util.Locale
 
 private const val TAG = "PingMapRepoImpl_싸피"
@@ -57,7 +59,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
 
         db.collection("DETAILMEETING")
             .document(data.uuid)
-            .set(GatheringDetail(10, arrayListOf(data.uid)))
+            .set(GatheringDetail(10, data.content,arrayListOf(data.uid)))
             .addOnSuccessListener { documentReference ->
                 FirebaseMessaging.getInstance().subscribeToTopic(data.uuid).addOnSuccessListener {
                     Log.d(TAG, "participantsMeetingDetailTable: success subscribed")
@@ -67,6 +69,39 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
+    }
+
+    /**
+     * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
+     */
+    override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
+        Log.d(TAG, "participantsMeetingDetailTable: ${userUid}")
+        val meetingDetailTable = db.collection("DETAILMEETING")
+        meetingDetailTable.document(data.uuid)
+            .update("participants", FieldValue.arrayUnion(userUid))
+    }
+
+    /**
+     * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
+     */
+    override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
+
+        val meetingDetailTable = db.collection("DETAILMEETING")
+        meetingDetailTable.document(data.uuid)
+            .update("participants", FieldValue.arrayRemove(userUid))
+    }
+
+    override suspend fun getUserName(userUid: String): String {
+        var queryResultName = CompletableDeferred<String>()
+        val userTable = db.collection("USER")
+
+        userTable.document(userUid)
+            .get()
+            .addOnSuccessListener {
+                queryResultName.complete(it.data?.get("name").toString())
+            }
+
+        return queryResultName.await()
     }
 
 

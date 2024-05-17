@@ -1,7 +1,6 @@
 package com.ping.app.ui.ui.feature.map
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,8 +26,9 @@ import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.FragmentPingMapBinding
-import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.presentation.MainActivityViewModel
+import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.MAP_BOUNDS
 import com.ping.app.ui.ui.util.round
@@ -53,6 +53,8 @@ class PingMapFragment :
     private val locationHelperInstance by lazy {
         PingApplication.locationHelper
     }
+    private val pingMapInstance = PingApplication.pingMapRepo
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
         args.pingData?.let {
@@ -76,8 +78,11 @@ class PingMapFragment :
                     currentLocation?.let {
                         binding.mapFragmentView.visibility = View.VISIBLE
                         binding.mapProgress.visibility = View.GONE
-                        binding.mapDistance.text =
-                            String.format("%.2f", currentLocation.distanceTo(latlngFromMain))
+                        binding.mapDistanceFixed.text = getString(R.string.ping_map_distance, String.format("%.2f", currentLocation.distanceTo(latlngFromMain)))
+                        binding.mapLocationFixed.text = getString(R.string.ping_map_location, dataFromMain.title)
+                        binding.mapOrganizerFixed.text = getString(R.string.ping_map_open_user, pingMapInstance.getUserName(dataFromMain.uid))
+                        binding.mapContentFixed.text = getString(R.string.ping_map_content, dataFromMain.content)
+
                         if (::naverMap.isInitialized) {
                             naverMap.locationOverlay.run {
                                 isVisible = true
@@ -94,6 +99,7 @@ class PingMapFragment :
     @UiThread
     override fun onMapReady(map: NaverMap) {
         val pingAlert = PingAlertDialog(binding.root.context)
+
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
         naverMap.locationSource = locationSource
@@ -151,6 +157,9 @@ class PingMapFragment :
         marker.map = naverMap
 
         binding.apply {
+
+
+
             mapBtnGathering.setOnClickListener {
                 Log.d(TAG, "initView: ")
                 pingAlert.showDialog()
@@ -158,6 +167,7 @@ class PingMapFragment :
                     setOnCancelListener {
                         lifecycleScope.launch {
                             // 모임에 참여시키는 로직 들어가면 됨
+                            pingMapInstance.participantsMeetingDetailTable(dataFromMain, mainActivityViewModel.userUid.value.toString())
                             findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
                         }
                     }

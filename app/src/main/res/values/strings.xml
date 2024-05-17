@@ -12,5 +12,9 @@
     <string name="blank_et">빈칸을 채워주세요</string>
     <string name="main_user">환영합니다\n%s님</string>
     <string name="main_user_detail">현재 내 주변의 핑들을 보여드릴게요</string>
+    <string name="ping_map_location">장소: %s</string>
+    <string name="ping_map_distance">현재 위치에서의 거리: %s</string>
+    <string name="ping_map_open_user">주최자: %s</string>
+    <string name="ping_map_content">내용: %s</string>
     <string name="main_see_all">마감된 모임까지 보여드릴게요</string>
 </resources>

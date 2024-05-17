@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.ItemMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
+class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, private val onEnterCodeDialog: (Gathering) -> Unit) :
     ListAdapter<Gathering, MainAdapter.MainHolder>(
         diffUtil
     ) {
@@ -25,8 +26,20 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit) :
         fun bindInfo(position: Int) {
             val item = currentList.get(position)
             binding.mainItemCard.setOnClickListener {
-                onMoveDetailedConfirmation(item)
+                if (item.enterCode == "") {
+                    onMoveDetailedConfirmation(item)
+                }
+                else{
+                    //dialog를 띄워야함
+
+                    onEnterCodeDialog(item)
+                }
             }
+
+            if(item.enterCode != ""){
+                binding.enterOrPass.setImageResource(R.drawable.baseline_lock_24)
+            }
+
             binding.mainItemTitle.text = item.title
 //            binding.mainItemTimeRemaining.text = item.content
             val targetTime = item.gatheringTime.toLong()

@@ -7,4 +7,10 @@ interface PingMapRepo {
     fun requestAddress(lat: Double, lng: Double): String
 
     fun makeMeetingDetailTable(data: Gathering)
+
+    fun participantsMeetingDetailTable(data: Gathering, userUid:String)
+
+    fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String)
+
+    suspend fun getUserName(userUid: String) : String
 }
