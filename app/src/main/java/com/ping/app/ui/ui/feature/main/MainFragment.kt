@@ -9,17 +9,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.easyToast
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -29,9 +26,7 @@ private const val TAG = "MainFragment_싸피"
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
     
     override val viewModel: MainViewModel by viewModels()
-    private val mainInstance = PingApplication.mainRepo
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     
     private val mainAdapter by lazy {
         MainAdapter(onMoveDetailedConfirmation = {
@@ -80,14 +75,13 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
         
         lifecycleScope.launch {
-            mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
                         val lat = currentLocation.latitude
                         val lng = currentLocation.longitude
                         
-                        initMeetingList(lat, lng)
+                        viewModel.initMeetingList(lat, lng)
                     }
                 }
             }
@@ -111,15 +105,5 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
         }
         mainDialog.showDialog()
-    }
-    
-    suspend fun initMeetingList(lat: Double, lng: Double) {
-        val updateList = CompletableDeferred<List<Gathering>>()
-        
-        lifecycleScope.launch {
-            updateList.complete(mainInstance.getMeetingTable(lng, lat))
-        }
-        viewModel.updateMeetingList(updateList.await())
-        
     }
 }

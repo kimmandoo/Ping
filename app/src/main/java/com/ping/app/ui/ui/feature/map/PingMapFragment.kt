@@ -25,9 +25,9 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
+import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.MAP_BOUNDS
@@ -54,7 +54,6 @@ class PingMapFragment :
         PingApplication.locationHelper
     }
     private val pingMapInstance = PingApplication.pingMapRepo
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
         args.pingData?.let {
@@ -167,7 +166,7 @@ class PingMapFragment :
                     setOnCancelListener {
                         lifecycleScope.launch {
                             // 모임에 참여시키는 로직 들어가면 됨
-                            pingMapInstance.participantsMeetingDetailTable(dataFromMain, mainActivityViewModel.userUid.value.toString())
+                            pingMapInstance.participantsMeetingDetailTable(dataFromMain, LoginRepoImpl.get().getAccessToken())
                             findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
                         }
                     }

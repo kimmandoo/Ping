@@ -3,10 +3,10 @@ package com.ping.app.ui.ui.feature.map
 import android.app.AlertDialog
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
 import com.ping.app.R
@@ -14,15 +14,14 @@ import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.DialogPingAddBinding
 import com.ping.app.databinding.FragmentPingAddPostBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
-import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LNG
 import com.ping.app.ui.ui.util.easyToast
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "PingAddPostFragment_싸피"
 
@@ -32,11 +31,10 @@ class PingAddPostFragment :
     ) {
     override val viewModel: PingMapViewModel by activityViewModels()
     
-    /** mainActivityViewModel 분리 해야함
-     */
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val pingMapInstance = PingApplication.pingMapRepo
+    private val loginRepoImpl = PingApplication.loginRepo
     private lateinit var gatheringTime: String
+    private lateinit var uid: String
     
     override fun initView(savedInstanceState: Bundle?) {
         val pingPosition = LatLng(
@@ -45,6 +43,9 @@ class PingAddPostFragment :
         )
         val symbol = requireArguments().getString("symbol")
         binding.apply {
+            lifecycleScope.launch {
+                uid = loginRepoImpl.getAccessToken()
+            }
             if (symbol.toString().isNotEmpty()) {
                 addPostEtWhere.setText(symbol)
             }
@@ -66,7 +67,6 @@ class PingAddPostFragment :
             }
             
             addPostBtnSend.setOnClickListener {
-                Log.d(TAG, "addPostBtnSend: ${mainActivityViewModel.userUid.value.toString()}")
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
@@ -77,7 +77,7 @@ class PingAddPostFragment :
                         if (enterCode.isNotEmpty()) {
                             pingMapInstance.sendPingInfo(
                                 Gathering(
-                                    uid = mainActivityViewModel.userUid.value.toString(),
+                                    uid = uid,
                                     uuid = UUID.randomUUID().toString(),
                                     enterCode = enterCode,
                                     gatheringTime = gatheringTime,
@@ -95,7 +95,7 @@ class PingAddPostFragment :
                         // 모두 참여가능
                         pingMapInstance.sendPingInfo(
                             Gathering(
-                                uid = mainActivityViewModel.userUid.value.toString(),
+                                uid = uid,
                                 uuid = UUID.randomUUID().toString(),
                                 enterCode = "",
                                 gatheringTime = gatheringTime,
@@ -129,16 +129,16 @@ class PingAddPostFragment :
             val max = Calendar.getInstance()
             max.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
             addPostDp.maxDate = max.timeInMillis
-
+            
             // Initialize targetDay with the current date
             targetDay = calendar.timeInMillis
-
+            
             addPostDp.setOnDateChangeListener { view, yy, mm, dd ->
                 val selectedCalendar = Calendar.getInstance()
                 selectedCalendar.set(yy, mm, dd)
                 targetDay = selectedCalendar.timeInMillis
             }
-
+            
             addPostTp.apply {
                 setOnTimeChangedListener { view, hourOfDay, minute ->
                     val currentCalendar = Calendar.getInstance()
@@ -155,7 +155,7 @@ class PingAddPostFragment :
                 }
             }
         }
-
+        
         val dialog =
             AlertDialog.Builder(binding.root.context).setView(dialogBinding.root)
                 .setNegativeButton("취소") { dialog, which ->
@@ -167,11 +167,18 @@ class PingAddPostFragment :
                         set(Calendar.HOUR_OF_DAY, dialogBinding.addPostTp.hour)
                         set(Calendar.MINUTE, dialogBinding.addPostTp.minute)
                     }
-                    val formattedDateString = "${SimpleDateFormat(format, Locale.KOREA).format(selectedCalendar.time)} " +
-                            "${if (selectedCalendar.get(Calendar.HOUR_OF_DAY) > 12) "오후 ${selectedCalendar.get(Calendar.HOUR_OF_DAY) - 12}" else "오전 ${selectedCalendar.get(Calendar.HOUR_OF_DAY)}"}시 " +
+                    val formattedDateString =
+                        "${SimpleDateFormat(format, Locale.KOREA).format(selectedCalendar.time)} " +
+                            "${
+                                if (selectedCalendar.get(Calendar.HOUR_OF_DAY) > 12) "오후 ${
+                                    selectedCalendar.get(
+                                        Calendar.HOUR_OF_DAY
+                                    ) - 12
+                                }" else "오전 ${selectedCalendar.get(Calendar.HOUR_OF_DAY)}"
+                            }시 " +
                             "${selectedCalendar.get(Calendar.MINUTE)}분"
                     binding.addPostTv.text = formattedDateString
-
+                    
                     // Save the selected date and time
                     gatheringTime = selectedCalendar.timeInMillis.toString()
                 }.create()

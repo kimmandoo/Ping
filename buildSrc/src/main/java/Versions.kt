@@ -1,4 +1,5 @@
 object Versions {
+    const val DATASTORE = "1.1.1"
     const val TED = "3.3.0"
     const val FIREBASE_CLOUD_FUNCTION = "20.4.0"
     const val GOOGLE_PLAY_SERVICE_AUTH = "21.1.0"
