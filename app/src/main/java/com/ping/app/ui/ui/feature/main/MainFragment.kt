@@ -91,13 +91,11 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
 
     suspend fun initMeetingList(lat: Double, lng: Double) {
         val updateList = CompletableDeferred<List<Gathering>>()
-        var getGathering = listOf<Gathering>()
+
         lifecycleScope.launch {
-            getGathering = mainInstance.getMeetingTable(lng, lat)
-            updateList.complete(getGathering)
+            updateList.complete(mainInstance.getMeetingTable(lng, lat))
         }
-        updateList.await()
-        viewModel.updateMeetingList(getGathering)
+        viewModel.updateMeetingList(updateList.await())
 
     }
 }

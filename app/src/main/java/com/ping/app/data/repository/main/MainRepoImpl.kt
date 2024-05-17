@@ -95,8 +95,10 @@ class MainRepoImpl(context: Context) : MainRepo {
     override suspend fun meetingsToAttend(userUid: String): Gathering {
 
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        lateinit var meetingsToAttendResult: Gathering
-        meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
+        var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
+
+        var resultDetailMeetingDocument = ""
+
 
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
@@ -116,25 +118,10 @@ class MainRepoImpl(context: Context) : MainRepo {
                                 meetingTable
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
-                                        for (meetingDocument in resultMeetingTable) {
-                                            val dataUUID =
-                                                meetingDocument.data["uuid"] as? String
-                                            if (detailMeetingDocument.id == dataUUID) {
-                                                meetingsToAttendResult = Gathering(
-                                                    meetingDocument.data["uid"].toString(),
-                                                    meetingDocument.data["uuid"].toString(),
-                                                    meetingDocument.data["enterCode"].toString(),
-                                                    meetingDocument.data["gatheringTime"].toString(),
-                                                    meetingDocument.data["title"].toString(),
-                                                    meetingDocument.data["content"].toString(),
-                                                    meetingDocument.data["longitude"].toString().toDouble(),
-                                                    meetingDocument.data["latitude"].toString().toDouble(),
-                                                )
-                                                meetingsToAttendTable.complete(
-                                                    resultMeetingTable
-                                                )
-                                            }
-                                        }
+                                        resultDetailMeetingDocument = detailMeetingDocument.id
+                                        meetingsToAttendTable.complete(
+                                            resultMeetingTable
+                                        )
                                     }
 
                             }
@@ -145,7 +132,24 @@ class MainRepoImpl(context: Context) : MainRepo {
 
                 }
             }
-        meetingsToAttendTable.await()
+        val resultMeetingTable = meetingsToAttendTable.await()
+
+        for (meetingDocument in resultMeetingTable) {
+            val dataUUID =
+                meetingDocument.data["uuid"] as? String
+            if (resultDetailMeetingDocument == dataUUID) {
+                meetingsToAttendResult = Gathering(
+                    meetingDocument.data["uid"].toString(),
+                    meetingDocument.data["uuid"].toString(),
+                    meetingDocument.data["enterCode"].toString(),
+                    meetingDocument.data["gatheringTime"].toString(),
+                    meetingDocument.data["title"].toString(),
+                    meetingDocument.data["content"].toString(),
+                    meetingDocument.data["longitude"].toString().toDouble(),
+                    meetingDocument.data["latitude"].toString().toDouble(),
+                )
+            }
+        }
 
         Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
 
