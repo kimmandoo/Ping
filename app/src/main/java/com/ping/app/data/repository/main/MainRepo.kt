@@ -8,4 +8,6 @@ interface MainRepo {
     fun participantsMeetingDetailTable(data: Gathering, userUid:String)
 
     fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String)
+
+    suspend fun meetingsToAttend(userUid: String) : Gathering
 }

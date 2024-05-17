@@ -10,15 +10,15 @@ import com.ping.app.data.model.Gathering
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
-class MainRepoImpl(context: Context): MainRepo {
+
+class MainRepoImpl(context: Context) : MainRepo {
 
     private val db = Firebase.firestore
 
     /**
      * 현재 사용자의 위치를 기준으로 모든 반경에서 1km 위치에 포함되는 모든 좌표들을 보여줘야함
      */
-    override suspend fun getMeetingTable(lng:Double, lat:Double) : List<Gathering> {
-        Log.d(TAG, "getMeetingTable: ")
+    override suspend fun getMeetingTable(lng: Double, lat: Double): List<Gathering> {
         val meetingTable = db.collection("MEETING")
         lateinit var meetingTableResult: MutableList<Gathering>
         meetingTableResult = arrayListOf()
@@ -30,13 +30,13 @@ class MainRepoImpl(context: Context): MainRepo {
 
         result
             .get()
-            .addOnSuccessListener {documents ->
+            .addOnSuccessListener { documents ->
                 val meetingDefferResult = documents
-                for(value in documents.documents){
+                for (value in documents.documents) {
                     val valuelat = value.data?.get("latitude").toString().toDouble()
                     val valuelng = value.data?.get("longitude").toString().toDouble()
 
-                    if(lat-0.02 < valuelat && valuelat < lat + 0.02 && lng-0.02 < valuelng && valuelng < lng + 0.02 ) {
+                    if (lat - 0.02 < valuelat && valuelat < lat + 0.02 && lng - 0.02 < valuelng && valuelng < lng + 0.02) {
                         meetingTableResult.add(
                             Gathering(
                                 uid = value.data?.get("uid").toString(),
@@ -62,6 +62,7 @@ class MainRepoImpl(context: Context): MainRepo {
 
     }
 
+
     /**
      * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
      *
@@ -70,7 +71,8 @@ class MainRepoImpl(context: Context): MainRepo {
     override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayUnion(userUid))
+        meetingDetailTable.document(data.uuid)
+            .update("Participants", FieldValue.arrayUnion(userUid))
     }
 
     /**
@@ -81,17 +83,87 @@ class MainRepoImpl(context: Context): MainRepo {
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
 
         val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid).update("Participants", FieldValue.arrayRemove(userUid))
+        meetingDetailTable.document(data.uuid)
+            .update("Participants", FieldValue.arrayRemove(userUid))
     }
 
 
-    companion object{
-        private var INSTANCE : MainRepoImpl? = null
+    /**
+     * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
+     * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
+     */
+    override suspend fun meetingsToAttend(userUid: String): Gathering {
 
-        fun initialize(context: Context) : MainRepoImpl{
-            if(INSTANCE == null){
-                synchronized(MainRepoImpl::class.java){
-                    if(INSTANCE == null){
+        val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
+        var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
+
+        var resultDetailMeetingDocument = ""
+
+
+        val detailMeetingTable = db.collection("DETAILMEETING")
+        detailMeetingTable
+            .get()
+            .addOnSuccessListener { resultDetailMeetingTable ->
+                // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
+                for (detailMeetingDocument in resultDetailMeetingTable) {
+
+                    val data = detailMeetingDocument.data["Participants"] as? List<String>
+                    if (data != null) {
+                        for (i in 1..<data.size) {
+                            if (userUid == data[i]) {
+
+                                // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
+                                val meetingTable = db.collection("MEETING")
+
+                                meetingTable
+                                    .get()
+                                    .addOnSuccessListener { resultMeetingTable ->
+                                        resultDetailMeetingDocument = detailMeetingDocument.id
+                                        meetingsToAttendTable.complete(
+                                            resultMeetingTable
+                                        )
+                                    }
+
+                            }
+                        }
+                    } else {
+                        Log.d(TAG, "No participants found")
+                    }
+
+                }
+            }
+        val resultMeetingTable = meetingsToAttendTable.await()
+
+        for (meetingDocument in resultMeetingTable) {
+            val dataUUID =
+                meetingDocument.data["uuid"] as? String
+            if (resultDetailMeetingDocument == dataUUID) {
+                meetingsToAttendResult = Gathering(
+                    meetingDocument.data["uid"].toString(),
+                    meetingDocument.data["uuid"].toString(),
+                    meetingDocument.data["enterCode"].toString(),
+                    meetingDocument.data["gatheringTime"].toString(),
+                    meetingDocument.data["title"].toString(),
+                    meetingDocument.data["content"].toString(),
+                    meetingDocument.data["longitude"].toString().toDouble(),
+                    meetingDocument.data["latitude"].toString().toDouble(),
+                )
+            }
+        }
+
+        Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
+
+        return meetingsToAttendResult
+    }
+
+
+    companion object {
+        private var INSTANCE: MainRepoImpl? = null
+
+        fun initialize(context: Context): MainRepoImpl {
+            if (INSTANCE == null) {
+                synchronized(MainRepoImpl::class.java) {
+                    if (INSTANCE == null) {
                         INSTANCE = MainRepoImpl(context)
                     }
                 }
@@ -99,7 +171,7 @@ class MainRepoImpl(context: Context): MainRepo {
             return INSTANCE!!
         }
 
-        fun get():MainRepoImpl{
+        fun get(): MainRepoImpl {
             return INSTANCE!!
         }
     }
