@@ -66,36 +66,6 @@ class MainRepoImpl(context: Context) : MainRepo {
 
     }
 
-
-    /**
-     * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
-     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
-     */
-    override fun participantsMeetingDetailTable(data: Gathering, userUid: String) {
-
-        val meetingDetailTable = db.collection("DETAILMEETING")
-        FirebaseMessaging.getInstance().subscribeToTopic(data.uuid).addOnSuccessListener {
-            Log.d(TAG, "participantsMeetingDetailTable: success subscribed")
-        }
-        meetingDetailTable.document(data.uuid)
-            .update("Participants", FieldValue.arrayUnion(userUid))
-    }
-
-    /**
-     * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
-     *
-     * 테스트 용도로 여기에 작성했으며 추후 이동 될 것입니다.
-     */
-    override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
-            Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
-        }
-        val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid)
-            .update("Participants", FieldValue.arrayRemove(userUid))
-    }
-
-
     /**
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
@@ -104,7 +74,6 @@ class MainRepoImpl(context: Context) : MainRepo {
 
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
         var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
-
         var resultDetailMeetingDocument = ""
         
         val detailMeetingTable = db.collection("DETAILMEETING")
