@@ -36,17 +36,17 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
 
         lifecycleScope.launch {
-            val gatheringTable = mainInstance.meetingsToAttend(mainActivityViewModel.userUid.value.toString())
+
+            // merge 후 uid 수정
+            val gatheringTable = mainInstance.meetingsToAttend("MxOpSRZimnb5hiTBPdE1Gn8tLZ13")
             gatheringTable.apply {
                 binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
             }
-            
+
             binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
                 Log.d(TAG, "initView: ${gatheringTable}")
-
                 val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gatheringTable, true)
                 findNavController().navigate(actionMainToMap)
-
             }
         }
 

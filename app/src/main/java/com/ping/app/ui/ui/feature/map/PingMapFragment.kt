@@ -48,6 +48,7 @@ class PingMapFragment :
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var dataFromMain: Gathering
+    private var dataFromMainShortCut: Boolean = false
     private lateinit var latlngFromMain: LatLng
     private val args: PingMapFragmentArgs by navArgs()
     private val locationHelperInstance by lazy {
@@ -63,6 +64,15 @@ class PingMapFragment :
             dataFromMain = it
             latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
         }
+        
+        args.pingShortCut.let {
+            Log.d(TAG, "initView: $it")
+            dataFromMainShortCut = it
+            if(dataFromMainShortCut == true){
+                binding.mapBtnGathering.text = "cancle"
+            }
+        }
+
         locationHelperInstance.startLocationTracking()
         locationHelperInstance.listener = {
             viewModel.setUserLocation(LatLng(it))
@@ -100,6 +110,7 @@ class PingMapFragment :
     @UiThread
     override fun onMapReady(map: NaverMap) {
         val pingAlert = PingAlertDialog(binding.root.context)
+        val pingCancelAlert = PingAlertCancelDialog(binding.root.context)
 
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
@@ -158,18 +169,34 @@ class PingMapFragment :
         marker.map = naverMap
 
         binding.apply {
-
-
-
             mapBtnGathering.setOnClickListener {
                 Log.d(TAG, "initView: ")
-                pingAlert.showDialog()
-                pingAlert.alertDialog.apply {
-                    setOnCancelListener {
-                        lifecycleScope.launch {
-                            // 모임에 참여시키는 로직 들어가면 됨
-                            pingMapInstance.participantsMeetingDetailTable(dataFromMain, mainActivityViewModel.userUid.value.toString())
-                            findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
+                if(dataFromMainShortCut == false) {
+                    pingAlert.showDialog()
+                    pingAlert.alertDialog.apply {
+                        setOnCancelListener {
+                            lifecycleScope.launch {
+                                // 모임에 참여시키는 로직 들어가면 됨
+                                pingMapInstance.participantsMeetingDetailTable(
+                                    dataFromMain,
+                                    mainActivityViewModel.userUid.value.toString()
+                                )
+                                findNavController().navigate(R.id.action_pingMapFragment_to_mainFragment)
+                            }
+                        }
+                    }
+                }else{
+                    pingCancelAlert.showDialog()
+                    pingCancelAlert.alertDialog.apply {
+                        setOnCancelListener {
+                            lifecycleScope.launch {
+                                // 모임에 참여취소 로직 들어가면 됨
+                                pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
+                                    dataFromMain,
+                                    mainActivityViewModel.userUid.value.toString()
+                                )
+                                findNavController().navigate(R.id.action_pingMapFragment_to_mainFragment)
+                            }
                         }
                     }
                 }

@@ -72,8 +72,7 @@ class MainRepoImpl(context: Context) : MainRepo {
         var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
 
         var resultDetailMeetingDocument = ""
-
-
+        
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
             .get()
@@ -81,14 +80,14 @@ class MainRepoImpl(context: Context) : MainRepo {
                 // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
                 for (detailMeetingDocument in resultDetailMeetingTable) {
 
-                    val data = detailMeetingDocument.data["Participants"] as? List<String>
+                    val data = detailMeetingDocument.data["participants"] as? List<String>
                     if (data != null) {
-                        for (i in 1..<data.size) {
-                            if (userUid == data[i]) {
 
+                        for (i in 1..<data.size) {
+                            if (userUid == data.get(i).toString()) {
                                 // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
                                 val meetingTable = db.collection("MEETING")
-
+                                
                                 meetingTable
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
@@ -97,15 +96,15 @@ class MainRepoImpl(context: Context) : MainRepo {
                                             resultMeetingTable
                                         )
                                     }
-
                             }
                         }
                     } else {
-//                        Log.d(TAG, "No participants found")
+//                        Log.d(TAG, "No participants found ${detailMeetingDocument.data}")
                     }
 
                 }
             }
+
         val resultMeetingTable = meetingsToAttendTable.await()
 
         for (meetingDocument in resultMeetingTable) {

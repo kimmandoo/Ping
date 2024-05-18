@@ -31,11 +31,6 @@
                 android:name="ping_data"
                 app:argType="com.ping.app.data.model.Gathering"
                 app:nullable="true"/>
-            <argument
-                android:name="ping_data_test"
-                app:argType="boolean"
-                app:nullable="false"
-                />
         </action>
         <action
             android:id="@+id/action_mainFragment_to_pingAddMapFragment"
@@ -54,10 +49,21 @@
             android:name="ping_data"
             app:argType="com.ping.app.data.model.Gathering"
             app:nullable="true"/>
+        <argument
+            android:name="ping_short_cut"
+            app:argType="boolean"
+            app:nullable="false"
+            />
         <action
             android:id="@+id/action_pingMapFragment_to_gatheringFragment"
             app:destination="@id/gatheringFragment"
-            app:popUpTo="@id/mainFragment" />
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_pingMapFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/pingMapFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"
