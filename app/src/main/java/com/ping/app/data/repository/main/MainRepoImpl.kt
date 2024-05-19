@@ -2,10 +2,15 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import com.ping.app.data.model.Gathering
+import com.ping.app.ui.ui.container.MainActivity
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
@@ -61,7 +66,6 @@ class MainRepoImpl(context: Context) : MainRepo {
 
     }
 
-
     /**
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
@@ -70,10 +74,8 @@ class MainRepoImpl(context: Context) : MainRepo {
 
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
         var meetingsToAttendResult = Gathering("", "", "", "", "","", 0.0, 0.0)
-
         var resultDetailMeetingDocument = ""
-
-
+        
         val detailMeetingTable = db.collection("DETAILMEETING")
         detailMeetingTable
             .get()
