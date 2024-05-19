@@ -11,11 +11,13 @@ import com.bumptech.glide.Glide
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
+import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.easyToast
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -37,6 +39,10 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
 
     override fun initView(savedInstanceState: Bundle?) {
 
+//        lifecycleScope.launch {
+//            MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
+//        }
+
         val user = LoginRepoImpl.get().getUserInfo()!!
         binding.apply {
             mainFragTitleHello.text =
@@ -52,7 +58,19 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
             mainFragRecyclerview.adapter = mainAdapter
             mainFragFab.setOnClickListener {
-                findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                val duplicateDeffer = CompletableDeferred<Boolean>()
+                var duplucateResult = false
+                lifecycleScope.launch {
+                    duplicateDeffer.complete(MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken()))
+                    duplucateResult = duplicateDeffer.await()
+                }
+
+                if(duplucateResult == true) {
+                    findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                }
+                else{
+                    binding.root.context.easyToast(getString(R.string.main_already_table))
+                }
             }
         }
         
