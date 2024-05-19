@@ -180,7 +180,7 @@ class PingMapFragment :
                                 // 모임에 참여시키는 로직 들어가면 됨
                                 pingMapInstance.participantsMeetingDetailTable(
                                     dataFromMain,
-                                    mainActivityViewModel.userUid.value.toString()
+                                    LoginRepoImpl.get().getAccessToken()
                                 )
                                 findNavController().navigate(R.id.action_pingMapFragment_to_mainFragment)
                             }
@@ -194,7 +194,7 @@ class PingMapFragment :
                                 // 모임에 참여취소 로직 들어가면 됨
                                 pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
                                     dataFromMain,
-                                    mainActivityViewModel.userUid.value.toString()
+                                    LoginRepoImpl.get().getAccessToken()
                                 )
                                 findNavController().navigate(R.id.action_pingMapFragment_to_mainFragment)
                             }

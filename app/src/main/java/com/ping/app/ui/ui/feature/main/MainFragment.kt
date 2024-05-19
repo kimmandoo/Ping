@@ -42,8 +42,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         lifecycleScope.launch {
 
             // merge 후 uid 수정
-            val gatheringTable = mainInstance.meetingsToAttend("MxOpSRZimnb5hiTBPdE1Gn8tLZ13")
-            gatheringTable.apply {
+            val gatheringTable = viewModel.mainToMapShortCut.value
+            if(gatheringTable != null){
                 binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
             }
 
@@ -107,7 +107,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
 
     private fun onMoveDetailedConfirmation(gathering: Gathering) {
-        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
+        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering, false)
         findNavController().navigate(actionMainToMap)
     }
 
@@ -117,7 +117,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             setOnCancelListener {
                 lifecycleScope.launch {
                     val actionMainToMap =
-                        MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
+                        MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering, false)
                     findNavController().navigate(actionMainToMap)
                 }
             }

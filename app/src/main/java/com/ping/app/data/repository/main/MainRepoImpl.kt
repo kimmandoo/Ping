@@ -2,15 +2,10 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.ktx.messaging
 import com.ping.app.data.model.Gathering
-import com.ping.app.ui.ui.container.MainActivity
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
