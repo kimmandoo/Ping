@@ -1,7 +1,6 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -35,8 +34,9 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             onEnterCodeDialog(it)
         })
     }
-    
+
     override fun initView(savedInstanceState: Bundle?) {
+
         val user = LoginRepoImpl.get().getUserInfo()!!
         binding.apply {
             mainFragTitleHello.text =

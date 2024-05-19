@@ -2,15 +2,10 @@ package com.ping.app.data.repository.main
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.ktx.messaging
 import com.ping.app.data.model.Gathering
-import com.ping.app.ui.ui.container.MainActivity
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
@@ -83,7 +78,7 @@ class MainRepoImpl(context: Context) : MainRepo {
                 // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
                 for (detailMeetingDocument in resultDetailMeetingTable) {
 
-                    val data = detailMeetingDocument.data["Participants"] as? List<String>
+                    val data = detailMeetingDocument.data["participants"] as? List<String>
                     if (data != null) {
                         for (i in 1..<data.size) {
                             if (userUid == data[i]) {
@@ -103,7 +98,7 @@ class MainRepoImpl(context: Context) : MainRepo {
                             }
                         }
                     } else {
-                        Log.d(TAG, "No participants found")
+//                        Log.d(TAG, "No participants found")
                     }
 
                 }
@@ -130,6 +125,20 @@ class MainRepoImpl(context: Context) : MainRepo {
         Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
+    }
+
+    override suspend fun detailMeetingDuplicateCheck(gathering: Gathering, userUid: String): Boolean {
+        val duplicateResult = CompletableDeferred<Boolean>()
+        val detailMeetingTable = db.collection("DETAILMEETING").document(gathering.uuid)
+        detailMeetingTable
+            .get()
+            .addOnSuccessListener { resultDetailMeetingTable ->
+                val data = resultDetailMeetingTable.data?.get("participants") as? List<String>
+                if (data != null) {
+                    duplicateResult.complete(data.contains(userUid))
+                }
+            }
+        return duplicateResult.await()
     }
 
 
