@@ -15,9 +15,6 @@
             app:destination="@id/mainFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_loginFragment_to_gatheringFragment"
-            app:destination="@id/gatheringFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
@@ -49,10 +46,6 @@
             android:name="ping_data"
             app:argType="com.ping.app.data.model.Gathering"
             app:nullable="true"/>
-        <action
-            android:id="@+id/action_pingMapFragment_to_gatheringFragment"
-            app:destination="@id/gatheringFragment"
-            app:popUpTo="@id/mainFragment" />
     </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"
@@ -66,8 +59,4 @@
         android:id="@+id/pingAddPostFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddPostFragment"
         android:label="PingAddPostFragment" />
-    <fragment
-        android:id="@+id/gatheringFragment"
-        android:name="com.ping.app.ui.ui.feature.gathering.GatheringFragment"
-        android:label="GatheringFragment" />
 </navigation>

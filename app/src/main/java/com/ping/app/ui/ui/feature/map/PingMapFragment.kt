@@ -167,7 +167,8 @@ class PingMapFragment :
                         lifecycleScope.launch {
                             // 모임에 참여시키는 로직 들어가면 됨
                             pingMapInstance.participantsMeetingDetailTable(dataFromMain, LoginRepoImpl.get().getAccessToken())
-                            findNavController().navigate(R.id.action_pingMapFragment_to_gatheringFragment)
+                            // TODO: 모임에 참여했으니까, 현재 화면에서 update가 필요하다
+
                         }
                     }
                 }
