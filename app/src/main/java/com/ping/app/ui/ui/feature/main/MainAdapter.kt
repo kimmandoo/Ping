@@ -1,5 +1,6 @@
 package com.ping.app.ui.ui.feature.main
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -24,20 +25,19 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
     inner class MainHolder(private val binding: ItemMainBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindInfo(position: Int) {
-            val item = currentList.get(position)
+            val item = currentList[position]
             binding.mainItemCard.setOnClickListener {
                 if (item.enterCode == "") {
                     onMoveDetailedConfirmation(item)
-                }
-                else{
-                    //dialog를 띄워야함
-
+                }else {
                     onEnterCodeDialog(item)
                 }
             }
 
             if(item.enterCode != ""){
                 binding.enterOrPass.setImageResource(R.drawable.baseline_lock_24)
+            }else{
+                binding.enterOrPass.setImageResource(R.drawable.baseline_arrow_forward_ios_24)
             }
 
             binding.mainItemTitle.text = item.title
@@ -54,6 +54,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
                 }.onCompletion {
                     withContext(Dispatchers.Main) {
                         binding.mainItemTimeRemaining.text = "마감"
+                        binding.view1.setBackgroundColor(Color.RED)
                     }
                 }.collect { remainingMillis ->
                     val totalSeconds = remainingMillis / 1000
@@ -62,6 +63,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
                     val remainingDays = totalSeconds / (24 * 3600)
 
                     withContext(Dispatchers.Main) {
+                        binding.view1.setBackgroundColor(Color.BLACK)
                         binding.mainItemTimeRemaining.text =
                             "${remainingDays}일 ${remainingHours}시 ${remainingMinutes}분 뒤"
                     }

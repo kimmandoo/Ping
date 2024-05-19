@@ -15,7 +15,7 @@ fun getAppKey(propertyKey: String): String {
 android {
     namespace = "com.ping.app"
     compileSdk = 34
-
+    
     defaultConfig {
         applicationId = "com.ping.app"
         minSdk = 24
@@ -25,7 +25,7 @@ android {
         manifestPlaceholders["NAVER_MAP_CLIENT_ID"] = getAppKey("NAVER_MAP_CLIENT_ID")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -53,6 +53,7 @@ dependencies {
     implementation(AndroidX.CONSTRAINT_LAYOUT)
     implementation(AndroidX.NAVIGATION_FRAGMENT)
     implementation(AndroidX.NAVIGATION_UI)
+    implementation(AndroidX.DATASTORE)
     implementation(Google.MATERIAL)
     implementation(Google.GOOGLE_PLAY_SERVICE_LOCATION)
     implementation(platform(Google.FIREBASE_BOM))

@@ -6,6 +6,8 @@ object AndroidX {
     const val NAVIGATION_FRAGMENT =
         "androidx.navigation:navigation-fragment-ktx:${Versions.NAVIGATION}"
     const val NAVIGATION_UI = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
+    const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
+    
 }
 
 object Naver {

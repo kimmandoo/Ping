@@ -25,9 +25,9 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
+import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.ui.base.BaseFragment
-import com.ping.app.ui.presentation.MainActivityViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.MAP_BOUNDS
@@ -55,7 +55,6 @@ class PingMapFragment :
         PingApplication.locationHelper
     }
     private val pingMapInstance = PingApplication.pingMapRepo
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     override fun initView(savedInstanceState: Bundle?) {
 
@@ -64,7 +63,7 @@ class PingMapFragment :
             dataFromMain = it
             latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
         }
-        
+
         args.pingShortCut.let {
             Log.d(TAG, "initView: $it")
             dataFromMainShortCut = it
@@ -169,8 +168,10 @@ class PingMapFragment :
         marker.map = naverMap
 
         binding.apply {
+
+
+
             mapBtnGathering.setOnClickListener {
-                Log.d(TAG, "initView: ")
                 if(dataFromMainShortCut == false) {
                     pingAlert.showDialog()
                     pingAlert.alertDialog.apply {
