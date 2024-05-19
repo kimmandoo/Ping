@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
@@ -26,6 +25,7 @@ import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
+import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.map.PingMapViewModel
@@ -72,15 +72,25 @@ class PingMapFragment :
             FusedLocationSource(this, GPS_ENABLE_REQUEST_CODE)
 
         lifecycleScope.launch {
+            initUi(isExist())
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
+                        // 여기에는 거리계산 update만 있으면 된다.
                         binding.mapFragmentView.visibility = View.VISIBLE
                         binding.mapProgress.visibility = View.GONE
-                        binding.mapDistanceFixed.text = getString(R.string.ping_map_distance, String.format("%.2f", currentLocation.distanceTo(latlngFromMain)))
-                        binding.mapLocationFixed.text = getString(R.string.ping_map_location, dataFromMain.title)
-                        binding.mapOrganizerFixed.text = getString(R.string.ping_map_open_user, pingMapInstance.getUserName(dataFromMain.uid))
-                        binding.mapContentFixed.text = getString(R.string.ping_map_content, dataFromMain.content)
+                        binding.mapDistanceFixed.text = getString(
+                            R.string.ping_map_distance,
+                            String.format("%.2f", currentLocation.distanceTo(latlngFromMain))
+                        )
+                        binding.mapLocationFixed.text =
+                            getString(R.string.ping_map_location, dataFromMain.title)
+                        binding.mapOrganizerFixed.text = getString(
+                            R.string.ping_map_open_user,
+                            pingMapInstance.getUserName(dataFromMain.uid)
+                        )
+                        binding.mapContentFixed.text =
+                            getString(R.string.ping_map_content, dataFromMain.content)
 
                         if (::naverMap.isInitialized) {
                             naverMap.locationOverlay.run {
@@ -104,13 +114,12 @@ class PingMapFragment :
         naverMap.locationSource = locationSource
         naverMap.apply {
             uiSettings.apply {
-                // zoom 버튼 제거하기
                 isZoomControlEnabled = false
             }
             minZoom = 16.0
             maxZoom = 18.0
             var pingPosition = starbucks
-            if (::dataFromMain.isInitialized){
+            if (::dataFromMain.isInitialized) {
                 pingPosition = LatLng(dataFromMain.latitude, dataFromMain.longitude)
             }
             cameraPosition = CameraPosition(
@@ -156,9 +165,6 @@ class PingMapFragment :
         marker.map = naverMap
 
         binding.apply {
-
-
-
             mapBtnGathering.setOnClickListener {
                 Log.d(TAG, "initView: ")
                 pingAlert.showDialog()
@@ -166,7 +172,10 @@ class PingMapFragment :
                     setOnCancelListener {
                         lifecycleScope.launch {
                             // 모임에 참여시키는 로직 들어가면 됨
-                            pingMapInstance.participantsMeetingDetailTable(dataFromMain, LoginRepoImpl.get().getAccessToken())
+                            pingMapInstance.participantsMeetingDetailTable(
+                                dataFromMain,
+                                LoginRepoImpl.get().getAccessToken()
+                            )
                             // TODO: 모임에 참여했으니까, 현재 화면에서 update가 필요하다
 
                         }
@@ -175,6 +184,20 @@ class PingMapFragment :
             }
         }
     }
+
+    private fun initUi(stateJoin: Boolean) {
+        if (stateJoin) {
+            // 이미 참가 중이다
+        } else {
+            // 아직 참가 전이다
+
+        }
+    }
+
+    private suspend fun isExist(): Boolean = MainRepoImpl.get().detailMeetingDuplicateCheck(
+        dataFromMain,
+        PingApplication.loginRepo.getAccessToken()
+    )
 
     override fun onStart() {
         super.onStart()
