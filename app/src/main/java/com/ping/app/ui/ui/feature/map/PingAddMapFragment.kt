@@ -72,7 +72,6 @@ class PingAddMapFragment :
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        
     }
     
     private fun createPing(map: NaverMap, marker: Marker) {

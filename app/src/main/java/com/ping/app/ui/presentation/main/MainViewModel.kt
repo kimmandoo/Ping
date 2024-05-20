@@ -7,26 +7,28 @@ import androidx.lifecycle.viewModelScope
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainViewModel_싸피"
-class MainViewModel(): ViewModel() {
+
+class MainViewModel() : ViewModel() {
     private val mainInstance = MainRepoImpl.get()
     private val loginInstance = LoginRepoImpl.get()
     private val _meetingList = MutableLiveData<List<Gathering>>()
-    val meetingList : LiveData<List<Gathering>> get() = _meetingList
-
+    val meetingList: LiveData<List<Gathering>> get() = _meetingList
+    
     private val _mainToMapShortCut = MutableLiveData<Gathering?>()
-    val mainToMapShortCut : LiveData<Gathering?> get() = _mainToMapShortCut
-
-    fun mainToMapShortCutInit(){
+    val mainToMapShortCut: LiveData<Gathering?> get() = _mainToMapShortCut
+    
+    fun mainToMapShortCutInit() {
         _mainToMapShortCut.value = null
         viewModelScope.launch {
             _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())
         }
     }
-
-    private fun updateMeetingList(newList: List<Gathering>){
+    
+    private fun updateMeetingList(newList: List<Gathering>) {
         _meetingList.value = newList
     }
     
@@ -35,4 +37,13 @@ class MainViewModel(): ViewModel() {
             updateMeetingList(mainInstance.getMeetingTable(lng, lat))
         }
     }
+    
+    fun getUserInfo() = LoginRepoImpl.get().getUserInfo()!!
+    
+    suspend fun getUid() = LoginRepoImpl.get().getAccessToken()
+    
+    suspend fun isUserDuplicated() = MainRepoImpl.get().meetingDuplicateCheck(getUid())
+    
+    suspend fun logout() = LoginRepoImpl.get().logout()
+    
 }
