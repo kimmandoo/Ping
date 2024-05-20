@@ -17,7 +17,6 @@ import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.easyToast
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -58,18 +57,15 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
             mainFragRecyclerview.adapter = mainAdapter
             mainFragFab.setOnClickListener {
-                val duplicateDeffer = CompletableDeferred<Boolean>()
-                var duplucateResult = false
                 lifecycleScope.launch {
-                    duplicateDeffer.complete(MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken()))
-                    duplucateResult = duplicateDeffer.await()
-                }
+                    val duplicateResult = MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
 
-                if(duplucateResult == true) {
-                    findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
-                }
-                else{
-                    binding.root.context.easyToast(getString(R.string.main_already_table))
+                    if(duplicateResult == true) {
+                        findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                    }
+                    else{
+                        binding.root.context.easyToast(getString(R.string.main_already_table))
+                    }
                 }
             }
         }

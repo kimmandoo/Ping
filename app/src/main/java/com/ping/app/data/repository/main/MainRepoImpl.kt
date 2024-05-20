@@ -145,7 +145,6 @@ class MainRepoImpl(context: Context) : MainRepo {
         val duplicateResult = CompletableDeferred<Boolean>()
         val meetingTable = db.collection("MEETING").whereEqualTo("uid", userUid)
         val currentTime = System.currentTimeMillis()
-        var checker = false
 
         meetingTable
             .get()
@@ -153,15 +152,12 @@ class MainRepoImpl(context: Context) : MainRepo {
                 for(resultMeetingElement in resultMeetingTable.documents){
                     if(resultMeetingElement.data?.get("gatheringTime").toString().toLong() > currentTime){
                         duplicateResult.complete(false)
-                        checker = true
-                        break
                     }
                 }
-                if(checker == false) {
-                    duplicateResult.complete(true)
-                }
             }
-
+            .addOnCompleteListener {
+                duplicateResult.complete(true)
+            }
         return duplicateResult.await()
     }
 
