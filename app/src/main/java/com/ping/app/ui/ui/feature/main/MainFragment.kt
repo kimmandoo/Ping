@@ -1,7 +1,6 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -40,17 +39,20 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
 
         lifecycleScope.launch {
-
             // merge 후 uid 수정
-            val gatheringTable = viewModel.mainToMapShortCut.value
-            if(gatheringTable != null){
-                binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
-            }
+            viewModel.mainToMapShortCut.observe(viewLifecycleOwner){shortCutGatheringData ->
+                if(shortCutGatheringData != null){
+                    binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
 
-            binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
-                Log.d(TAG, "initView: ${gatheringTable}")
-                val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gatheringTable, true)
-                findNavController().navigate(actionMainToMap)
+                    binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
+                        val actionMainToMap =
+                            MainFragmentDirections.actionMainFragmentToPingMapFragment(
+                                shortCutGatheringData,
+                                true
+                            )
+                        findNavController().navigate(actionMainToMap)
+                    }
+                }
             }
         }
 
