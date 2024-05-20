@@ -1,7 +1,6 @@
 package com.ping.app.data.repository.main
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -77,12 +76,10 @@ class MainRepoImpl(context: Context) : MainRepo {
             .addOnSuccessListener { resultDetailMeetingTable ->
                 // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
                 for (detailMeetingDocument in resultDetailMeetingTable) {
-
                     val data = detailMeetingDocument.data["participants"] as? List<String>
                     if (data != null) {
                         for (i in 1..<data.size) {
-                            if (userUid == data[i]) {
-
+                            if (userUid == data.get(i).toString()) {
                                 // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
                                 val meetingTable = db.collection("MEETING")
 
@@ -90,22 +87,21 @@ class MainRepoImpl(context: Context) : MainRepo {
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
                                         resultDetailMeetingDocument = detailMeetingDocument.id
+
                                         meetingsToAttendTable.complete(
                                             resultMeetingTable
                                         )
                                     }
-
                             }
                         }
                     } else {
 //                        Log.d(TAG, "No participants found")
                     }
-
                 }
             }
-        val resultMeetingTable = meetingsToAttendTable.await()
 
-        for (meetingDocument in resultMeetingTable) {
+        for (meetingDocument in meetingsToAttendTable.await()) {
+
             val dataUUID =
                 meetingDocument.data["uuid"] as? String
             if (resultDetailMeetingDocument == dataUUID) {
@@ -119,10 +115,9 @@ class MainRepoImpl(context: Context) : MainRepo {
                     meetingDocument.data["longitude"].toString().toDouble(),
                     meetingDocument.data["latitude"].toString().toDouble(),
                 )
+                break
             }
         }
-
-        Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
     }

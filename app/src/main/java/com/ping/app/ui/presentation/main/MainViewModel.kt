@@ -9,18 +9,23 @@ import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
 import kotlinx.coroutines.launch
 
+private const val TAG = "MainViewModel_싸피"
 class MainViewModel(): ViewModel() {
     private val mainInstance = MainRepoImpl.get()
     private val loginInstance = LoginRepoImpl.get()
     private val _meetingList = MutableLiveData<List<Gathering>>()
     val meetingList : LiveData<List<Gathering>> get() = _meetingList
-    
-    init {
+
+    private val _mainToMapShortCut = MutableLiveData<Gathering?>()
+    val mainToMapShortCut : LiveData<Gathering?> get() = _mainToMapShortCut
+
+    fun mainToMapShortCutInit(){
+        _mainToMapShortCut.value = null
         viewModelScope.launch {
-            mainInstance.meetingsToAttend(loginInstance.getAccessToken())
+            _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())
         }
     }
-    
+
     private fun updateMeetingList(newList: List<Gathering>){
         _meetingList.value = newList
     }

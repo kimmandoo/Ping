@@ -46,6 +46,11 @@
             android:name="ping_data"
             app:argType="com.ping.app.data.model.Gathering"
             app:nullable="true"/>
+        <action
+            android:id="@+id/action_pingMapFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/pingMapFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/pingAddMapFragment"
