@@ -42,15 +42,15 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner){shortCutGatheringData ->
                 if(shortCutGatheringData != null){
                     binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
+                }
 
-                    binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
-                        val actionMainToMap =
-                            MainFragmentDirections.actionMainFragmentToPingMapFragment(
-                                shortCutGatheringData,
-                                true
-                            )
-                        findNavController().navigate(actionMainToMap)
-                    }
+                binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
+                    val actionMainToMap =
+                        MainFragmentDirections.actionMainFragmentToPingMapFragment(
+                            shortCutGatheringData,
+                            true
+                        )
+                    findNavController().navigate(actionMainToMap)
                 }
             }
         }
