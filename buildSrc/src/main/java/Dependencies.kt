@@ -46,11 +46,10 @@ object UnitTest {
 }
 
 object Square {
-    //    const val RETROFIT2 = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT2}"
-//    const val RETROFIT2_CONVERTER_GSON =
-//        "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT2}"
-//    const val OKHTTP3_BOM = "com.squareup.okhttp3:okhttp-bom:${Versions.OKHTTP3_BOM}"
-    const val OKHTTP3 = "com.squareup.okhttp3:okhttp"
-    const val OKHTTP3_LOGGING = "com.squareup.okhttp3:logging-interceptor"
+    const val RETROFIT2 = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT2}"
+    const val RETROFIT2_CONVERTER_GSON =
+        "com.squareup.retrofit2:converter-gson:${Versions.RETROFIT2}"
+    const val OKHTTP3 = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP3}"
+    const val OKHTTP3_LOGGING = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP3}"
     const val GLIDE = "com.github.bumptech.glide:glide:${Versions.GLIDE}"
 }

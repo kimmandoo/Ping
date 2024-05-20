@@ -2,9 +2,10 @@ package com.ping.app
 
 import android.app.Application
 import android.content.Context
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.ping.app.data.repository.chatgpt.ChatGPTRepo
+import com.ping.app.data.repository.chatgpt.ChatGPTRepoImpl
 import com.ping.app.data.repository.login.LoginRepo
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepo
@@ -22,11 +23,12 @@ class PingApplication : Application() {
         pingMapRepo = PingMapRepoImpl.initialize(this)
         loginRepo = LoginRepoImpl.initialize(this)
         mainRepo = MainRepoImpl.initialize(this)
+        gptRepo = ChatGPTRepoImpl.initialize()
     }
     
     companion object {
         val UID_TOKEN = stringPreferencesKey("uid")
-        
+        lateinit var gptRepo: ChatGPTRepo
         lateinit var locationHelper: LocationHelper
         lateinit var pingMapRepo: PingMapRepo
         lateinit var loginRepo: LoginRepo
