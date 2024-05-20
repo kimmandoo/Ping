@@ -5,10 +5,8 @@ import android.util.Log
 import androidx.annotation.UiThread
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraAnimation
-import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
@@ -19,11 +17,14 @@ import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.map.PingMapViewModel
+import com.ping.app.ui.ui.util.CLICK_DELAY
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LNG
 import com.ping.app.ui.ui.util.init
 import com.ping.app.ui.ui.util.withMarker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "PingAddMapFragment_싸피"
 
@@ -61,7 +62,12 @@ class PingAddMapFragment :
         map.withMarker(marker, binding.pingAddView)
         locationHelperInstance.getClient().init(map, marker, binding.location)
         binding.mapAddBtn.setOnClickListener {
-            createPing(map, marker)
+            lifecycleScope.launch {
+                binding.mapAddBtn.isEnabled = false
+                createPing(map, marker)
+                delay(CLICK_DELAY)
+                binding.mapAddBtn.isEnabled = true
+            }
         }
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()

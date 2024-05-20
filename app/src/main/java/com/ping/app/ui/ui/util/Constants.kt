@@ -19,7 +19,7 @@ object FCM{
 
 
 val starbucks = LatLng(36.107953, 128.418385)
-
+val CLICK_DELAY = 1000L
 enum class userTableColunm{
     NAME, EMAIL, REGION, MeetingManagerUID
 }
