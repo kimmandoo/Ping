@@ -38,23 +38,31 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
 
     override fun initView(savedInstanceState: Bundle?) {
+        viewModel.mainToMapShortCutTest()
 
         lifecycleScope.launch {
-            viewModel.mainToMapShortCut.observe(viewLifecycleOwner){shortCutGatheringData ->
-                if(shortCutGatheringData != null){
+            viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
+
+                // LiveData가 변경될 때 UI 업데이트
+                if (shortCutGatheringData != null) {
                     binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
+                } else {
+                    binding.mainFragLinearPlannedParticipationResult.visibility = View.GONE
                 }
 
+                // 클릭 리스너 설정
                 binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
-                    val actionMainToMap =
-                        MainFragmentDirections.actionMainFragmentToPingMapFragment(
+                    if (shortCutGatheringData != null) {
+                        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(
                             shortCutGatheringData,
                             true
                         )
-                    findNavController().navigate(actionMainToMap)
+                        findNavController().navigate(actionMainToMap)
+                    }
                 }
             }
         }
+
 
         val user = LoginRepoImpl.get().getUserInfo()!!
         lifecycleScope.launch {

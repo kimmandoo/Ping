@@ -16,15 +16,16 @@ class MainViewModel(): ViewModel() {
     private val _meetingList = MutableLiveData<List<Gathering>>()
     val meetingList : LiveData<List<Gathering>> get() = _meetingList
 
-    private val _mainToMapShortCut = MutableLiveData<Gathering>()
-    val mainToMapShortCut : LiveData<Gathering> get() = _mainToMapShortCut
-    
-    init{
+    private val _mainToMapShortCut = MutableLiveData<Gathering?>()
+    val mainToMapShortCut : LiveData<Gathering?> get() = _mainToMapShortCut
+
+    fun mainToMapShortCutTest(){
+        _mainToMapShortCut.value = null
         viewModelScope.launch {
             _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())
         }
     }
-    
+
     private fun updateMeetingList(newList: List<Gathering>){
         _meetingList.value = newList
     }

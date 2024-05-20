@@ -77,7 +77,6 @@ class MainRepoImpl(context: Context) : MainRepo {
             .addOnSuccessListener { resultDetailMeetingTable ->
                 // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
                 for (detailMeetingDocument in resultDetailMeetingTable) {
-
                     val data = detailMeetingDocument.data["participants"] as? List<String>
                     if (data != null) {
                         for (i in 1..<data.size) {
@@ -89,22 +88,31 @@ class MainRepoImpl(context: Context) : MainRepo {
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
                                         resultDetailMeetingDocument = detailMeetingDocument.id
+                                        Log.d(TAG, "meetingsToAttend resultDetailMeetingDocument: ${resultDetailMeetingDocument}")
+
                                         meetingsToAttendTable.complete(
                                             resultMeetingTable
                                         )
                                     }
-
                             }
                         }
                     } else {
 //                        Log.d(TAG, "No participants found")
                     }
-
                 }
             }
-        val resultMeetingTable = meetingsToAttendTable.await()
+            .addOnCompleteListener {
+                Log.d(TAG, "meetingsToAttend: addOnCompleteListener")
+            }
+            .addOnCanceledListener {
+                Log.d(TAG, "meetingsToAttend: addOnCanceledListener")
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "meetingsToAttend: addOnFailureListener")
+            }
 
-        for (meetingDocument in resultMeetingTable) {
+        for (meetingDocument in meetingsToAttendTable.await()) {
+
             val dataUUID =
                 meetingDocument.data["uuid"] as? String
             if (resultDetailMeetingDocument == dataUUID) {
@@ -122,7 +130,7 @@ class MainRepoImpl(context: Context) : MainRepo {
             }
         }
 
-        Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
+        Log.d(TAG, "meetingsToAttend@@@@@@@: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
     }

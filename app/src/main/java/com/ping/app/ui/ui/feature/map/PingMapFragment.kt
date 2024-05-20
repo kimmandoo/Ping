@@ -184,22 +184,32 @@ class PingMapFragment :
                 text = "취소하기"
                 setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
                 setOnClickListener {
+
                     lifecycleScope.launch {
-                        pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
-                            dataFromMain,
-                            LoginRepoImpl.get().getAccessToken()
-                        )
-                        binding.mapBtnGathering.apply {
-                            setBackgroundColor(
-                                ResourcesCompat.getColor(
-                                    resources,
-                                    R.color.ic_launcher_background,
-                                    null
-                                )
+                        if(dataFromMain.uid == LoginRepoImpl.get().getAccessToken()){
+                            pingMapInstance.organizercancellationOfParticipantsMeetingTable(
+                                dataFromMain,
+                                LoginRepoImpl.get().getAccessToken()
                             )
-                            text = getString(R.string.join)
+
+
+                        } else {
+                            pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
+                                dataFromMain,
+                                LoginRepoImpl.get().getAccessToken()
+                            )
+                            binding.mapBtnGathering.apply {
+                                setBackgroundColor(
+                                    ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.ic_launcher_background,
+                                        null
+                                    )
+                                )
+                                text = getString(R.string.join)
+                            }
+                            binding.root.context.easyToast("참여 취소되었습니다")
                         }
-                        binding.root.context.easyToast("참여 취소되었습니다")
                     }
                 }
             }

@@ -88,14 +88,35 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
      * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
      */
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
-            Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
+
+        if(data.uid == userUid){
+            organizercancellationOfParticipantsMeetingTable(data, userUid)
+        }else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
+                Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
+            }
+            val meetingDetailTable = db.collection("DETAILMEETING")
+            meetingDetailTable.document(data.uuid)
+                .update("participants", FieldValue.arrayRemove(userUid))
         }
-        val meetingDetailTable = db.collection("DETAILMEETING")
-        meetingDetailTable.document(data.uuid)
-            .update("participants", FieldValue.arrayRemove(userUid))
     }
-    
+
+    override fun organizercancellationOfParticipantsMeetingTable(data: Gathering, userUid: String) {
+        db.collection("DETAILMEETING")
+            .document(data.uuid)
+            .delete()
+
+        db.collection("MEETING")
+            .whereEqualTo("uid", userUid)
+            .get()
+            .addOnSuccessListener {
+                db.collection("MEETING")
+                    .document(it.documents.get(0).id)
+                    .delete()
+            }
+    }
+
+
     override suspend fun getUserName(userUid: String): String {
         var queryResultName = CompletableDeferred<String>()
         val userTable = db.collection("USER")
