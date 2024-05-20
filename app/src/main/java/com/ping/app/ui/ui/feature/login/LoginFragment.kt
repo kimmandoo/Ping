@@ -5,7 +5,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseUser
+import com.ping.app.PingApplication.Companion.loginRepo
 import com.ping.app.R
+import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.FragmentLoginBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.login.LoginViewModel
@@ -22,7 +24,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         binding.apply {
             loginBtnGoogleLogin.setOnClickListener {
                 lifecycleScope.launch {
-                    viewModel.requestGoogleLogin() { firebaseUser ->
+                    viewModel.requestGoogleLogin { firebaseUser ->
                         updateUI(firebaseUser)
                     }
                 }

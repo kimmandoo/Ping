@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         splashScreen = installSplashScreen()
+        PingApplication.loginRepo = LoginRepoImpl.initialize(this)
         LoginRepoImpl.get().authInit()
         PingApplication.locationHelper.listener = {
             pingMapViewModel.setUserLocation(LatLng(it))
@@ -55,7 +56,6 @@ class MainActivity : AppCompatActivity() {
         startAnimation()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        
         createNotificationChannel(FCM.CHANNEL_ID, FCM.CHANNEL_NAME)
         initView()
     }

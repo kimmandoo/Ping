@@ -34,6 +34,7 @@
                 android:id="@+id/map_layout_data"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp"
                 app:layout_constraintTop_toTopOf="parent">
@@ -86,7 +87,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="8dp"
                 android:elevation="0dp"
-                app:cardCornerRadius="10dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

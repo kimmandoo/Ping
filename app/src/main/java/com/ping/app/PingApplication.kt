@@ -12,6 +12,7 @@ import com.ping.app.data.repository.main.MainRepo
 import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.data.repository.map.PingMapRepo
 import com.ping.app.data.repository.map.PingMapRepoImpl
+import com.ping.app.ui.ui.container.MainActivity
 import com.ping.app.ui.ui.util.LocationHelper
 
 val Context.tokenDataStore by preferencesDataStore(name = "uid")
@@ -21,7 +22,6 @@ class PingApplication : Application() {
         super.onCreate()
         locationHelper = LocationHelper.initialize(this)
         pingMapRepo = PingMapRepoImpl.initialize(this)
-        loginRepo = LoginRepoImpl.initialize(this)
         mainRepo = MainRepoImpl.initialize(this)
         gptRepo = ChatGPTRepoImpl.initialize()
     }
