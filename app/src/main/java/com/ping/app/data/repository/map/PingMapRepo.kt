@@ -12,5 +12,7 @@ interface PingMapRepo {
 
     fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String)
 
+    fun organizercancellationOfParticipantsMeetingTable(data: Gathering, userUid: String)
+
     suspend fun getUserName(userUid: String) : String
 }

@@ -28,10 +28,10 @@ import kotlinx.coroutines.launch
 private const val TAG = "MainFragment_싸피"
 
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.fragment_main) {
-    
+
     override val viewModel: MainViewModel by viewModels()
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
-    
+
     private val mainAdapter by lazy {
         MainAdapter(onMoveDetailedConfirmation = {
             onMoveDetailedConfirmation(it)
@@ -39,8 +39,33 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             onEnterCodeDialog(it)
         })
     }
-    
+
     override fun initView(savedInstanceState: Bundle?) {
+        viewModel.mainToMapShortCutInit()
+
+        lifecycleScope.launch {
+            viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
+
+                // LiveData가 변경될 때 UI 업데이트
+                if (shortCutGatheringData != null) {
+                    binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
+                } else {
+                    binding.mainFragLinearPlannedParticipationResult.visibility = View.GONE
+                }
+
+                // 클릭 리스너 설정
+                binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
+                    if (shortCutGatheringData != null) {
+                        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(
+                            shortCutGatheringData
+                        )
+                        findNavController().navigate(actionMainToMap)
+                    }
+                }
+            }
+        }
+
+
         val user = LoginRepoImpl.get().getUserInfo()!!
         
         lifecycleScope.launch {
@@ -85,7 +110,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
             mainFragRecyclerview.adapter = mainAdapter
         }
-        
+
         viewModel.meetingList.observe(viewLifecycleOwner) { meetinglist ->
             meetinglist?.let {
                 mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
@@ -95,7 +120,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                             mainAdapter.submitList(meetinglist)
                             binding.root.context.easyToast(getString(R.string.main_see_all))
                         }
-                        
+
                         false -> {
                             mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
                         }
@@ -103,26 +128,26 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 }
             }
         }
-        
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
                         val lat = currentLocation.latitude
                         val lng = currentLocation.longitude
-                        
+
                         viewModel.initMeetingList(lat, lng)
                     }
                 }
             }
         }
     }
-    
+
     private fun onMoveDetailedConfirmation(gathering: Gathering) {
         val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
         findNavController().navigate(actionMainToMap)
     }
-    
+
     private fun onEnterCodeDialog(gathering: Gathering) {
         val mainDialog = MainAlertDialog(binding.root.context, gathering)
         mainDialog.alertDialog.apply {
