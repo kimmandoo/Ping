@@ -39,7 +39,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
 
         lifecycleScope.launch {
-            // merge 후 uid 수정
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner){shortCutGatheringData ->
                 if(shortCutGatheringData != null){
                     binding.mainFragLinearPlannedParticipationResult.visibility = View.VISIBLE
@@ -55,7 +54,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 }
             }
         }
-
 
         val user = LoginRepoImpl.get().getUserInfo()!!
         binding.apply {
