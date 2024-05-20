@@ -141,6 +141,26 @@ class MainRepoImpl(context: Context) : MainRepo {
         return duplicateResult.await()
     }
 
+    override suspend fun meetingDuplicateCheck(userUid: String): Boolean {
+        val duplicateResult = CompletableDeferred<Boolean>()
+        val meetingTable = db.collection("MEETING").whereEqualTo("uid", userUid)
+        val currentTime = System.currentTimeMillis()
+
+        meetingTable
+            .get()
+            .addOnSuccessListener {resultMeetingTable ->
+                for(resultMeetingElement in resultMeetingTable.documents){
+                    if(resultMeetingElement.data?.get("gatheringTime").toString().toLong() > currentTime){
+                        duplicateResult.complete(false)
+                    }
+                }
+            }
+            .addOnCompleteListener {
+                duplicateResult.complete(true)
+            }
+        return duplicateResult.await()
+    }
+
 
     companion object {
         private var INSTANCE: MainRepoImpl? = null

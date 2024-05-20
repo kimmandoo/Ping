@@ -20,4 +20,5 @@
     <string name="join">참여하기</string>
     <string name="map_data_title">%s가 생성한 핑입니다</string>
     <string name="map_data_content">일정 내용: %s</string>
+    <string name="main_already_table">이미 생성된 테이블이 존재합니다.</string>
 </resources>

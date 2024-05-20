@@ -8,4 +8,7 @@ interface MainRepo {
     suspend fun meetingsToAttend(userUid: String) : Gathering
 
     suspend fun detailMeetingDuplicateCheck(gathering: Gathering, userUid: String):Boolean
+
+    suspend fun meetingDuplicateCheck(userUid: String):Boolean
+
 }
