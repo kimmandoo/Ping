@@ -7,6 +7,7 @@ import android.view.View
 import androidx.annotation.UiThread
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,13 +23,11 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
-import com.ping.app.data.repository.login.LoginRepoImpl
-import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.databinding.FragmentPingMapBinding
 import com.ping.app.ui.base.BaseFragment
+import com.ping.app.ui.presentation.login.LoginViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.MAP_BOUNDS
@@ -44,46 +43,39 @@ private const val TAG = "MapFragment 싸피"
 class PingMapFragment :
     BaseFragment<FragmentPingMapBinding, PingMapViewModel>(R.layout.fragment_ping_map),
     OnMapReadyCallback {
-
+    
     override val viewModel: PingMapViewModel by activityViewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var dataFromMain: Gathering
     private lateinit var latlngFromMain: LatLng
     private val args: PingMapFragmentArgs by navArgs()
-    private val locationHelperInstance by lazy {
-        PingApplication.locationHelper
-    }
-    private val pingMapInstance = PingApplication.pingMapRepo
-
+    
     override fun initView(savedInstanceState: Bundle?) {
-
+        
         args.pingData?.let {
             Log.d(TAG, "initView: $it")
             dataFromMain = it
             latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
         }
-
-        locationHelperInstance.startLocationTracking()
-        locationHelperInstance.listener = {
-            viewModel.setUserLocation(LatLng(it))
-        }
+        
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this@PingMapFragment)
         locationSource =
             FusedLocationSource(this, GPS_ENABLE_REQUEST_CODE)
-
+        
         lifecycleScope.launch {
-            initUi(isExist())
+            initUi(viewModel.isExist(dataFromMain, loginViewModel.getUid()))
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
                         binding.apply {
                             mapDataOrganizer.text = getString(
                                 R.string.map_data_title,
-                                pingMapInstance.getUserName(dataFromMain.uid)
+                                viewModel.getUserName(dataFromMain.uid)
                             )
                             val dist = if (currentLocation.distanceTo(latlngFromMain) < 10) {
                                 "0m"
@@ -109,7 +101,7 @@ class PingMapFragment :
             }
         }
     }
-
+    
     @UiThread
     override fun onMapReady(map: NaverMap) {
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
@@ -136,7 +128,7 @@ class PingMapFragment :
                 pingPosition.offset(-MAP_BOUNDS, -MAP_BOUNDS),
                 pingPosition.offset(MAP_BOUNDS, MAP_BOUNDS)
             )
-
+            
             addOnCameraIdleListener {
                 val scale = round(cameraPosition.zoom - 16.0, 1) * MAP_BOUNDS
                 extent = LatLngBounds(
@@ -167,7 +159,7 @@ class PingMapFragment :
         }
         marker.map = naverMap
     }
-
+    
     private fun initUi(stateJoin: Boolean) {
         val pingAlert = PingAlertDialog(binding.root.context)
         if (stateJoin) {
@@ -176,15 +168,15 @@ class PingMapFragment :
                 setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
                 setOnClickListener {
                     lifecycleScope.launch {
-                        if(dataFromMain.uid == LoginRepoImpl.get().getAccessToken()){
-                            pingMapInstance.organizercancellationOfParticipantsMeetingTable(
+                        if (dataFromMain.uid == loginViewModel.getUid()) {
+                            viewModel.organizercancellationOfParticipantsMeetingTable(
                                 dataFromMain,
-                                LoginRepoImpl.get().getAccessToken()
+                                loginViewModel.getUid()
                             )
                         } else {
-                            pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
+                            viewModel.cancellationOfParticipantsMeetingDetailTable(
                                 dataFromMain,
-                                LoginRepoImpl.get().getAccessToken()
+                                loginViewModel.getUid()
                             )
                             binding.mapBtnGathering.apply {
                                 setBackgroundColor(
@@ -208,9 +200,9 @@ class PingMapFragment :
                 pingAlert.alertDialog.apply {
                     setOnCancelListener {
                         lifecycleScope.launch {
-                            pingMapInstance.participantsMeetingDetailTable(
+                            viewModel.participantsMeetingDetailTable(
                                 dataFromMain,
-                                LoginRepoImpl.get().getAccessToken()
+                                loginViewModel.getUid()
                             )
                             dismiss()
                             initUi(true)
@@ -220,45 +212,40 @@ class PingMapFragment :
             }
         }
     }
-
-    private suspend fun isExist(): Boolean = MainRepoImpl.get().detailMeetingDuplicateCheck(
-        dataFromMain,
-        PingApplication.loginRepo.getAccessToken()
-    )
-
+    
     override fun onStart() {
         super.onStart()
         mapView.onStart()
     }
-
+    
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
-
+    
     override fun onPause() {
         super.onPause()
         mapView.onPause()
     }
-
+    
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-
+    
     override fun onStop() {
         super.onStop()
         mapView.onStop()
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
     }
-
+    
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
-
+    
 }
