@@ -109,6 +109,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:backgroundTint="@color/white"
             android:src="@drawable/ic_map_add"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@null" />

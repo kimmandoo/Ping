@@ -1,6 +1,7 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -35,14 +36,23 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             onEnterCodeDialog(it)
         })
     }
-
+    
     override fun initView(savedInstanceState: Bundle?) {
-
-//        lifecycleScope.launch {
-//            MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
-//        }
-
         val user = LoginRepoImpl.get().getUserInfo()!!
+        lifecycleScope.launch {
+            val duplicateResult =
+                MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
+            binding.mainFragFab.apply {
+                visibility = if (!duplicateResult) View.GONE else View.VISIBLE
+                setOnClickListener {
+                    if (duplicateResult) {
+                        findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                    } else {
+                        binding.root.context.easyToast(getString(R.string.main_already_table))
+                    }
+                }
+            }
+        }
         binding.apply {
             mainFragTitleHello.text =
                 getString(R.string.main_user, user.displayName)
@@ -56,18 +66,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 }
             }
             mainFragRecyclerview.adapter = mainAdapter
-            mainFragFab.setOnClickListener {
-                lifecycleScope.launch {
-                    val duplicateResult = MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
-
-                    if(duplicateResult == true) {
-                        findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
-                    }
-                    else{
-                        binding.root.context.easyToast(getString(R.string.main_already_table))
-                    }
-                }
-            }
         }
         
         viewModel.meetingList.observe(viewLifecycleOwner) { meetinglist ->
