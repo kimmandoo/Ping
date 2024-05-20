@@ -176,15 +176,12 @@ class PingMapFragment :
                 text = "취소하기"
                 setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
                 setOnClickListener {
-
                     lifecycleScope.launch {
                         if(dataFromMain.uid == LoginRepoImpl.get().getAccessToken()){
                             pingMapInstance.organizercancellationOfParticipantsMeetingTable(
                                 dataFromMain,
                                 LoginRepoImpl.get().getAccessToken()
                             )
-
-
                         } else {
                             pingMapInstance.cancellationOfParticipantsMeetingDetailTable(
                                 dataFromMain,
@@ -201,6 +198,7 @@ class PingMapFragment :
                                 text = getString(R.string.join)
                             }
                             binding.root.context.easyToast("참여 취소되었습니다")
+                            initUi(false)
                         }
                     }
                 }
@@ -211,7 +209,6 @@ class PingMapFragment :
                 pingAlert.alertDialog.apply {
                     setOnCancelListener {
                         lifecycleScope.launch {
-                            // 모임에 참여시키는 로직 들어가면 됨
                             pingMapInstance.participantsMeetingDetailTable(
                                 dataFromMain,
                                 LoginRepoImpl.get().getAccessToken()
