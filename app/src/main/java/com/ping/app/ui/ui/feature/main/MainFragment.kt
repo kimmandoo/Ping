@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
+import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.main.MainViewModel
@@ -56,6 +57,20 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         }
 
         val user = LoginRepoImpl.get().getUserInfo()!!
+        lifecycleScope.launch {
+            val duplicateResult =
+                MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
+            binding.mainFragFab.apply {
+                visibility = if (!duplicateResult) View.GONE else View.VISIBLE
+                setOnClickListener {
+                    if (duplicateResult) {
+                        findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                    } else {
+                        binding.root.context.easyToast(getString(R.string.main_already_table))
+                    }
+                }
+            }
+        }
         binding.apply {
             mainFragTitleHello.text =
                 getString(R.string.main_user, user.displayName)
@@ -69,9 +84,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 }
             }
             mainFragRecyclerview.adapter = mainAdapter
-            mainFragFab.setOnClickListener {
-                findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
-            }
         }
 
         viewModel.meetingList.observe(viewLifecycleOwner) { meetinglist ->

@@ -80,12 +80,11 @@ class MainRepoImpl(context: Context) : MainRepo {
 
                     val data = detailMeetingDocument.data["participants"] as? List<String>
                     if (data != null) {
-
                         for (i in 1..<data.size) {
                             if (userUid == data.get(i).toString()) {
                                 // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
                                 val meetingTable = db.collection("MEETING")
-                                
+
                                 meetingTable
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
@@ -94,15 +93,15 @@ class MainRepoImpl(context: Context) : MainRepo {
                                             resultMeetingTable
                                         )
                                     }
+
                             }
                         }
                     } else {
-//                        Log.d(TAG, "No participants found ${detailMeetingDocument.data}")
+//                        Log.d(TAG, "No participants found")
                     }
 
                 }
             }
-
         val resultMeetingTable = meetingsToAttendTable.await()
 
         for (meetingDocument in resultMeetingTable) {
@@ -126,6 +125,40 @@ class MainRepoImpl(context: Context) : MainRepo {
         Log.d(TAG, "meetingsToAttend: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
+    }
+
+    override suspend fun detailMeetingDuplicateCheck(gathering: Gathering, userUid: String): Boolean {
+        val duplicateResult = CompletableDeferred<Boolean>()
+        val detailMeetingTable = db.collection("DETAILMEETING").document(gathering.uuid)
+        detailMeetingTable
+            .get()
+            .addOnSuccessListener { resultDetailMeetingTable ->
+                val data = resultDetailMeetingTable.data?.get("participants") as? List<String>
+                if (data != null) {
+                    duplicateResult.complete(data.contains(userUid))
+                }
+            }
+        return duplicateResult.await()
+    }
+
+    override suspend fun meetingDuplicateCheck(userUid: String): Boolean {
+        val duplicateResult = CompletableDeferred<Boolean>()
+        val meetingTable = db.collection("MEETING").whereEqualTo("uid", userUid)
+        val currentTime = System.currentTimeMillis()
+
+        meetingTable
+            .get()
+            .addOnSuccessListener {resultMeetingTable ->
+                for(resultMeetingElement in resultMeetingTable.documents){
+                    if(resultMeetingElement.data?.get("gatheringTime").toString().toLong() > currentTime){
+                        duplicateResult.complete(false)
+                    }
+                }
+            }
+            .addOnCompleteListener {
+                duplicateResult.complete(true)
+            }
+        return duplicateResult.await()
     }
 
 
