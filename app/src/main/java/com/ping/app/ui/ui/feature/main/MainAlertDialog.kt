@@ -1,12 +1,9 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.DialogMainBinding
 import com.ping.app.ui.base.BaseDialog

@@ -67,13 +67,12 @@ class LoginRepoImpl private constructor(context: Context) : LoginRepo {
     }
     
     override suspend fun requestGoogleLogin(
-        context: Context,
         onSuccessListener: (FirebaseUser?) -> Unit,
     ) {
         runCatching {
             credentialManager.getCredential(
                 request = credentialRequest,
-                context = context,
+                context = appContext,
             )
         }.onSuccess {
             when (val credential = it.credential) {
