@@ -33,6 +33,7 @@
 
         <activity
             android:name=".ui.ui.container.MainActivity"
+            android:theme="@style/Theme.Ping.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

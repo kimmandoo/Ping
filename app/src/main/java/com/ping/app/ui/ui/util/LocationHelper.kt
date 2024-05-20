@@ -38,7 +38,7 @@ class LocationHelper private constructor(context: Context) {
         request = createRequest()
     }
     
-    fun getClient():FusedLocationProviderClient{
+    fun getClient(): FusedLocationProviderClient {
         return locationClient
     }
     
@@ -56,6 +56,9 @@ class LocationHelper private constructor(context: Context) {
             .setPermissionListener(object : PermissionListener {
                 @SuppressLint("MissingPermission")
                 override fun onPermissionGranted() {
+                    locationClient.lastLocation.addOnSuccessListener {
+                        listener(it)
+                    }
                     locationClient.requestLocationUpdates(
                         request,
                         this@LocationHelper.LocationCallBack(),

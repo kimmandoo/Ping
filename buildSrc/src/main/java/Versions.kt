@@ -1,4 +1,6 @@
 object Versions {
+    const val COROUTINE_TEST = "1.4.2"
+    const val SPLASH_SCREEN = "1.0.1"
     const val OKHTTP3 = "4.9.1"
     const val RETROFIT2 = "2.11.0"
     const val DATASTORE = "1.1.1"

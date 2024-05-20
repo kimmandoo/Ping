@@ -7,6 +7,7 @@ object AndroidX {
         "androidx.navigation:navigation-fragment-ktx:${Versions.NAVIGATION}"
     const val NAVIGATION_UI = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
     const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
+    const val SPLASH_SCREEN = "androidx.core:core-splashscreen:${Versions.SPLASH_SCREEN}"
     
 }
 
@@ -42,6 +43,7 @@ object Permission {
 object UnitTest {
     const val TEST_JUNIT_CORE = "junit:junit:${Versions.JUNIT_CORE}"
     const val TEST_JUNIT = "androidx.test.ext:junit:${Versions.JUNIT}"
+    const val COROUTINE_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.COROUTINE_TEST}"
     const val ESPRESSO = "androidx.test.espresso:espresso-core:${Versions.ESPRESSO}"
 }
 
