@@ -44,20 +44,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         val user = LoginRepoImpl.get().getUserInfo()!!
         
         lifecycleScope.launch {
-            // TODO: GPT 쓰는 예제
-            val messages = listOf(
-                Message(role = "user", content = "오늘 뭐하면 좋을까?")
-            )
-            runCatching {
-                ChatGPTRepoImpl.getInstance().getChatCompletion(messages)
-            }.onSuccess {
-                Log.d(TAG, "initView: ${it.choices}\n ")
-            }.onFailure {
-                Log.d(TAG, "initView: ${it}\n ")
-            }
-        }
-        
-        lifecycleScope.launch {
             val duplicateResult =
                 MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
             binding.mainFragFab.apply {

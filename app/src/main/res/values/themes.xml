@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/ic_launcher_background</item>
     </style>
     
+    <style name="Theme.Ping.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground" tools:targetApi="S">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon" tools:targetApi="S">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenIconBackgroundColor" tools:targetApi="S">@color/white</item>
+        <item name="postSplashScreenTheme">@style/Theme.Ping</item>
+    </style>
     
     <style name="Theme.Ping" parent="Base.Theme.Ping" />
 </resources>

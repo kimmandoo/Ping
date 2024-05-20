@@ -1,14 +1,22 @@
 package com.ping.app.ui.ui.container
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.tasks.OnCompleteListener
@@ -24,6 +32,8 @@ import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.FCM
 import com.ping.app.ui.ui.util.LocationHelper
 import com.ping.app.ui.ui.util.easyToast
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity_싸피"
 
@@ -33,17 +43,35 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var navController: NavController
     private val pingMapViewModel: PingMapViewModel by viewModels()
-
+    private lateinit var splashScreen: SplashScreen
+    
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        PingApplication.locationHelper.startLocationTracking()
+        splashScreen = installSplashScreen()
+        LoginRepoImpl.get().authInit()
         PingApplication.locationHelper.listener = {
             pingMapViewModel.setUserLocation(LatLng(it))
         }
-        LoginRepoImpl.get().authInit()
+        PingApplication.locationHelper.startLocationTracking()
+        startAnimation()
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        
         createNotificationChannel(FCM.CHANNEL_ID, FCM.CHANNEL_NAME)
         initView()
+    }
+    
+    private fun startAnimation() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val slideUp = ObjectAnimator.ofFloat(
+                splashScreenView.view,
+                View.TRANSLATION_X,
+                0f,
+            )
+            slideUp.interpolator = AnticipateInterpolator()
+            slideUp.duration = 1000
+            slideUp.doOnEnd { splashScreenView.remove() }
+            slideUp.start()
+        }
     }
     
     private fun initView() {
