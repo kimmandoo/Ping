@@ -1,4 +1,6 @@
 object Versions {
+    const val OKHTTP3 = "4.9.1"
+    const val RETROFIT2 = "2.11.0"
     const val DATASTORE = "1.1.1"
     const val TED = "3.3.0"
     const val FIREBASE_CLOUD_FUNCTION = "20.4.0"

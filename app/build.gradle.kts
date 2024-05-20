@@ -23,6 +23,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         manifestPlaceholders["NAVER_MAP_CLIENT_ID"] = getAppKey("NAVER_MAP_CLIENT_ID")
+        buildConfigField("String", "CHAT_GPT", getAppKey("CHAT_GPT"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     
@@ -44,6 +45,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -73,4 +75,8 @@ dependencies {
     implementation(Permission.TED_NORMAL)
     implementation(Permission.TED_COROUTINE)
     implementation(Square.GLIDE)
+    implementation(Square.RETROFIT2)
+    implementation(Square.OKHTTP3)
+    implementation(Square.OKHTTP3_LOGGING)
+    implementation(Square.RETROFIT2_CONVERTER_GSON)
 }

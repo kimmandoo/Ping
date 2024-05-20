@@ -1,6 +1,7 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -11,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
+import com.ping.app.data.model.gpt.Message
+import com.ping.app.data.repository.chatgpt.ChatGPTRepoImpl
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
 import com.ping.app.databinding.FragmentMainBinding
@@ -65,6 +68,21 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
 
 
         val user = LoginRepoImpl.get().getUserInfo()!!
+        
+        lifecycleScope.launch {
+            // TODO: GPT 쓰는 예제
+            val messages = listOf(
+                Message(role = "user", content = "오늘 뭐하면 좋을까?")
+            )
+            runCatching {
+                ChatGPTRepoImpl.getInstance().getChatCompletion(messages)
+            }.onSuccess {
+                Log.d(TAG, "initView: ${it.choices}\n ")
+            }.onFailure {
+                Log.d(TAG, "initView: ${it}\n ")
+            }
+        }
+        
         lifecycleScope.launch {
             val duplicateResult =
                 MainRepoImpl.get().meetingDuplicateCheck(LoginRepoImpl.get().getAccessToken())
