@@ -46,11 +46,6 @@
             android:name="ping_data"
             app:argType="com.ping.app.data.model.Gathering"
             app:nullable="true"/>
-        <argument
-            android:name="ping_short_cut"
-            app:argType="boolean"
-            app:nullable="false"
-            />
         <action
             android:id="@+id/action_pingMapFragment_to_mainFragment"
             app:destination="@id/mainFragment"

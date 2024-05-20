@@ -50,7 +50,7 @@ class PingMapFragment :
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var dataFromMain: Gathering
-    private var dataFromMainShortCut: Boolean = false
+//    private var dataFromMainShortCut: Boolean = false
     private lateinit var latlngFromMain: LatLng
     private val args: PingMapFragmentArgs by navArgs()
     private val locationHelperInstance by lazy {
@@ -64,14 +64,6 @@ class PingMapFragment :
             Log.d(TAG, "initView: $it")
             dataFromMain = it
             latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
-        }
-
-        args.pingShortCut.let {
-            Log.d(TAG, "initView: $it")
-            dataFromMainShortCut = it
-            if(dataFromMainShortCut == true){
-                binding.mapBtnGathering.text = "cancle"
-            }
         }
 
         locationHelperInstance.startLocationTracking()

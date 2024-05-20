@@ -1,7 +1,6 @@
 package com.ping.app.data.repository.main
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -88,7 +87,6 @@ class MainRepoImpl(context: Context) : MainRepo {
                                     .get()
                                     .addOnSuccessListener { resultMeetingTable ->
                                         resultDetailMeetingDocument = detailMeetingDocument.id
-                                        Log.d(TAG, "meetingsToAttend resultDetailMeetingDocument: ${resultDetailMeetingDocument}")
 
                                         meetingsToAttendTable.complete(
                                             resultMeetingTable
@@ -100,15 +98,6 @@ class MainRepoImpl(context: Context) : MainRepo {
 //                        Log.d(TAG, "No participants found")
                     }
                 }
-            }
-            .addOnCompleteListener {
-                Log.d(TAG, "meetingsToAttend: addOnCompleteListener")
-            }
-            .addOnCanceledListener {
-                Log.d(TAG, "meetingsToAttend: addOnCanceledListener")
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "meetingsToAttend: addOnFailureListener")
             }
 
         for (meetingDocument in meetingsToAttendTable.await()) {
@@ -129,8 +118,6 @@ class MainRepoImpl(context: Context) : MainRepo {
                 break
             }
         }
-
-        Log.d(TAG, "meetingsToAttend@@@@@@@: ${meetingsToAttendResult}")
 
         return meetingsToAttendResult
     }

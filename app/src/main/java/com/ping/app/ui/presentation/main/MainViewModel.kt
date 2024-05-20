@@ -19,7 +19,7 @@ class MainViewModel(): ViewModel() {
     private val _mainToMapShortCut = MutableLiveData<Gathering?>()
     val mainToMapShortCut : LiveData<Gathering?> get() = _mainToMapShortCut
 
-    fun mainToMapShortCutTest(){
+    fun mainToMapShortCutInit(){
         _mainToMapShortCut.value = null
         viewModelScope.launch {
             _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())

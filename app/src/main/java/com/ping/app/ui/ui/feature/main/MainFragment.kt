@@ -41,7 +41,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
 
     override fun initView(savedInstanceState: Bundle?) {
-        viewModel.mainToMapShortCutTest()
+        viewModel.mainToMapShortCutInit()
 
         lifecycleScope.launch {
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
@@ -57,8 +57,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
                     if (shortCutGatheringData != null) {
                         val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(
-                            shortCutGatheringData,
-                            true
+                            shortCutGatheringData
                         )
                         findNavController().navigate(actionMainToMap)
                     }
@@ -145,7 +144,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
 
     private fun onMoveDetailedConfirmation(gathering: Gathering) {
-        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering, false)
+        val actionMainToMap = MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
         findNavController().navigate(actionMainToMap)
     }
 
@@ -155,7 +154,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             setOnCancelListener {
                 lifecycleScope.launch {
                     val actionMainToMap =
-                        MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering, false)
+                        MainFragmentDirections.actionMainFragmentToPingMapFragment(gathering)
                     findNavController().navigate(actionMainToMap)
                 }
             }
