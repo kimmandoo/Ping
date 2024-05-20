@@ -46,10 +46,15 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         lifecycleScope.launch {
             // TODO: GPT 쓰는 예제
             val messages = listOf(
-                Message(role = "user", content = "오늘 뭐하면 좋을까?")
+                Message(role = "use4r", content = "오늘 뭐하면 좋을까?")
             )
-            val res = ChatGPTRepoImpl.getInstance().getChatCompletion(messages)
-            Log.d(TAG, "initView: ${res.choices}\n ")
+            runCatching {
+                ChatGPTRepoImpl.getInstance().getChatCompletion(messages)
+            }.onSuccess {
+                Log.d(TAG, "initView: ${it.choices}\n ")
+            }.onFailure {
+                Log.d(TAG, "initView: ${it}\n ")
+            }
         }
         
         lifecycleScope.launch {
