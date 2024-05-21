@@ -7,32 +7,43 @@ import androidx.lifecycle.viewModelScope
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainViewModel_싸피"
-class MainViewModel(): ViewModel() {
+
+class MainViewModel() : ViewModel() {
     private val mainInstance = MainRepoImpl.get()
     private val loginInstance = LoginRepoImpl.get()
     private val _meetingList = MutableLiveData<List<Gathering>>()
-    val meetingList : LiveData<List<Gathering>> get() = _meetingList
-
+    val meetingList: LiveData<List<Gathering>> get() = _meetingList
+    
     private val _mainToMapShortCut = MutableLiveData<Gathering?>()
-    val mainToMapShortCut : LiveData<Gathering?> get() = _mainToMapShortCut
-
-    fun mainToMapShortCutInit(){
+    val mainToMapShortCut: LiveData<Gathering?> get() = _mainToMapShortCut
+    private val _duplicatedState = MutableSharedFlow<Boolean>()
+    val duplicatedState get() = _duplicatedState.asSharedFlow()
+    
+    fun mainToMapShortCutInit() {
         _mainToMapShortCut.value = null
         viewModelScope.launch {
             _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())
         }
     }
-
-    private fun updateMeetingList(newList: List<Gathering>){
-        _meetingList.value = newList
-    }
     
-    fun initMeetingList(lat: Double, lng: Double) {
+    fun getMeetingList(lat: Double, lng: Double) {
         viewModelScope.launch {
-            updateMeetingList(mainInstance.getMeetingTable(lng, lat))
+            _meetingList.value = mainInstance.getMeetingTable(lng, lat)
+            _duplicatedState.emit(isUserDuplicated())
         }
     }
+    
+    fun getUserInfo() = LoginRepoImpl.get().getUserInfo()!!
+    
+    suspend fun getUid() = LoginRepoImpl.get().getAccessToken()
+    
+    private suspend fun isUserDuplicated() = MainRepoImpl.get().meetingDuplicateCheck(getUid())
+    
+    suspend fun logout() = LoginRepoImpl.get().logout()
+    
 }

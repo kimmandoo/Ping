@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, private val onEnterCodeDialog: (Gathering) -> Unit) :
+class MainAdapter(
+    private val onMoveDetailedConfirmation: (Gathering) -> Unit,
+    private val onEnterCodeDialog: (Gathering) -> Unit
+) :
     ListAdapter<Gathering, MainAdapter.MainHolder>(
         diffUtil
     ) {
@@ -29,28 +32,31 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
             binding.mainItemCard.setOnClickListener {
                 if (item.enterCode == "") {
                     onMoveDetailedConfirmation(item)
-                }else {
+                } else {
                     onEnterCodeDialog(item)
                 }
             }
-
-            if(item.enterCode != ""){
+            
+            if (item.enterCode != "") {
                 binding.enterOrPass.setImageResource(R.drawable.baseline_lock_24)
-            }else{
+            } else {
                 binding.enterOrPass.setImageResource(R.drawable.baseline_arrow_forward_ios_24)
             }
-
-            binding.mainItemTitle.text = item.title
-//            binding.mainItemTimeRemaining.text = item.content
+            binding.mainItemTitle.text =
+                binding.root.context.getString(
+                    R.string.item_string,
+                    item.organizer + "의 ",
+                    item.title
+                )
             val targetTime = item.gatheringTime.toLong()
             CoroutineScope(Dispatchers.Default).launch {
                 flow {
                     while (true) {
                         emit(targetTime - System.currentTimeMillis())
-                        delay(1000*60)
+                        delay(1000 * 60)
                     }
-                }.takeWhile {
-                    remainingMillis -> remainingMillis > 0
+                }.takeWhile { remainingMillis ->
+                    remainingMillis > 0
                 }.onCompletion {
                     withContext(Dispatchers.Main) {
                         binding.mainItemTimeRemaining.text = "마감"
@@ -61,18 +67,23 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
                     val remainingMinutes = (totalSeconds / 60) % 60
                     val remainingHours = (totalSeconds / 3600) % 24
                     val remainingDays = totalSeconds / (24 * 3600)
-
+                    
                     withContext(Dispatchers.Main) {
                         binding.view1.setBackgroundColor(Color.BLACK)
                         binding.mainItemTimeRemaining.text =
-                            "${remainingDays}일 ${remainingHours}시 ${remainingMinutes}분 뒤"
+                            binding.root.context.getString(
+                                R.string.item_remain_time,
+                                remainingDays.toString(),
+                                remainingHours.toString(),
+                                remainingMinutes.toString()
+                            )
                     }
                 }
             }
         }
-
+        
     }
-
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         return MainHolder(
             ItemMainBinding.inflate(
@@ -82,24 +93,23 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
             )
         )
     }
-
+    
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        // currentList: 해당 Adapter에 "submitList()"를 통해 삽입한 아이템 리스트
         holder.bindInfo(position)
     }
-
-
+    
+    
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Gathering>() {
             override fun areItemsTheSame(oldItem: Gathering, newItem: Gathering): Boolean {
                 return oldItem.hashCode() == newItem.hashCode()
             }
-
+            
             override fun areContentsTheSame(oldItem: Gathering, newItem: Gathering): Boolean {
                 return oldItem == newItem
             }
-
+            
         }
     }
-
+    
 }
