@@ -105,7 +105,11 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         viewModel.meetingList.observe(viewLifecycleOwner) { meetinglist ->
             meetinglist?.let {
                 lifecycleScope.launch {
-                    mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
+                    if (binding.mainSwitch.isChecked){
+                        mainAdapter.submitList(meetinglist)
+                    }else{
+                        mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
+                    }
                     binding.mainSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                         when (isChecked) {
                             true -> {
