@@ -1,19 +1,18 @@
 package com.ping.app.ui.base
 
 import android.app.Dialog
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -50,9 +49,10 @@ abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, VM : ViewModel
             bottomSheet?.let {
                 val behavior = BottomSheetBehavior.from(it)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                
             }
         }
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             dialog.window?.setDecorFitsSystemWindows(false)
             view?.rootView?.setOnApplyWindowInsetsListener { _, insets ->
