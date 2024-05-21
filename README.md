@@ -2,6 +2,8 @@
 | <img src="https://github.com/kimmandoo/Ping/assets/46841652/22f526f5-5047-4028-af6c-00df69ee422c" width="100" height="100"> |
 | - |
 
+![Ping 발표자료](https://github.com/kimmandoo/Ping/assets/46841652/da539113-d982-4f9b-9751-c316879895c0)
+
 
 ---
 ### commit convention
