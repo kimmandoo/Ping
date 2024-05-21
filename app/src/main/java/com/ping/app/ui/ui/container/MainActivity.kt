@@ -49,10 +49,6 @@ class MainActivity : AppCompatActivity() {
         splashScreen = installSplashScreen()
         PingApplication.loginRepo = LoginRepoImpl.initialize(this)
         LoginRepoImpl.get().authInit()
-        PingApplication.locationHelper.listener = {
-            pingMapViewModel.setUserLocation(LatLng(it))
-        }
-        PingApplication.locationHelper.startLocationTracking()
         startAnimation()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -78,22 +74,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         navController = navHostFragment.navController
-        binding.apply {
-            navController.addOnDestinationChangedListener { _, destination, arguments ->
-                when (destination.id) {
-                    R.id.loginFragment -> {
-
-                    }
-
-                    R.id.mainFragment -> {
-                    }
-
-                    R.id.pingAddMapFragment, R.id.pingMapFragment -> {
-                        LocationHelper.getInstance()
-                    }
-                }
-            }
-        }
     }
     
     private fun initFCM() {
@@ -104,9 +84,6 @@ class MainActivity : AppCompatActivity() {
             }
             
             Log.d(TAG, "token: ${task.result ?: "task.result is null"}")
-            if (task.result != null) {
-//                uploadToken(task.result!!)
-            }
         })
     }
     
@@ -116,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             TedPermission.create().setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
                     initFCM()
-                    val importance = NotificationManager.IMPORTANCE_HIGH
                     val notificationManager: NotificationManager =
                         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     
@@ -125,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                             NotificationChannel(
                                 id,
                                 name,
-                                importance
+                                NotificationManager.IMPORTANCE_HIGH
                             )
                         )
                     }

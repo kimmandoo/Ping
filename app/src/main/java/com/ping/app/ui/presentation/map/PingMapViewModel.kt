@@ -1,5 +1,6 @@
 package com.ping.app.ui.presentation.map
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -11,8 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 
+private const val TAG = "PingMapViewModel_싸피"
 class PingMapViewModel : ViewModel() {
     private val locationHelperInstance = LocationHelper.getInstance()
     private val pingMapInstance = PingMapRepoImpl.getInstance()
@@ -20,6 +21,7 @@ class PingMapViewModel : ViewModel() {
     val userLocation get() = _userLocation.asStateFlow()
     
     init {
+        Log.d(TAG, ": viewModel created")
         locationHelperInstance.startLocationTracking()
         locationHelperInstance.listener = {
             setUserLocation(LatLng(it))
@@ -56,4 +58,6 @@ class PingMapViewModel : ViewModel() {
             gathering
         )
     }
+    
+    fun getLocationClient() = locationHelperInstance.getClient()
 }

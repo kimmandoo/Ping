@@ -12,7 +12,6 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
-import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.databinding.FragmentPingMapAddBinding
 import com.ping.app.ui.base.BaseFragment
@@ -34,7 +33,6 @@ class PingAddMapFragment :
     override val viewModel: PingMapViewModel by activityViewModels()
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
-    private val locationHelperInstance = PingApplication.locationHelper
     
     override fun initView(savedInstanceState: Bundle?) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_add_view) as MapFragment?
@@ -60,7 +58,7 @@ class PingAddMapFragment :
             true
         }
         map.withMarker(marker, binding.pingAddView)
-        locationHelperInstance.getClient().init(map, marker, binding.location)
+        viewModel.getLocationClient().init(map, marker, binding.location)
         binding.mapAddBtn.setOnClickListener {
             lifecycleScope.launch {
                 binding.mapAddBtn.isEnabled = false
