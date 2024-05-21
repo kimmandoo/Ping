@@ -128,6 +128,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                         viewModel.getMeetingList(lat, lng)
                         Firebase.firestore.collection("MEETING")
                             .addSnapshotListener { snapshot, error ->
+                                Log.d(TAG, "initView: ")
                                 snapshot?.let { data ->
                                     viewModel.getMeetingList(lat, lng)
                                     viewModel.mainToMapShortCutInit()

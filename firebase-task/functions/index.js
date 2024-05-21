@@ -47,3 +47,38 @@ exports.detectMeetingJoinWithFCM = functions.firestore
     // 아무 변경도 없을 경우
     return null;
   });
+
+exports.detectMeetingDeleteWithFCM = functions.firestore
+  .document("/DETAILMEETING/{documentId}")
+  .onDelete((snap, context) => {
+    const documentId = context.params.documentId;
+    const deletedValue = snap.data();
+    
+    if (deletedValue?.participants.length > 1) {
+      const participants = deletedValue.participants;
+      const meetingContent = deletedValue.meeting;
+      functions.logger.log("Detected delete", documentId, participants);
+
+      const topic = documentId; // 모임을 토픽으로
+      const message = {
+        notification: {
+          title: `${meetingContent}`,
+          body: `모임이 취소되었습니다`
+        },
+        topic: topic
+      };
+
+      return admin.messaging().send(message)
+      .then(response => {
+        console.log('Successfully sent message:', response);
+        return null;
+      })
+      .catch(error => {
+        console.error('Error sending message:', error);
+        return null;
+      });
+    }
+
+    // 아무 변경도 없을 경우
+    return null;
+  });

@@ -76,7 +76,7 @@ class PingMapFragment :
                         binding.apply {
                             mapDataOrganizer.text = getString(
                                 R.string.map_data_title,
-                                viewModel.getUserName(dataFromMain.uid)
+                                dataFromMain.organizer
                             )
                             val dist = if (currentLocation.distanceTo(latlngFromMain) < 10) {
                                 "0m"
