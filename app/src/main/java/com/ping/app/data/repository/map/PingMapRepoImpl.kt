@@ -3,6 +3,7 @@ package com.ping.app.data.repository.map
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -18,10 +19,10 @@ private const val TAG = "PingMapRepoImpl_싸피"
 class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     private val appContext: Context = context
     private val db = Firebase.firestore
-    
+
     override fun sendPingInfo(data: Gathering) {
         Log.d(TAG, "sendPingInfo: $data")
-        
+
         db.collection("MEETING")
             .add(data)
             .addOnSuccessListener { documentReference ->
@@ -32,31 +33,40 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
                 Log.w(TAG, "Error adding document", e)
             }
     }
-    
-    
+
+
     override fun requestAddress(lat: Double, lng: Double): String {
         val geoCoder = Geocoder(appContext, Locale.KOREA)
         var addressResult = "주소를 가져 올 수 없습니다."
-        runCatching {
-            geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-        }.onSuccess { response ->
-            if (response.size > 0) {
-                val currentLocationAddress = response[0].getAddressLine(0)
-                    .toString()
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            geoCoder.getFromLocation(lat, lng, 1) {
+                val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).toString()
+                Log.d(TAG, "requestAddress: $currentLocationAddress")
                 addressResult = currentLocationAddress
             }
-        }.onFailure {
-            Log.d("requestAddress", "error: ${it.stackTrace}")
+        } else {
+            runCatching {
+                geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
+            }.onSuccess { response ->
+                if (response.size > 0) {
+                    val currentLocationAddress = response[0].getAddressLine(0)
+                        .toString()
+                    addressResult = currentLocationAddress
+                }
+            }.onFailure {
+                Log.d("requestAddress", "error: ${it.stackTrace}")
+            }
         }
-        
+
         return addressResult
     }
-    
+
     /**
      * 해당 함수는 주최자가 meeting을 생성한 경우 그에 따른 DetailTable도 만들어 주는 함수입니다.
      */
     override fun makeMeetingDetailTable(data: Gathering) {
-        
+
         db.collection("DETAILMEETING")
             .document(data.uuid)
             .set(GatheringDetail(10, data.content, arrayListOf(data.uid)))
@@ -70,7 +80,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
                 Log.w(TAG, "Error adding document", e)
             }
     }
-    
+
     /**
      * 모임 참가 버튼을 누르면 Meeting에 참가하는 로직입니다.
      */
@@ -83,15 +93,15 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         meetingDetailTable.document(data.uuid)
             .update("participants", FieldValue.arrayUnion(userUid))
     }
-    
+
     /**
      * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
      */
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
 
-        if(data.uid == userUid){
+        if (data.uid == userUid) {
             organizercancellationOfParticipantsMeetingTable(data, userUid)
-        }else {
+        } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
                 Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
             }
@@ -120,17 +130,17 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     override suspend fun getUserName(userUid: String): String {
         var queryResultName = CompletableDeferred<String>()
         val userTable = db.collection("USER")
-        
+
         userTable.document(userUid)
             .get()
             .addOnSuccessListener {
                 queryResultName.complete(it.data?.get("name").toString())
             }
-        
+
         return queryResultName.await()
     }
-    
-    
+
+
     companion object {
         private var instance: PingMapRepoImpl? = null
         fun initialize(context: Context): PingMapRepoImpl {
@@ -143,7 +153,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
             }
             return instance!!
         }
-        
+
         fun getInstance(): PingMapRepoImpl {
             return instance!!
         }

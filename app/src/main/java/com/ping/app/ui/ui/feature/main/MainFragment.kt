@@ -1,5 +1,6 @@
 package com.ping.app.ui.ui.feature.main
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -44,7 +45,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     
     override fun initView(savedInstanceState: Bundle?) {
         viewModel.mainToMapShortCutInit()
-        
         lifecycleScope.launch {
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
                 // LiveData가 변경될 때 UI 업데이트
