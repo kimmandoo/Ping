@@ -95,11 +95,11 @@ class MainRepoImpl(context: Context) : MainRepo {
                 meetingsToAttendResult = Gathering(
                     meetingDocument.data["uid"].toString(),
                     meetingDocument.data["uuid"].toString(),
+                    meetingDocument.data["organizer"].toString(),
                     meetingDocument.data["enterCode"].toString(),
                     meetingDocument.data["gatheringTime"].toString(),
                     meetingDocument.data["title"].toString(),
                     meetingDocument.data["content"].toString(),
-                    meetingDocument.data["organizer"].toString(),
                     meetingDocument.data["longitude"].toString().toDouble(),
                     meetingDocument.data["latitude"].toString().toDouble(),
                 )

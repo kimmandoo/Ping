@@ -1,6 +1,7 @@
 package com.ping.app.ui.ui.feature.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -43,6 +44,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 // LiveData가 변경될 때 UI 업데이트
                 binding.mainFragLinearPlannedParticipationResult.visibility =
                     if (shortCutGatheringData != null) {
+                        Log.d(TAG, "initView: $shortCutGatheringData")
                         View.VISIBLE
                     } else {
                         View.GONE
