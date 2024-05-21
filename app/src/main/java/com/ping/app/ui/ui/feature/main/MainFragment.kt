@@ -29,12 +29,16 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     
     override val viewModel: MainViewModel by viewModels()
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
-    
+    private lateinit var joinedData: Gathering
     private val mainAdapter by lazy {
         MainAdapter(onMoveDetailedConfirmation = {
             onMoveDetailedConfirmation(it)
         }, onEnterCodeDialog = {
-            onEnterCodeDialog(it)
+            if(::joinedData.isInitialized && joinedData == it){
+                onMoveDetailedConfirmation(it)
+            }else{
+                onEnterCodeDialog(it)
+            }
         })
     }
     
@@ -46,6 +50,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 // LiveData가 변경될 때 UI 업데이트
                 binding.mainFragLinearPlannedParticipationResult.visibility =
                     if (shortCutGatheringData != null) {
+                        joinedData = shortCutGatheringData
                         Log.d(TAG, "initView: $shortCutGatheringData")
                         View.VISIBLE
                     } else {
