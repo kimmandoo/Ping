@@ -30,6 +30,8 @@ class LoginViewModel : ViewModel() {
     
     suspend fun getUid() = loginRepoInstance.getAccessToken()
     
+    fun getLoginUserName() = loginRepoInstance.getUserInfo()!!.displayName!!
+    
     fun userTableCheck(user: FirebaseUser) {
         loginRepoInstance.userTableCheck(user)
     }

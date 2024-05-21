@@ -86,7 +86,8 @@ class PingAddPostFragment :
                                     title = title,
                                     content = content,
                                     longitude = pingPosition.longitude,
-                                    latitude = pingPosition.latitude
+                                    latitude = pingPosition.latitude,
+                                    organizer = loginViewModel.getLoginUserName()
                                 )
                             )
                             binding.root.context.easyToast(getString(R.string.ping_detail))
@@ -105,7 +106,8 @@ class PingAddPostFragment :
                                 title = title,
                                 content = content,
                                 longitude = pingPosition.longitude,
-                                latitude = pingPosition.latitude
+                                latitude = pingPosition.latitude,
+                                organizer = loginViewModel.getLoginUserName()
                             )
                         )
                         binding.root.context.easyToast(getString(R.string.ping_detail))

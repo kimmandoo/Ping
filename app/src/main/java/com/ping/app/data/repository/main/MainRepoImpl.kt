@@ -36,7 +36,8 @@ class MainRepoImpl(context: Context) : MainRepo {
                                 content = value.data?.get("content").toString(),
                                 title = value.data?.get("title").toString(),
                                 latitude = valuelat,
-                                longitude = valuelng
+                                longitude = valuelng,
+                                organizer = value.data?.get("organizer").toString(),
                             )
                         )
                     }
@@ -53,7 +54,7 @@ class MainRepoImpl(context: Context) : MainRepo {
     override suspend fun meetingsToAttend(userUid: String): Gathering {
         
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        var meetingsToAttendResult = Gathering("", "", "", "", "", "", 0.0, 0.0)
+        var meetingsToAttendResult = Gathering("", "", "", "", "", "", "",0.0, 0.0)
         var resultDetailMeetingDocument = ""
         
         val detailMeetingTable = db.collection("DETAILMEETING")
@@ -98,6 +99,7 @@ class MainRepoImpl(context: Context) : MainRepo {
                     meetingDocument.data["gatheringTime"].toString(),
                     meetingDocument.data["title"].toString(),
                     meetingDocument.data["content"].toString(),
+                    meetingDocument.data["organizer"].toString(),
                     meetingDocument.data["longitude"].toString().toDouble(),
                     meetingDocument.data["latitude"].toString().toDouble(),
                 )
