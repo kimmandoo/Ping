@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
@@ -156,56 +157,67 @@ class PingMapFragment :
             )
             icon = OverlayImage.fromResource(R.drawable.map_point_wave_svgrepo_com)
             iconTintColor = Color.RED
+            captionText = dataFromMain.title
         }
         marker.map = naverMap
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
     
     private fun initUi(stateJoin: Boolean) {
         val pingAlert = PingAlertDialog(binding.root.context)
-        if (stateJoin) {
+        if (dataFromMain.gatheringTime.toLong() < System.currentTimeMillis()) {
             binding.mapBtnGathering.apply {
-                text = "취소하기"
-                setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
-                setOnClickListener {
-                    lifecycleScope.launch {
-                        if (dataFromMain.uid == loginViewModel.getUid()) {
-                            viewModel.organizercancellationOfParticipantsMeetingTable(
-                                dataFromMain,
-                                loginViewModel.getUid()
-                            )
-                        } else {
-                            viewModel.cancellationOfParticipantsMeetingDetailTable(
-                                dataFromMain,
-                                loginViewModel.getUid()
-                            )
-                            binding.mapBtnGathering.apply {
-                                setBackgroundColor(
-                                    ResourcesCompat.getColor(
-                                        resources,
-                                        R.color.ic_launcher_background,
-                                        null
-                                    )
+                text = "종료"
+                isEnabled = false
+            }
+        } else {
+            if (stateJoin) {
+                binding.mapBtnGathering.apply {
+                    text = "취소하기"
+                    setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
+                    setOnClickListener {
+                        lifecycleScope.launch {
+                            if (dataFromMain.uid == loginViewModel.getUid()) {
+                                viewModel.organizercancellationOfParticipantsMeetingTable(
+                                    dataFromMain,
+                                    loginViewModel.getUid()
                                 )
-                                text = getString(R.string.join)
+                            } else {
+                                viewModel.cancellationOfParticipantsMeetingDetailTable(
+                                    dataFromMain,
+                                    loginViewModel.getUid()
+                                )
+                                binding.mapBtnGathering.apply {
+                                    setBackgroundColor(
+                                        ResourcesCompat.getColor(
+                                            resources,
+                                            R.color.ic_launcher_background,
+                                            null
+                                        )
+                                    )
+                                    text = getString(R.string.join)
+                                }
+                                binding.root.context.easyToast("참여 취소되었습니다")
+                                initUi(false)
                             }
-                            binding.root.context.easyToast("참여 취소되었습니다")
-                            initUi(false)
                         }
                     }
                 }
-            }
-        } else {
-            binding.mapBtnGathering.setOnClickListener {
-                pingAlert.showDialog()
-                pingAlert.alertDialog.apply {
-                    setOnCancelListener {
-                        lifecycleScope.launch {
-                            viewModel.participantsMeetingDetailTable(
-                                dataFromMain,
-                                loginViewModel.getUid()
-                            )
-                            dismiss()
-                            initUi(true)
+            } else {
+                binding.mapBtnGathering.setOnClickListener {
+                    pingAlert.showDialog()
+                    pingAlert.alertDialog.apply {
+                        setOnCancelListener {
+                            lifecycleScope.launch {
+                                viewModel.participantsMeetingDetailTable(
+                                    dataFromMain,
+                                    loginViewModel.getUid()
+                                )
+                                dismiss()
+                                initUi(true)
+                            }
                         }
                     }
                 }
