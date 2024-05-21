@@ -1,8 +1,6 @@
 package com.ping.app.ui.ui.feature.chat
 
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ping.app.R
@@ -18,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "ChatFragment_싸피"
-@RequiresApi(Build.VERSION_CODES.O)
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.fragment_chat) {
     override val viewModel: ChatViewModel by viewModels()
 

@@ -1,19 +1,16 @@
 package com.ping.app.ui.ui.feature.chat
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ping.app.data.model.gpt.ChatBubble
 import com.ping.app.databinding.ItemChatBinding
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 class ChatAdapter : ListAdapter<ChatBubble, RecyclerView.ViewHolder>(diffUtil) {
 
     inner class ChatMeViewHolder(private val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -39,10 +36,9 @@ class ChatAdapter : ListAdapter<ChatBubble, RecyclerView.ViewHolder>(diffUtil) {
     }
 
     fun timeSetting(): String{
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("a hh:mm")
-        val formatted = current.format(formatter)
-        return formatted
+        val now = System.currentTimeMillis()
+        val simpleDateFormat = SimpleDateFormat("a hh:mm", Locale.KOREAN).format(now)
+        return simpleDateFormat
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
