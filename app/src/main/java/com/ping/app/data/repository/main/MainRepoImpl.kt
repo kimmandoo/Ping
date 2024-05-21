@@ -5,7 +5,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ping.app.data.model.Gathering
-import com.ping.app.data.model.User
 import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
@@ -19,22 +18,14 @@ class MainRepoImpl(context: Context) : MainRepo {
      */
     override suspend fun getMeetingTable(lng: Double, lat: Double): List<Gathering> {
         val meetingTable = db.collection("MEETING")
-        lateinit var meetingTableResult: MutableList<Gathering>
-        meetingTableResult = arrayListOf()
-        
-        val getMeeingTableDeffer = CompletableDeferred<QuerySnapshot>()
-        
-        val result = meetingTable
-        
-        
-        result
+        val getMeeingTableDeffer = CompletableDeferred<List<Gathering>>()
+        meetingTable
             .get()
             .addOnSuccessListener { documents ->
-                val meetingDefferResult = documents
+                val meetingTableResult: MutableList<Gathering> = mutableListOf()
                 for (value in documents.documents) {
                     val valuelat = value.data?.get("latitude").toString().toDouble()
                     val valuelng = value.data?.get("longitude").toString().toDouble()
-                    
                     if (lat - 0.02 < valuelat && valuelat < lat + 0.02 && lng - 0.02 < valuelng && valuelng < lng + 0.02) {
                         meetingTableResult.add(
                             Gathering(
@@ -44,21 +35,15 @@ class MainRepoImpl(context: Context) : MainRepo {
                                 gatheringTime = value.data?.get("gatheringTime").toString(),
                                 content = value.data?.get("content").toString(),
                                 title = value.data?.get("title").toString(),
-                                latitude = value.data?.get("latitude").toString().toDouble(),
-                                longitude = value.data?.get("longitude").toString().toDouble()
+                                latitude = valuelat,
+                                longitude = valuelng
                             )
                         )
                     }
                 }
-                
-                getMeeingTableDeffer.complete(meetingDefferResult)
-                
+                getMeeingTableDeffer.complete(meetingTableResult)
             }
-        
-        getMeeingTableDeffer.await()
-        
-        return meetingTableResult
-        
+        return getMeeingTableDeffer.await()
     }
     
     /**
