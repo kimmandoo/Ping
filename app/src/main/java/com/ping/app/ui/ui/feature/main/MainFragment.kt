@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.FragmentMainBinding
@@ -111,6 +113,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             }
         }
         
+        
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pingMapViewModel.userLocation.collectLatest { currentLocation ->
@@ -118,7 +121,13 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                         val lat = currentLocation.latitude
                         val lng = currentLocation.longitude
                         
-                        viewModel.initMeetingList(lat, lng)
+                        viewModel.getMeetingList(lat, lng)
+                        Firebase.firestore.collection("MEETING")
+                            .addSnapshotListener { snapshot, error ->
+                                snapshot?.let { data ->
+                                    viewModel.getMeetingList(lat, lng)
+                                }
+                            }
                     }
                 }
             }

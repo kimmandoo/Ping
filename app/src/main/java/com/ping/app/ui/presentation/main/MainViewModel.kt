@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainViewModel_싸피"
@@ -28,13 +27,9 @@ class MainViewModel() : ViewModel() {
         }
     }
     
-    private fun updateMeetingList(newList: List<Gathering>) {
-        _meetingList.value = newList
-    }
-    
-    fun initMeetingList(lat: Double, lng: Double) {
+    fun getMeetingList(lat: Double, lng: Double) {
         viewModelScope.launch {
-            updateMeetingList(mainInstance.getMeetingTable(lng, lat))
+            _meetingList.value = mainInstance.getMeetingTable(lng, lat)
         }
     }
     

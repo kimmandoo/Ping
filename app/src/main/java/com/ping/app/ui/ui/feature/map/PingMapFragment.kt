@@ -175,19 +175,26 @@ class PingMapFragment :
         } else {
             if (stateJoin) {
                 binding.mapBtnGathering.apply {
-                    text = "취소하기"
-                    setBackgroundColor(ResourcesCompat.getColor(resources, R.color.ping_red, null))
-                    setOnClickListener {
-                        lifecycleScope.launch {
-                            if (dataFromMain.uid == loginViewModel.getUid()) {
+                    lifecycleScope.launch {
+                        val uid = loginViewModel.getUid()
+                        text = if (uid == dataFromMain.uid) "삭제하기" else "취소하기"
+                        setBackgroundColor(
+                            ResourcesCompat.getColor(
+                                resources,
+                                R.color.ping_red,
+                                null
+                            )
+                        )
+                        setOnClickListener {
+                            if (dataFromMain.uid == uid) {
                                 viewModel.organizercancellationOfParticipantsMeetingTable(
                                     dataFromMain,
-                                    loginViewModel.getUid()
+                                    uid
                                 )
                             } else {
                                 viewModel.cancellationOfParticipantsMeetingDetailTable(
                                     dataFromMain,
-                                    loginViewModel.getUid()
+                                    uid
                                 )
                                 binding.mapBtnGathering.apply {
                                     setBackgroundColor(

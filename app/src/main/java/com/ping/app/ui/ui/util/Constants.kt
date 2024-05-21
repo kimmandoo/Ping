@@ -1,5 +1,7 @@
 package com.ping.app.ui.ui.util
 
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 
 object Map{
@@ -16,7 +18,6 @@ object FCM{
     const val CHANNEL_ID = "ping"
     const val NOTIFICATION_ID = 1001
 }
-
 
 val starbucks = LatLng(36.107953, 128.418385)
 val CLICK_DELAY = 1000L
