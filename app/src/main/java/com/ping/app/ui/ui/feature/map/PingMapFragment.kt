@@ -186,28 +186,38 @@ class PingMapFragment :
                             )
                         )
                         setOnClickListener {
-                            if (dataFromMain.uid == uid) {
-                                viewModel.organizercancellationOfParticipantsMeetingTable(
-                                    dataFromMain,
-                                    uid
-                                )
+                            val dialog = if (uid == dataFromMain.uid) {
+                                PingAlertCancelDialog(binding.root.context, "삭제하시겠습니까?")
                             } else {
-                                viewModel.cancellationOfParticipantsMeetingDetailTable(
-                                    dataFromMain,
-                                    uid
-                                )
-                                binding.mapBtnGathering.apply {
-                                    setBackgroundColor(
-                                        ResourcesCompat.getColor(
-                                            resources,
-                                            R.color.ic_launcher_background,
-                                            null
-                                        )
+                                PingAlertCancelDialog(binding.root.context, "취소하시겠습니까?")
+                            }
+                            dialog.showDialog()
+                            dialog.alertDialog.setOnCancelListener {
+                                if (dataFromMain.uid == uid) {
+                                    viewModel.organizercancellationOfParticipantsMeetingTable(
+                                        dataFromMain,
+                                        uid
                                     )
-                                    text = getString(R.string.join)
+                                    binding.root.context.easyToast("핑이 삭제되었습니다")
+                                    findNavController().popBackStack()
+                                } else {
+                                    viewModel.cancellationOfParticipantsMeetingDetailTable(
+                                        dataFromMain,
+                                        uid
+                                    )
+                                    binding.mapBtnGathering.apply {
+                                        setBackgroundColor(
+                                            ResourcesCompat.getColor(
+                                                resources,
+                                                R.color.ic_launcher_background,
+                                                null
+                                            )
+                                        )
+                                        text = getString(R.string.join)
+                                    }
+                                    binding.root.context.easyToast("참여 취소되었습니다")
+                                    initUi(false)
                                 }
-                                binding.root.context.easyToast("참여 취소되었습니다")
-                                initUi(false)
                             }
                         }
                     }

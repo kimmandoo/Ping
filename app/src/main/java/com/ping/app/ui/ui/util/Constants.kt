@@ -1,7 +1,5 @@
 package com.ping.app.ui.ui.util
 
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 
 object Map{

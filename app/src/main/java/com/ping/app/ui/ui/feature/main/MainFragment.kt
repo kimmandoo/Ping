@@ -66,18 +66,22 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         val user = viewModel.getUserInfo()
         
         lifecycleScope.launch {
-            val isDuplicated = viewModel.isUserDuplicated()
-            binding.mainFragFab.apply {
-                visibility = if (!isDuplicated) View.GONE else View.VISIBLE
-                setOnClickListener {
-                    if (isDuplicated) {
-                        findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
-                    } else {
-                        binding.root.context.easyToast(getString(R.string.main_already_table))
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.duplicatedState.collectLatest { isDuplicated ->
+                    binding.mainFragFab.apply {
+                        visibility = if (!isDuplicated) View.GONE else View.VISIBLE
+                        setOnClickListener {
+                            if (isDuplicated) {
+                                findNavController().navigate(R.id.action_mainFragment_to_pingAddMapFragment)
+                            } else {
+                                binding.root.context.easyToast(getString(R.string.main_already_table))
+                            }
+                        }
                     }
                 }
             }
         }
+        
         binding.apply {
             mainFragTitleHello.text =
                 getString(R.string.main_user, user.displayName)
@@ -126,6 +130,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                             .addSnapshotListener { snapshot, error ->
                                 snapshot?.let { data ->
                                     viewModel.getMeetingList(lat, lng)
+                                    viewModel.mainToMapShortCutInit()
                                 }
                             }
                     }

@@ -18,7 +18,7 @@ class MainRepoImpl(context: Context) : MainRepo {
      */
     override suspend fun getMeetingTable(lng: Double, lat: Double): List<Gathering> {
         val meetingTable = db.collection("MEETING")
-        val getMeeingTableDeffer = CompletableDeferred<List<Gathering>>()
+        val getMeetingTableDeffer = CompletableDeferred<List<Gathering>>()
         meetingTable
             .get()
             .addOnSuccessListener { documents ->
@@ -42,9 +42,9 @@ class MainRepoImpl(context: Context) : MainRepo {
                         )
                     }
                 }
-                getMeeingTableDeffer.complete(meetingTableResult)
+                getMeetingTableDeffer.complete(meetingTableResult)
             }
-        return getMeeingTableDeffer.await()
+        return getMeetingTableDeffer.await()
     }
     
     /**
@@ -54,7 +54,7 @@ class MainRepoImpl(context: Context) : MainRepo {
     override suspend fun meetingsToAttend(userUid: String): Gathering {
         
         val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        var meetingsToAttendResult = Gathering("", "", "", "", "", "", "",0.0, 0.0)
+        var meetingsToAttendResult = Gathering("", "", "", "", "", "", "", 0.0, 0.0)
         var resultDetailMeetingDocument = ""
         
         val detailMeetingTable = db.collection("DETAILMEETING")
