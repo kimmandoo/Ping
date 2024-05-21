@@ -37,6 +37,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_mainFragment_to_mainFragToChatgpt"
+            app:destination="@id/mainFragToChatgpt" />
     </fragment>
     <fragment
         android:id="@+id/pingMapFragment"
@@ -64,4 +67,10 @@
         android:id="@+id/pingAddPostFragment"
         android:name="com.ping.app.ui.ui.feature.map.PingAddPostFragment"
         android:label="PingAddPostFragment" />
+
+    <fragment
+        android:id="@+id/mainFragToChatgpt"
+        android:name="com.ping.app.ui.ui.feature.chat.ChatFragment"
+        android:label="MainToChatFragment"
+        />
 </navigation>
