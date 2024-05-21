@@ -43,7 +43,7 @@ class MainAdapter(
                 binding.enterOrPass.setImageResource(R.drawable.baseline_arrow_forward_ios_24)
             }
             binding.mainItemTitle.text =
-                binding.root.context.getString(R.string.item_string, item.title, item.content)
+                binding.root.context.getString(R.string.item_string, item.uid+"의 ", item.title)
             val targetTime = item.gatheringTime.toLong()
             CoroutineScope(Dispatchers.Default).launch {
                 flow {

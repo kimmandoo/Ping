@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.data.repository.main.MainRepoImpl
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainViewModel_싸피"
@@ -20,6 +19,8 @@ class MainViewModel() : ViewModel() {
     
     private val _mainToMapShortCut = MutableLiveData<Gathering?>()
     val mainToMapShortCut: LiveData<Gathering?> get() = _mainToMapShortCut
+    
+    suspend fun getUserList() = mainInstance.getAllUserName()
     
     fun mainToMapShortCutInit() {
         _mainToMapShortCut.value = null

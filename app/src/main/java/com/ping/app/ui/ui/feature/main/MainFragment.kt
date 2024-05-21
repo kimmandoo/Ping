@@ -91,16 +91,31 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
         
         viewModel.meetingList.observe(viewLifecycleOwner) { meetinglist ->
             meetinglist?.let {
-                mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
-                binding.mainSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-                    when (isChecked) {
-                        true -> {
-                            mainAdapter.submitList(meetinglist)
-                            binding.root.context.easyToast(getString(R.string.main_see_all))
-                        }
-                        
-                        false -> {
-                            mainAdapter.submitList(meetinglist.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
+                lifecycleScope.launch {
+                    val userList = viewModel.getUserList()
+                    val namedList = meetinglist.map {
+                        Gathering(
+                            uid = userList[it.uid] ?: "unknown",
+                            uuid = it.uuid,
+                            enterCode = it.enterCode,
+                            gatheringTime = it.gatheringTime,
+                            title = it.title,
+                            content = it.content,
+                            longitude = it.longitude,
+                            latitude = it.latitude
+                        )
+                    }
+                    mainAdapter.submitList(namedList.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
+                    binding.mainSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                        when (isChecked) {
+                            true -> {
+                                mainAdapter.submitList(namedList)
+                                binding.root.context.easyToast(getString(R.string.main_see_all))
+                            }
+                            
+                            false -> {
+                                mainAdapter.submitList(namedList.filter { it.gatheringTime.toLong() > System.currentTimeMillis() })
+                            }
                         }
                     }
                 }
