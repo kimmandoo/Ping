@@ -18,12 +18,11 @@ import kotlinx.coroutines.launch
 private const val TAG = "ChatFragment_싸피"
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.fragment_chat) {
     override val viewModel: ChatViewModel by viewModels()
-
+    
     private val chatAdapter by lazy {
         ChatAdapter()
     }
     override fun initView(savedInstanceState: Bundle?) {
-
 
         binding.apply {
             chatFragRv.adapter = chatAdapter
@@ -44,6 +43,8 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
             chatAdapter.submitList(chatList)
         }
     }
+    
+    
 
     private suspend fun callChatGpt(msg:String){
         val test = CompletableDeferred<ChatGptResponse>()
