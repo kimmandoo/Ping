@@ -6,14 +6,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.naver.maps.geometry.LatLng
-import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
 import com.ping.app.databinding.DialogPingAddBinding
 import com.ping.app.databinding.FragmentPingAddPostBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
+import com.ping.app.ui.presentation.login.LoginViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LAT
 import com.ping.app.ui.ui.util.Map.USER_POSITION_LNG
@@ -30,9 +31,7 @@ class PingAddPostFragment :
         R.layout.fragment_ping_add_post
     ) {
     override val viewModel: PingMapViewModel by activityViewModels()
-    
-    private val pingMapInstance = PingApplication.pingMapRepo
-    private val loginRepoImpl = PingApplication.loginRepo
+    private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var gatheringTime: String
     private lateinit var uid: String
     
@@ -44,24 +43,28 @@ class PingAddPostFragment :
         val symbol = requireArguments().getString("symbol")
         binding.apply {
             lifecycleScope.launch {
-                uid = loginRepoImpl.getAccessToken()
+                uid = loginViewModel.getUid()
             }
             if (symbol.toString().isNotEmpty()) {
                 addPostEtWhere.setText(symbol)
             }
             addPostTvAddress.text =
-                pingMapInstance.requestAddress(pingPosition.latitude, pingPosition.longitude)
+                viewModel.requestAddress(pingPosition.latitude, pingPosition.longitude)
             addPostIvDialog.setOnClickListener {
                 addDateDialog()
             }
             pingAddRg.setOnCheckedChangeListener { group, checkedId ->
-                when (checkedId) {
+                binding.addPostCode.visibility = when (checkedId) {
                     R.id.ping_add_post_cb_all -> {
-                        binding.addPostCode.visibility = View.GONE
+                        View.GONE
                     }
                     
                     R.id.ping_add_post_cb_friend -> {
-                        binding.addPostCode.visibility = View.VISIBLE
+                        View.VISIBLE
+                    }
+                    
+                    else -> {
+                        View.GONE
                     }
                 }
             }
@@ -70,12 +73,11 @@ class PingAddPostFragment :
                 val title = addPostEtWhere.text.toString()
                 val content = addPostEtWhat.text.toString()
                 if (::gatheringTime.isInitialized && title.isNotEmpty() && content.isNotEmpty()) {
-                    
                     if (binding.addPostCode.visibility == View.VISIBLE) {
                         // 코드가 있을때만 참여가능
                         val enterCode = binding.addPostCode.text.toString()
                         if (enterCode.isNotEmpty()) {
-                            pingMapInstance.sendPingInfo(
+                            viewModel.sendPingInfo(
                                 Gathering(
                                     uid = uid,
                                     uuid = UUID.randomUUID().toString(),
@@ -87,13 +89,14 @@ class PingAddPostFragment :
                                     latitude = pingPosition.latitude
                                 )
                             )
+                            binding.root.context.easyToast(getString(R.string.ping_detail))
                             dismiss()
                         } else {
                             binding.root.context.easyToast(getString(R.string.blank_et))
                         }
                     } else {
                         // 모두 참여가능
-                        pingMapInstance.sendPingInfo(
+                        viewModel.sendPingInfo(
                             Gathering(
                                 uid = uid,
                                 uuid = UUID.randomUUID().toString(),
@@ -105,6 +108,7 @@ class PingAddPostFragment :
                                 latitude = pingPosition.latitude
                             )
                         )
+                        binding.root.context.easyToast(getString(R.string.ping_detail))
                         dismiss()
                     }
                 } else {
@@ -130,7 +134,6 @@ class PingAddPostFragment :
             max.set(year, month, calendar.get(Calendar.DAY_OF_MONTH) + 7)
             addPostDp.maxDate = max.timeInMillis
             
-            // Initialize targetDay with the current date
             targetDay = calendar.timeInMillis
             
             addPostDp.setOnDateChangeListener { view, yy, mm, dd ->
@@ -179,7 +182,6 @@ class PingAddPostFragment :
                             "${selectedCalendar.get(Calendar.MINUTE)}분"
                     binding.addPostTv.text = formattedDateString
                     
-                    // Save the selected date and time
                     gatheringTime = selectedCalendar.timeInMillis.toString()
                 }.create()
         dialog.window!!.setBackgroundDrawable(

@@ -22,4 +22,6 @@
     <string name="map_data_content">일정 내용: %s</string>
     <string name="main_already_table">이미 생성된 테이블이 존재합니다.</string>
     <string name="main_participation_result">현재 참여중인 핑이 있습니다</string>
+    <string name="ping_detail">일정이 등록되었습니다</string>
+    <string name="item_string">%1$s - %2$s</string>
 </resources>

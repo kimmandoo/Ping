@@ -39,9 +39,7 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
             }else{
                 binding.enterOrPass.setImageResource(R.drawable.baseline_arrow_forward_ios_24)
             }
-
-            binding.mainItemTitle.text = item.title
-//            binding.mainItemTimeRemaining.text = item.content
+            binding.mainItemTitle.text = binding.root.context.getString(R.string.item_string, item.title, item.content)
             val targetTime = item.gatheringTime.toLong()
             CoroutineScope(Dispatchers.Default).launch {
                 flow {
@@ -84,7 +82,6 @@ class MainAdapter(private val onMoveDetailedConfirmation: (Gathering) -> Unit, p
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        // currentList: 해당 Adapter에 "submitList()"를 통해 삽입한 아이템 리스트
         holder.bindInfo(position)
     }
 
