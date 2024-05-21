@@ -40,10 +40,14 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         var addressResult = "주소를 가져 올 수 없습니다."
 
         if (Build.VERSION.SDK_INT >= 33) {
-            geoCoder.getFromLocation(lat, lng, 1) {
-                val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).toString()
-                Log.d(TAG, "requestAddress: $currentLocationAddress")
-                addressResult = currentLocationAddress
+            runCatching {
+                geoCoder.getFromLocation(lat, lng, 1) {
+                    val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).toString()
+                    Log.d(TAG, "requestAddress successed: $currentLocationAddress")
+                    addressResult = currentLocationAddress
+                }
+            }.onFailure {
+                Log.d(TAG, "requestAddress failed: $it")
             }
         } else {
             runCatching {
