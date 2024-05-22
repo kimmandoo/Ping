@@ -11,4 +11,6 @@ interface MainRepo {
 
     suspend fun meetingDuplicateCheck(userUid: String):Boolean
 
+    suspend fun organizerMeetingTableCheck(userUid: String): Gathering?
+
 }

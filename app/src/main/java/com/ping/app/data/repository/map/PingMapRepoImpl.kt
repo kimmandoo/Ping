@@ -12,9 +12,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.model.GatheringDetail
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -23,6 +21,7 @@ private const val TAG = "PingMapRepoImpl_싸피"
 class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     private val appContext: Context = context
     private val db = Firebase.firestore
+
     
     override fun sendPingInfo(data: Gathering) {
         Log.d(TAG, "sendPingInfo: $data")
@@ -46,7 +45,8 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
                 if (Build.VERSION.SDK_INT >= 33) {
                     CompletableDeferred<String>().also { deferred ->
                         geoCoder.getFromLocation(lat, lng, 1) {
-                            val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).orEmpty()
+                            val currentLocationAddress =
+                                it.firstOrNull()?.getAddressLine(0).orEmpty()
                             deferred.complete(currentLocationAddress)
                         }
                     }.await()
@@ -115,14 +115,15 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         db.collection("DETAILMEETING")
             .document(data.uuid)
             .delete()
-        
-        db.collection("MEETING")
-            .whereEqualTo("uid", userUid)
-            .get()
             .addOnSuccessListener {
                 db.collection("MEETING")
-                    .document(it.documents.get(0).id)
-                    .delete()
+                    .whereEqualTo("uid", userUid)
+                    .get()
+                    .addOnSuccessListener {
+                        db.collection("MEETING")
+                            .document(it.documents.get(0).id)
+                            .delete()
+                    }
             }
     }
     
