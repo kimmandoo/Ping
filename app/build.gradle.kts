@@ -81,4 +81,5 @@ dependencies {
     implementation(Square.OKHTTP3)
     implementation(Square.OKHTTP3_LOGGING)
     implementation(Square.RETROFIT2_CONVERTER_GSON)
+    implementation(Airbnb.Lottie)
 }

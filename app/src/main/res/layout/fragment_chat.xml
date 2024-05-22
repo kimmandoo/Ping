@@ -10,16 +10,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@drawable/bg_white_radius_30"
+        android:paddingTop="12dp"
         tools:context=".ui.ui.feature.chat.ChatFragment">
         
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_frag_rv"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingStart="5dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="5dp"
             android:paddingTop="10dp"
-            android:paddingEnd="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/chat_frag_cl"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             android:id="@+id/chat_frag_cl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#66E6F6FA"
+            android:background="#F7FDFF"
             android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -40,22 +40,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_et_radius_16"
-                android:hint=""
+                android:hint="무엇이든 물어보세요"
                 android:padding="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/chat_frag_send"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
-            <Button
+            <ImageView
                 android:id="@+id/chat_frag_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="전송"
+                android:tint="@color/ic_launcher_background"
+                android:src="@android:drawable/ic_menu_send"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/chat_frag_ed" />
+                app:layout_constraintStart_toEndOf="@+id/chat_frag_ed"
+                app:layout_constraintTop_toTopOf="parent" />
         
         
         </androidx.constraintlayout.widget.ConstraintLayout>

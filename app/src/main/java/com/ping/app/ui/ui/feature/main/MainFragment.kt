@@ -18,6 +18,8 @@ import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
+import com.ping.app.ui.ui.feature.chat.ChatFragment
+import com.ping.app.ui.ui.feature.map.PingAddPostFragment
 import com.ping.app.ui.ui.util.easyToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -67,15 +69,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 }
             }
         }
-
-        binding.apply {
-            mainFragToChatgpt.setOnClickListener{
-                findNavController().navigate(R.id.action_mainFragment_to_mainFragToChatgpt)
-            }
-        }
-
-
-
+        
         val user = viewModel.getUserInfo()
         
         lifecycleScope.launch {

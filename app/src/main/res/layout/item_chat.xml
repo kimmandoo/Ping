@@ -7,7 +7,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingBottom="20dp"
+        android:paddingBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,7 +18,7 @@
             android:maxWidth="250dp"
             android:background="@drawable/chat_me"
             android:textColor="@color/black"
-            android:padding="10dp"
+            android:paddingHorizontal="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,13 +50,12 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textColor="@color/black"
-            android:text=""
             android:background="@drawable/chat_gpt"
             android:backgroundTint="@color/oragne"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:maxWidth="250dp"
-            android:paddingRight="10dp"
+            android:paddingHorizontal="12dp"
             android:gravity="left|center"
 
         />

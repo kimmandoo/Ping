@@ -15,6 +15,10 @@ object Naver {
     const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
 }
 
+object Airbnb{
+    const val Lottie = "com.airbnb.android:lottie:${Versions.LOTTIE}"
+}
+
 object Google {
     const val MATERIAL = "com.google.android.material:material:${Versions.MATERIAL}"
     const val GOOGLE_PLAY_SERVICE_LOCATION =

@@ -133,19 +133,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@null" />
 
-
-        <com.ping.app.ui.ui.util.MovableFloatingActionButton
-            android:id="@+id/main_frag_to_chatgpt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:backgroundTint="@color/white"
-            android:src="@drawable/ic_gpt"
-            android:visibility= "visible"
-            app:layout_constraintBottom_toTopOf="@+id/main_frag_fab"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@null" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

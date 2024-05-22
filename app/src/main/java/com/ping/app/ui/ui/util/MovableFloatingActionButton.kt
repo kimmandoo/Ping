@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.math.absoluteValue
 
@@ -13,7 +15,7 @@ class MovableFloatingActionButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FloatingActionButton(context, attrs, defStyleAttr), View.OnTouchListener {
+) : CardView(context, attrs, defStyleAttr), View.OnTouchListener {
     
     companion object {
         private const val CLICK_DRAG_TOLERANCE =
