@@ -80,13 +80,13 @@ class PingMapFragment :
                                 R.string.map_data_title,
                                 dataFromMain.organizer
                             )
-                            val dist = if (currentLocation.distanceTo(latlngFromMain) < 10) {
-                                "0m"
+                            mapDataWhere.text = if (currentLocation.distanceTo(latlngFromMain) < 10) {
+                                getString(R.string.arrive_near)
                             } else {
-                                currentLocation.distanceTo(latlngFromMain).toInt().toString() + "m"
-                            }
-                            mapDataWhere.text =
+                                val dist = currentLocation.distanceTo(latlngFromMain).toInt().toString() + "m"
                                 getString(R.string.ping_map_location, dataFromMain.title, dist)
+                            }
+                            
                             mapDataContent.text =
                                 getString(R.string.map_data_content, dataFromMain.content)
                             mapFragmentView.visibility = View.VISIBLE
@@ -113,11 +113,9 @@ class PingMapFragment :
         mapView.setOnTouchListener { v, event ->
             when(event.action){
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    // 터치 다운 또는 터치 이동 시 부모 스크롤뷰의 터치를 막습니다.
                     mapView.parent.requestDisallowInterceptTouchEvent(true)
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    // 터치 업 또는 터치 취소 시 부모 스크롤뷰의 터치를 허용합니다.
                     mapView.parent.requestDisallowInterceptTouchEvent(false)
                 }
             }
