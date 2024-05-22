@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/map_data_title"
-                        android:textSize="28sp" />
+                        android:textSize="24sp" />
                     
                     <TextView
                         android:id="@+id/map_data_where"
