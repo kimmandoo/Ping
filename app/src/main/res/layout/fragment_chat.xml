@@ -8,6 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.ui.feature.chat.ChatFragment">
@@ -22,30 +23,44 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/chat_frag_ed"
+            app:layout_constraintBottom_toTopOf="@+id/chat_frag_cl"
         />
 
-        <EditText
-            android:id="@+id/chat_frag_ed"
-            style="@style/Ping.Body"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_et_radius_16"
-            android:hint="채팅"
-            android:padding="12dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/chat_frag_cl"
+            android:background="#66E6F6FA"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chat_frag_send"
-        />
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/chat_frag_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="전송"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-        />
+            <EditText
+                android:id="@+id/chat_frag_ed"
+                style="@style/Ping.Body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_et_radius_16"
+                android:hint=""
+                android:padding="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/chat_frag_send"
+            />
+
+            <Button
+                android:id="@+id/chat_frag_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="전송"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/chat_frag_ed"
+            />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

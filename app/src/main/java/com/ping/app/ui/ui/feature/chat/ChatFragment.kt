@@ -2,7 +2,6 @@ package com.ping.app.ui.ui.feature.chat
 
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ping.app.R
 import com.ping.app.databinding.FragmentChatBinding
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "ChatFragment_싸피"
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.fragment_chat) {
-    override val viewModel: ChatViewModel by viewModels()
+    override val viewModel: ChatViewModel by activityViewModels()
     private val pingMapViewModel: PingMapViewModel by activityViewModels()
     
     private val chatAdapter by lazy {
@@ -23,8 +22,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(R.layout.f
     }
     override fun initView(savedInstanceState: Bundle?) {
 
-        lifecycleScope.launch {
-            viewModel.initChatMsgSetting(pingMapViewModel.userLocation.value!!)
+        if(viewModel.chatList.value?.size!! < 2) {
+            lifecycleScope.launch {
+                viewModel.initChatMsgSetting(pingMapViewModel.userLocation.value!!)
+            }
         }
 
         binding.apply {
