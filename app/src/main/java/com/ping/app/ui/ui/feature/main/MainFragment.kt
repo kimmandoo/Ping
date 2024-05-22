@@ -3,6 +3,7 @@ package com.ping.app.ui.ui.feature.main
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -50,7 +51,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 binding.mainFragLinearPlannedParticipationResult.visibility =
                     if (shortCutGatheringData != null) {
                         joinedData = shortCutGatheringData
-                        Log.d(TAG, "initView: $shortCutGatheringData")
                         View.VISIBLE
                     } else {
                         View.GONE
@@ -115,8 +115,8 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
             logout.setOnClickListener {
                 lifecycleScope.launch {
                     logout.isEnabled = false
+                    binding.root.context.easyToast("로그아웃 하겠습니다")
                     viewModel.logout()
-                    binding.root.context.easyToast("로그아웃 됐습니다")
                     logout.isEnabled = true
                     findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
                 }
@@ -159,7 +159,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                         viewModel.getMeetingList(lat, lng)
                         Firebase.firestore.collection("MEETING")
                             .addSnapshotListener { snapshot, error ->
-                                Log.d(TAG, "initView: ")
                                 snapshot?.let { data ->
                                     viewModel.getMeetingList(lat, lng)
                                     viewModel.mainToMapShortCutInit()

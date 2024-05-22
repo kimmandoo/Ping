@@ -42,8 +42,13 @@ class ChatViewModel : ViewModel() {
                 Message(role = "system", content = "모든 답변은 200글자 이내로 해줘" + "그리고 말투는 ~습니다. 로 마무리해"),
                 Message(role = "user", content = msg)
             )
-            val answer = ChatGPTRepoImpl.getInstance().getChatCompletion(messages).choices.first().message.content
-            chatList(answer, 2)
+            runCatching {
+                ChatGPTRepoImpl.getInstance().getChatCompletion(messages).choices.first().message.content
+            }.onSuccess {
+                chatList(it, 2)
+            }.onFailure {
+                chatList("오류가 발생했습니다. 잠시후 다시 시작해주세요", 2)
+            }
         }
     }
 }

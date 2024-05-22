@@ -1,8 +1,10 @@
 package com.ping.app.ui.ui.feature.map
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.UiThread
 import androidx.core.content.res.ResourcesCompat
@@ -78,13 +80,13 @@ class PingMapFragment :
                                 R.string.map_data_title,
                                 dataFromMain.organizer
                             )
-                            val dist = if (currentLocation.distanceTo(latlngFromMain) < 10) {
-                                "0m"
+                            mapDataWhere.text = if (currentLocation.distanceTo(latlngFromMain) < 10) {
+                                getString(R.string.arrive_near)
                             } else {
-                                currentLocation.distanceTo(latlngFromMain).toInt().toString() + "m"
-                            }
-                            mapDataWhere.text =
+                                val dist = currentLocation.distanceTo(latlngFromMain).toInt().toString() + "m"
                                 getString(R.string.ping_map_location, dataFromMain.title, dist)
+                            }
+                            
                             mapDataContent.text =
                                 getString(R.string.map_data_content, dataFromMain.content)
                             mapFragmentView.visibility = View.VISIBLE
@@ -103,10 +105,22 @@ class PingMapFragment :
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @UiThread
     override fun onMapReady(map: NaverMap) {
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
+        mapView.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    mapView.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    mapView.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
         naverMap.locationSource = locationSource
         naverMap.apply {
             uiSettings.apply {
