@@ -1,6 +1,5 @@
 package com.ping.app.data.repository.chatgpt
 
-import android.util.Log
 import com.ping.app.data.model.gpt.ChatGptRequest
 import com.ping.app.data.model.gpt.ChatGptResponse
 import com.ping.app.data.model.gpt.Message
@@ -13,7 +12,7 @@ class ChatGPTRepoImpl: ChatGPTRepo {
     
     override suspend fun getChatCompletion(messages: List<Message>): ChatGptResponse {
         val request = ChatGptRequest(
-            model = "gpt-3.5-turbo",
+            model = "gpt-4o",
             messages = messages
         )
         val gptAnswer = CompletableDeferred<ChatGptResponse>()
