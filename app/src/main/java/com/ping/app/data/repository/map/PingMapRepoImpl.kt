@@ -15,6 +15,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 private const val TAG = "PingMapRepoImpl_싸피"
@@ -40,35 +41,25 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     
     override suspend fun requestAddress(lat: Double, lng: Double): String {
         val geoCoder = Geocoder(appContext, Locale.KOREA)
-        val retrievedAddress = CompletableDeferred<String>()
-        CoroutineScope(Dispatchers.IO).launch {
-            if (Build.VERSION.SDK_INT >= 33) {
-                runCatching {
-                    geoCoder.getFromLocation(lat, lng, 1) {
-                        val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).toString()
-                        retrievedAddress.complete(currentLocationAddress)
-                    }
-                }.onFailure {
-                    Log.d(TAG, "requestAddress failed: $it")
-                    retrievedAddress.complete("주소를 가져 올 수 없습니다.")
-                }
-            } else {
-                runCatching {
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                if (Build.VERSION.SDK_INT >= 33) {
+                    CompletableDeferred<String>().also { deferred ->
+                        geoCoder.getFromLocation(lat, lng, 1) {
+                            val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).orEmpty()
+                            deferred.complete(currentLocationAddress)
+                        }
+                    }.await()
+                } else {
                     @Suppress("DEPRECATION")
-                    geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-                }.onSuccess { response ->
-                    if (response.size > 0) {
-                        val currentLocationAddress = response[0].getAddressLine(0)
-                            .toString()
-                        retrievedAddress.complete(currentLocationAddress)
-                    }
-                }.onFailure {
-                    retrievedAddress.complete("주소를 가져 올 수 없습니다.")
+                    val response = geoCoder.getFromLocation(lat, lng, 1) as List<Address>
+                    response.firstOrNull()?.getAddressLine(0).orEmpty()
                 }
+            }.getOrElse {
+                Log.d(TAG, "requestAddress failed: $it")
+                "주소를 가져 올 수 없습니다."
             }
         }
-        
-        return retrievedAddress.await()
     }
     
     /**
