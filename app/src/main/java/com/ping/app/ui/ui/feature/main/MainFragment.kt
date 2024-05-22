@@ -97,6 +97,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                 lifecycleScope.launch {
                     logout.isEnabled = false
                     viewModel.logout()
+                    binding.root.context.easyToast("로그아웃 됐습니다")
                     logout.isEnabled = true
                     findNavController().navigate(R.id.action_mainFragment_to_loginFragment)
                 }
