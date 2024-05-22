@@ -23,6 +23,17 @@ class MainViewModel() : ViewModel() {
     val mainToMapShortCut: LiveData<Gathering?> get() = _mainToMapShortCut
     private val _duplicatedState = MutableSharedFlow<Boolean>()
     val duplicatedState get() = _duplicatedState.asSharedFlow()
+
+    private val _organizerShortCut = MutableLiveData<Gathering?>()
+    val organizerShortCut : LiveData<Gathering?>
+        get() = _organizerShortCut
+
+    fun organizerShortCutInit(){
+        _organizerShortCut.value = null
+        viewModelScope.launch {
+            _organizerShortCut.value = mainInstance.organizerMeetingTableCheck(loginInstance.getAccessToken())
+        }
+    }
     
     fun mainToMapShortCutInit() {
         _mainToMapShortCut.value = null
