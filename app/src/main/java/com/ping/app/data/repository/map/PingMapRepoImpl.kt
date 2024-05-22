@@ -21,6 +21,7 @@ private const val TAG = "PingMapRepoImpl_싸피"
 class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     private val appContext: Context = context
     private val db = Firebase.firestore
+
     
     override fun sendPingInfo(data: Gathering) {
         Log.d(TAG, "sendPingInfo: $data")
