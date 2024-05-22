@@ -1,13 +1,16 @@
 package com.ping.app.ui.ui.feature.map
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.naver.maps.geometry.LatLng
 import com.ping.app.R
 import com.ping.app.data.model.Gathering
@@ -26,7 +29,7 @@ import java.util.UUID
 
 private const val TAG = "PingAddPostFragment_싸피"
 
-class PingAddPostFragment :
+class PingAddPostFragment(private val onDismissListener: () -> Unit) :
     BaseBottomSheetDialogFragment<FragmentPingAddPostBinding, PingMapViewModel>(
         R.layout.fragment_ping_add_post
     ) {
@@ -91,6 +94,7 @@ class PingAddPostFragment :
                                 )
                             )
                             binding.root.context.easyToast(getString(R.string.ping_detail))
+                            findNavController().popBackStack()
                             dismiss()
                         } else {
                             binding.root.context.easyToast(getString(R.string.blank_et))
@@ -111,6 +115,7 @@ class PingAddPostFragment :
                             )
                         )
                         binding.root.context.easyToast(getString(R.string.ping_detail))
+                        findNavController().popBackStack()
                         dismiss()
                     }
                 } else {

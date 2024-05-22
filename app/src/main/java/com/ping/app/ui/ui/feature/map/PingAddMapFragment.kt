@@ -7,6 +7,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
@@ -79,7 +80,9 @@ class PingAddMapFragment :
             USER_POSITION_LNG to marker.position.longitude,
             "symbol" to marker.captionText
         )
-        val modal = PingAddPostFragment()
+        val modal = PingAddPostFragment(onDismissListener = {
+            findNavController().popBackStack()
+        }) as BottomSheetDialogFragment
         modal.arguments = userPosition
         modal.show(childFragmentManager, "modal")
     }
