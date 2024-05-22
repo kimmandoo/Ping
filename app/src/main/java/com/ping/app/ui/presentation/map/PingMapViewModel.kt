@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "PingMapViewModel_싸피"
+
 class PingMapViewModel : ViewModel() {
     private val locationHelperInstance = LocationHelper.getInstance()
     private val pingMapInstance = PingMapRepoImpl.getInstance()
@@ -51,9 +52,9 @@ class PingMapViewModel : ViewModel() {
     suspend fun isExist(gathering: Gathering, uid: String) =
         MainRepoImpl.get().detailMeetingDuplicateCheck(gathering, uid)
     
-    fun requestAddress(lat: Double, lng: Double) = pingMapInstance.requestAddress(lat, lng)
+    suspend fun requestAddress(lat: Double, lng: Double) = pingMapInstance.requestAddress(lat, lng)
     
-    fun sendPingInfo(gathering: Gathering){
+    fun sendPingInfo(gathering: Gathering) {
         pingMapInstance.sendPingInfo(
             gathering
         )

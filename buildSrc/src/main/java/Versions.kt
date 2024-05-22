@@ -21,5 +21,6 @@ object Versions {
     const val CREDENTIAL = "1.3.0-alpha03"
     const val GOOGLE_ID = "1.1.0"
     const val GLIDE = "4.15.1"
+    const val LOTTIE = "6.1.0"
     
 }

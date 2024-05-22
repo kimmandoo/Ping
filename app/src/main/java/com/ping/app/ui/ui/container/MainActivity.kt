@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,24 +15,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import com.naver.maps.geometry.LatLng
 import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
 import com.ping.app.ui.presentation.map.PingMapViewModel
+import com.ping.app.ui.ui.feature.chat.ChatFragment
 import com.ping.app.ui.ui.util.FCM
-import com.ping.app.ui.ui.util.LocationHelper
 import com.ping.app.ui.ui.util.easyToast
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity_싸피"
 
@@ -74,6 +69,23 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         navController = navHostFragment.navController
+        binding.apply {
+            mainGpt.setOnClickListener {
+                val modal = ChatFragment()
+                modal.show(supportFragmentManager, "modal")
+            }
+            navController.addOnDestinationChangedListener { _, destination, arguments ->
+                when (destination.id) {
+                    R.id.loginFragment -> {
+                        mainGpt.visibility = View.GONE
+                    }
+                    
+                    else -> {
+                        mainGpt.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
     }
     
     private fun initFCM() {

@@ -1,7 +1,7 @@
 package com.ping.app.data.repository.main
 
 import android.content.Context
-import com.google.firebase.firestore.QuerySnapshot
+import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ping.app.data.model.Gathering
@@ -51,63 +51,57 @@ class MainRepoImpl(context: Context) : MainRepo {
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
      */
-    override suspend fun meetingsToAttend(userUid: String): Gathering {
-        
-        val meetingsToAttendTable = CompletableDeferred<QuerySnapshot>()
-        var meetingsToAttendResult = Gathering("", "", "", "", "", "", "", 0.0, 0.0)
-        var resultDetailMeetingDocument = ""
-        
+    override suspend fun meetingsToAttend(userUid: String): Gathering? {
+        val joinedGathering = CompletableDeferred<Gathering>()
         val detailMeetingTable = db.collection("DETAILMEETING")
+        
         detailMeetingTable
+            // 일단 내가 생성한 핑까지 다 가져온다
+            .whereArrayContains("participants", userUid)
             .get()
             .addOnSuccessListener { resultDetailMeetingTable ->
-                // detailMeeting 테이블에서 유저 uid를 가지고 있는 데이터를 가져옴
-                for (detailMeetingDocument in resultDetailMeetingTable) {
-                    val data = detailMeetingDocument.data["participants"] as? List<String>
-                    if (data != null) {
-                        for (i in 1..<data.size) {
-                            if (userUid == data.get(i).toString()) {
-                                // 해당 Meeting 테이블로 접근하여 해당 uuid에 맞는 테이블을 가져옴
-                                val meetingTable = db.collection("MEETING")
-                                
-                                meetingTable
-                                    .get()
-                                    .addOnSuccessListener { resultMeetingTable ->
-                                        resultDetailMeetingDocument = detailMeetingDocument.id
-                                        
-                                        meetingsToAttendTable.complete(
-                                            resultMeetingTable
+                // detailMeeting 테이블에서 유저 uid를 가지고 있는 것들만 가져옴
+                for (doc in resultDetailMeetingTable.documents) {
+                    if ((doc["participants"] as List<String>).first() == userUid) {
+                        continue
+                    }
+                    val meetingTable = db.collection("MEETING")
+                    meetingTable
+                        .whereEqualTo("uuid", doc.id)
+                        .get()
+                        .addOnSuccessListener { resultMeetingTable ->
+                            // 내가 생성한 핑이 아닌데 참여한 게 있을 경우
+                            for (meeting in resultMeetingTable.documents) {
+                                meeting.data?.let {
+                                    val isValid = it["gatheringTime"].toString()
+                                        .toLong() > System.currentTimeMillis()
+                                    if (isValid) {
+                                        Log.d(TAG, "meetingsToAttend: $it")
+                                        joinedGathering.complete(
+                                            Gathering(
+                                                it["uid"].toString(),
+                                                it["uuid"].toString(),
+                                                it["organizer"].toString(),
+                                                it["enterCode"].toString(),
+                                                it["gatheringTime"].toString(),
+                                                it["title"].toString(),
+                                                it["content"].toString(),
+                                                it["longitude"].toString().toDouble(),
+                                                it["latitude"].toString().toDouble(),
+                                            )
                                         )
                                     }
+                                }
                             }
                         }
-                    } else {
-//                        Log.d(TAG, "No participants found")
-                    }
                 }
             }
-        
-        for (meetingDocument in meetingsToAttendTable.await()) {
-            
-            val dataUUID =
-                meetingDocument.data["uuid"] as? String
-            if (resultDetailMeetingDocument == dataUUID) {
-                meetingsToAttendResult = Gathering(
-                    meetingDocument.data["uid"].toString(),
-                    meetingDocument.data["uuid"].toString(),
-                    meetingDocument.data["organizer"].toString(),
-                    meetingDocument.data["enterCode"].toString(),
-                    meetingDocument.data["gatheringTime"].toString(),
-                    meetingDocument.data["title"].toString(),
-                    meetingDocument.data["content"].toString(),
-                    meetingDocument.data["longitude"].toString().toDouble(),
-                    meetingDocument.data["latitude"].toString().toDouble(),
-                )
-                break
-            }
+        val result = joinedGathering.await()
+        return if (result.gatheringTime.toLong() > System.currentTimeMillis()) {
+            result
+        } else {
+            null
         }
-        
-        return meetingsToAttendResult
     }
     
     override suspend fun detailMeetingDuplicateCheck(

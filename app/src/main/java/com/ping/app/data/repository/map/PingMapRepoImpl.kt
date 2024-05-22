@@ -3,6 +3,7 @@ package com.ping.app.data.repository.map
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -11,6 +12,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.ping.app.data.model.Gathering
 import com.ping.app.data.model.GatheringDetail
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 private const val TAG = "PingMapRepoImpl_싸피"
@@ -34,22 +39,27 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     }
     
     
-    override fun requestAddress(lat: Double, lng: Double): String {
+    override suspend fun requestAddress(lat: Double, lng: Double): String {
         val geoCoder = Geocoder(appContext, Locale.KOREA)
-        var addressResult = "주소를 가져 올 수 없습니다."
-        runCatching {
-            geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-        }.onSuccess { response ->
-            if (response.size > 0) {
-                val currentLocationAddress = response[0].getAddressLine(0)
-                    .toString()
-                addressResult = currentLocationAddress
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                if (Build.VERSION.SDK_INT >= 33) {
+                    CompletableDeferred<String>().also { deferred ->
+                        geoCoder.getFromLocation(lat, lng, 1) {
+                            val currentLocationAddress = it.firstOrNull()?.getAddressLine(0).orEmpty()
+                            deferred.complete(currentLocationAddress)
+                        }
+                    }.await()
+                } else {
+                    @Suppress("DEPRECATION")
+                    val response = geoCoder.getFromLocation(lat, lng, 1) as List<Address>
+                    response.firstOrNull()?.getAddressLine(0).orEmpty()
+                }
+            }.getOrElse {
+                Log.d(TAG, "requestAddress failed: $it")
+                "주소를 가져 올 수 없습니다."
             }
-        }.onFailure {
-            Log.d("requestAddress", "error: ${it.stackTrace}")
         }
-        
-        return addressResult
     }
     
     /**
@@ -88,10 +98,10 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
      * 모임 취소 버튼을 누르면 Meeting에 참가를 취소하는 로직입니다.
      */
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
-
-        if(data.uid == userUid){
+        
+        if (data.uid == userUid) {
             organizercancellationOfParticipantsMeetingTable(data, userUid)
-        }else {
+        } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
                 Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
             }
@@ -100,12 +110,12 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
                 .update("participants", FieldValue.arrayRemove(userUid))
         }
     }
-
+    
     override fun organizercancellationOfParticipantsMeetingTable(data: Gathering, userUid: String) {
         db.collection("DETAILMEETING")
             .document(data.uuid)
             .delete()
-
+        
         db.collection("MEETING")
             .whereEqualTo("uid", userUid)
             .get()
@@ -115,8 +125,8 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
                     .delete()
             }
     }
-
-
+    
+    
     override suspend fun getUserName(userUid: String): String {
         var queryResultName = CompletableDeferred<String>()
         val userTable = db.collection("USER")
