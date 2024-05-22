@@ -44,12 +44,12 @@ class PingAddPostFragment :
         binding.apply {
             lifecycleScope.launch {
                 uid = loginViewModel.getUid()
+                addPostTvAddress.text =
+                    viewModel.requestAddress(pingPosition.latitude, pingPosition.longitude)
             }
             if (symbol.toString().isNotEmpty()) {
                 addPostEtWhere.setText(symbol)
             }
-            addPostTvAddress.text =
-                viewModel.requestAddress(pingPosition.latitude, pingPosition.longitude)
             addPostIvDialog.setOnClickListener {
                 addDateDialog()
             }
