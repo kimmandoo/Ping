@@ -18,8 +18,6 @@ import com.ping.app.databinding.FragmentMainBinding
 import com.ping.app.ui.base.BaseFragment
 import com.ping.app.ui.presentation.main.MainViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
-import com.ping.app.ui.ui.feature.chat.ChatFragment
-import com.ping.app.ui.ui.feature.map.PingAddPostFragment
 import com.ping.app.ui.ui.util.easyToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,6 +44,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     
     override fun initView(savedInstanceState: Bundle?) {
         viewModel.mainToMapShortCutInit()
+        viewModel.organizerShortCutInit()
         
         lifecycleScope.launch {
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
@@ -60,6 +59,28 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                     }
                 shortCutGatheringData?.let {
                     binding.mainFragLinearPlannedParticipationResult.setOnClickListener {
+                        val actionMainToMap =
+                            MainFragmentDirections.actionMainFragmentToPingMapFragment(
+                                shortCutGatheringData
+                            )
+                        findNavController().navigate(actionMainToMap)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.organizerShortCut.observe(viewLifecycleOwner){shortCutGatheringData ->
+                binding.mainFragLinearOrganizerShortCut.visibility =
+                    if(shortCutGatheringData != null){
+                        joinedData = shortCutGatheringData
+                        Log.d(TAG, "initView: $shortCutGatheringData")
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
+                shortCutGatheringData?.let {
+                    binding.mainFragLinearOrganizerShortCut.setOnClickListener {
                         val actionMainToMap =
                             MainFragmentDirections.actionMainFragmentToPingMapFragment(
                                 shortCutGatheringData

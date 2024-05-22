@@ -10,9 +10,9 @@ import kotlinx.coroutines.CompletableDeferred
 private const val TAG = "MainRepoImpl_싸피"
 
 class MainRepoImpl(context: Context) : MainRepo {
-    
+
     private val db = Firebase.firestore
-    
+
     /**
      * 현재 사용자의 위치를 기준으로 모든 반경에서 1km 위치에 포함되는 모든 좌표들을 보여줘야함
      */
@@ -46,7 +46,7 @@ class MainRepoImpl(context: Context) : MainRepo {
             }
         return getMeetingTableDeffer.await()
     }
-    
+
     /**
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
@@ -54,7 +54,7 @@ class MainRepoImpl(context: Context) : MainRepo {
     override suspend fun meetingsToAttend(userUid: String): Gathering? {
         val joinedGathering = CompletableDeferred<Gathering>()
         val detailMeetingTable = db.collection("DETAILMEETING")
-        
+
         detailMeetingTable
             // 일단 내가 생성한 핑까지 다 가져온다
             .whereArrayContains("participants", userUid)
@@ -103,7 +103,7 @@ class MainRepoImpl(context: Context) : MainRepo {
             null
         }
     }
-    
+
     override suspend fun detailMeetingDuplicateCheck(
         gathering: Gathering,
         userUid: String
@@ -120,12 +120,12 @@ class MainRepoImpl(context: Context) : MainRepo {
             }
         return duplicateResult.await()
     }
-    
+
     override suspend fun meetingDuplicateCheck(userUid: String): Boolean {
         val duplicateResult = CompletableDeferred<Boolean>()
         val meetingTable = db.collection("MEETING").whereEqualTo("uid", userUid)
         val currentTime = System.currentTimeMillis()
-        
+
         meetingTable
             .get()
             .addOnSuccessListener { resultMeetingTable ->
@@ -142,7 +142,49 @@ class MainRepoImpl(context: Context) : MainRepo {
             }
         return duplicateResult.await()
     }
-    
+
+    override suspend fun organizerMeetingTableCheck(userUid: String): Gathering? {
+        val meetingTable = db.collection("MEETING")
+        val waitingOrganizerMeeting = CompletableDeferred<Gathering>()
+
+//        delay(1000)
+
+        meetingTable
+            .whereEqualTo("uid", userUid)
+            .get()
+            .addOnSuccessListener { organizerGathering ->
+                for (organizerGatheringData in organizerGathering) {
+                    val nowTime = System.currentTimeMillis()
+                    if (organizerGatheringData.data["gatheringTime"].toString()
+                            .toLong() > nowTime
+                    ) {
+                        waitingOrganizerMeeting.complete(
+                            Gathering(
+                                organizerGatheringData.data["uid"].toString(),
+                                organizerGatheringData.data["uuid"].toString(),
+                                organizerGatheringData.data["organizer"].toString(),
+                                organizerGatheringData.data["enterCode"].toString(),
+                                organizerGatheringData.data["gatheringTime"].toString(),
+                                organizerGatheringData.data["title"].toString(),
+                                organizerGatheringData.data["content"].toString(),
+                                organizerGatheringData.data["longitude"].toString().toDouble(),
+                                organizerGatheringData.data["latitude"].toString().toDouble()
+                            )
+                        )
+                    }
+                }
+            }
+
+        val result = waitingOrganizerMeeting.await()
+        Log.d(TAG, "organizerMeetingTableCheck@@@@@@@@@@@@: ${result}")
+        return if (result != null){
+            result
+        }else{
+            null
+        }
+
+    }
+
     suspend fun getAllUserName(): HashMap<String, String> {
         val userNameList = CompletableDeferred<HashMap<String, String>>()
         val userTable = db.collection("USER")
@@ -155,11 +197,11 @@ class MainRepoImpl(context: Context) : MainRepo {
         }
         return userNameList.await()
     }
-    
-    
+
+
     companion object {
         private var INSTANCE: MainRepoImpl? = null
-        
+
         fun initialize(context: Context): MainRepoImpl {
             if (INSTANCE == null) {
                 synchronized(MainRepoImpl::class.java) {
@@ -170,7 +212,7 @@ class MainRepoImpl(context: Context) : MainRepo {
             }
             return INSTANCE!!
         }
-        
+
         fun get(): MainRepoImpl {
             return INSTANCE!!
         }
