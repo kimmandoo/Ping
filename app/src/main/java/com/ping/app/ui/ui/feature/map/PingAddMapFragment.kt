@@ -80,9 +80,7 @@ class PingAddMapFragment :
             USER_POSITION_LNG to marker.position.longitude,
             "symbol" to marker.captionText
         )
-        val modal = PingAddPostFragment(onDismissListener = {
-            findNavController().popBackStack()
-        }) as BottomSheetDialogFragment
+        val modal = PingAddPostFragment()
         modal.arguments = userPosition
         modal.show(childFragmentManager, "modal")
     }

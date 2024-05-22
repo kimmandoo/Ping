@@ -29,7 +29,7 @@ import java.util.UUID
 
 private const val TAG = "PingAddPostFragment_싸피"
 
-class PingAddPostFragment(private val onDismissListener: () -> Unit) :
+class PingAddPostFragment:
     BaseBottomSheetDialogFragment<FragmentPingAddPostBinding, PingMapViewModel>(
         R.layout.fragment_ping_add_post
     ) {
