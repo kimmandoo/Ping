@@ -43,8 +43,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
     }
     
     override fun initView(savedInstanceState: Bundle?) {
-        viewModel.mainToMapShortCutInit()
-        viewModel.organizerShortCutInit()
         
         lifecycleScope.launch {
             viewModel.mainToMapShortCut.observe(viewLifecycleOwner) { shortCutGatheringData ->
@@ -165,6 +163,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>(R.layout.f
                                 snapshot?.let { data ->
                                     viewModel.getMeetingList(lat, lng)
                                     viewModel.mainToMapShortCutInit()
+                                    viewModel.organizerShortCutInit()
                                 }
                             }
                     }
