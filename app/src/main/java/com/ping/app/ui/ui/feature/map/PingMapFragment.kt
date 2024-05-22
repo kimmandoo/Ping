@@ -1,8 +1,10 @@
 package com.ping.app.ui.ui.feature.map
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.UiThread
 import androidx.core.content.res.ResourcesCompat
@@ -103,10 +105,24 @@ class PingMapFragment :
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @UiThread
     override fun onMapReady(map: NaverMap) {
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
+        mapView.setOnTouchListener { v, event ->
+            when(event.action){
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    // 터치 다운 또는 터치 이동 시 부모 스크롤뷰의 터치를 막습니다.
+                    mapView.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    // 터치 업 또는 터치 취소 시 부모 스크롤뷰의 터치를 허용합니다.
+                    mapView.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
         naverMap.locationSource = locationSource
         naverMap.apply {
             uiSettings.apply {
