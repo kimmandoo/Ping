@@ -2,18 +2,19 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
-
+    
     </data>
-
+    
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#66E6F6FA"
         android:paddingTop="8dp"
         tools:context=".ui.ui.feature.main.MainFragment">
-
+        
         <ImageView
             android:id="@+id/logout"
             android:layout_width="28dp"
@@ -24,7 +25,7 @@
             android:tint="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/main_frag_ll"
             app:layout_constraintTop_toTopOf="@id/main_frag_ll" />
-
+        
         <LinearLayout
             android:id="@+id/main_frag_ll"
             android:layout_width="match_parent"
@@ -33,12 +34,12 @@
             android:orientation="vertical"
             android:paddingHorizontal="10dp"
             app:layout_constraintTop_toTopOf="parent">
-
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
+                
                 <ImageView
                     android:id="@+id/main_frag_profile"
                     android:layout_width="48dp"
@@ -47,7 +48,7 @@
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_iv_profile"
                     android:padding="8dp" />
-
+                
                 <TextView
                     android:id="@+id/main_frag_title_hello"
                     style="@style/Ping.Title1"
@@ -57,7 +58,7 @@
                     android:text="@string/main_user"
                     android:textSize="28sp" />
             </LinearLayout>
-
+            
             <TextView
                 android:id="@+id/main_frag_linear_planned_participation"
                 style="@style/Ping.Subtitle"
@@ -66,7 +67,7 @@
                 android:layout_marginTop="12dp"
                 android:text="@string/main_user_detail"
                 android:textSize="16sp" />
-
+            
             <LinearLayout
                 android:id="@+id/main_frag_linear_planned_participation_result"
                 android:layout_width="match_parent"
@@ -74,7 +75,7 @@
                 android:layout_marginTop="4dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
-
+                
                 <TextView
                     style="@style/Ping.Title2"
                     android:layout_width="wrap_content"
@@ -83,18 +84,18 @@
                     android:text="@string/main_participation_result"
                     android:textSize="16sp"
                     tools:visibility="visible" />
-
+                
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@android:drawable/ic_menu_send" />
             </LinearLayout>
-
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
+                
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/main_switch"
                     style="@style/Ping.Body"
@@ -106,8 +107,8 @@
                     app:layout_constraintEnd_toEndOf="@id/main_frag_ll" />
             </LinearLayout>
         </LinearLayout>
-
-
+        
+        
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/main_frag_recyclerview"
             android:layout_width="match_parent"
@@ -119,7 +120,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_frag_ll" />
-
+        
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/main_frag_fab"
             android:layout_width="wrap_content"
@@ -132,6 +133,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="@null" />
-
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
