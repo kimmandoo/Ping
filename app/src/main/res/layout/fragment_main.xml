@@ -134,7 +134,7 @@
             app:tint="@null" />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.ping.app.ui.ui.util.MovableFloatingActionButton
             android:id="@+id/main_frag_to_chatgpt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
