@@ -2,14 +2,15 @@ package com.ping.app.ui.ui.feature.chat
 
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.ping.app.R
 import com.ping.app.databinding.FragmentChatBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
 import com.ping.app.ui.presentation.chat.ChatViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "ChatFragment_싸피"
@@ -25,33 +26,31 @@ class ChatFragment :
     
     override fun initView(savedInstanceState: Bundle?) {
         
-        if (viewModel.chatList.value?.size!! < 2) {
+        binding.apply {
+            chatFragRv.apply {
+                adapter = chatAdapter
+            }
+            
             lifecycleScope.launch {
                 viewModel.initChatMsgSetting(pingMapViewModel.userLocation.value!!)
-            }
-        }
-        
-        binding.apply {
-            chatFragRv.adapter = chatAdapter
-            chatFragSend.setOnClickListener {
-                viewModel.chatList(chatFragEd.text.toString(), 1)
-                
-                lifecycleScope.launch {
-                    viewModel.callChatGpt(chatFragEd.text.toString())
-                    CoroutineScope(Dispatchers.Main).launch {
-                        binding.chatFragRv.scrollToPosition(
-                            viewModel.chatList.value?.size?.minus(1) ?: 0
-                        )
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.chatList.collectLatest {
+                        binding.chatFragRv.smoothScrollToPosition((it.size - 1) ?: 0)
+                        chatAdapter.submitList(it)
                     }
                 }
-                
-                chatFragEd.text.clear()
-                binding.chatFragRv.scrollToPosition(viewModel.chatList.value?.size?.minus(1) ?: 0)
             }
-        }
-        
-        viewModel.chatList.observe(viewLifecycleOwner) { chatList ->
-            chatAdapter.submitList(chatList)
+            
+            chatFragSend.setOnClickListener {
+                if(chatFragEd.text.isNotEmpty()){
+                    viewModel.chatList(chatFragEd.text.toString(), 1)
+                    lifecycleScope.launch {
+                        viewModel.callChatGpt(chatFragEd.text.toString())
+                    }
+                    
+                    chatFragEd.text.clear()
+                }
+            }
         }
     }
 }
