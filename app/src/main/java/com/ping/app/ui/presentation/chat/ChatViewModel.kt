@@ -1,6 +1,5 @@
 package com.ping.app.ui.presentation.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -8,10 +7,10 @@ import com.ping.app.data.model.gpt.ChatBubble
 import com.ping.app.data.model.gpt.Message
 import com.ping.app.data.repository.chatgpt.ChatGPTRepoImpl
 import com.ping.app.data.repository.map.PingMapRepoImpl
+import com.ping.app.ui.ui.util.LocationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 private const val TAG = "ChatViewModel_싸피"
@@ -21,6 +20,10 @@ class ChatViewModel : ViewModel() {
     private val _chatList = MutableStateFlow<List<ChatBubble>>(listOf())
     val chatList: StateFlow<List<ChatBubble>> get() = _chatList.asStateFlow()
     
+    init {
+        chatList("안녕하세요. :)", 2)
+    }
+    
     suspend fun initChatMsgSetting(latLng: LatLng) {
         val msg =
             "${mapInstance.requestAddress(latLng.latitude, latLng.longitude)} 이 주소에서 추천하는 장소가 있어?"
@@ -29,7 +32,6 @@ class ChatViewModel : ViewModel() {
     
     fun chatList(msg: String, type: Int) {
         viewModelScope.launch {
-            Log.d(TAG, "chatList: ${_chatList.value.toMutableList()}")
             val currentList = _chatList.value.toMutableList()
             currentList.add(ChatBubble(msg, type))
             _chatList.emit(currentList)
@@ -38,7 +40,7 @@ class ChatViewModel : ViewModel() {
     
     fun clearGpt() {
         viewModelScope.launch {
-            val currentList = _chatList.value.toMutableList()
+            val currentList = mutableListOf<ChatBubble>()
             currentList.add(ChatBubble("안녕하세요. :)", 2))
             _chatList.emit(currentList)
         }
