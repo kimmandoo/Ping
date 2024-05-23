@@ -24,6 +24,19 @@ fun round(number: Double, scale: Int): Double {
     return (number * factor).roundToInt() / factor
 }
 
+fun findFinality(lastChar: Char): String {
+    return when (val jongsung = lastChar.code) {
+        in 0xD7A3 downTo 0xAC00 -> {
+            if ((jongsung - 0xAC00) % 28 > 0) "이"
+            else "가"
+        }
+        
+        else -> {
+            "가"
+        }
+    }
+}
+
 fun Context.easyToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

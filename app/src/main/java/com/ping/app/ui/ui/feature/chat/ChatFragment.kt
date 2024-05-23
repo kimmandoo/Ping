@@ -32,6 +32,7 @@ class ChatFragment :
             }
             
             lifecycleScope.launch {
+                viewModel.chatList("주변에서 뭐 할지 추천해줘", 1)
                 viewModel.initChatMsgSetting(pingMapViewModel.userLocation.value!!)
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.chatList.collectLatest {

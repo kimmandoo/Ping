@@ -3,7 +3,6 @@ package com.ping.app.ui.ui.feature.map
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.UiThread
@@ -35,6 +34,7 @@ import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.util.Map.GPS_ENABLE_REQUEST_CODE
 import com.ping.app.ui.ui.util.Map.MAP_BOUNDS
 import com.ping.app.ui.ui.util.easyToast
+import com.ping.app.ui.ui.util.findFinality
 import com.ping.app.ui.ui.util.round
 import com.ping.app.ui.ui.util.starbucks
 import kotlinx.coroutines.flow.collectLatest
@@ -46,7 +46,7 @@ private const val TAG = "MapFragment 싸피"
 class PingMapFragment :
     BaseFragment<FragmentPingMapBinding, PingMapViewModel>(R.layout.fragment_ping_map),
     OnMapReadyCallback {
-
+    
     override val viewModel: PingMapViewModel by activityViewModels()
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var mapView: MapView
@@ -55,37 +55,40 @@ class PingMapFragment :
     private lateinit var dataFromMain: Gathering
     private lateinit var latlngFromMain: LatLng
     private val args: PingMapFragmentArgs by navArgs()
-
+    
     override fun initView(savedInstanceState: Bundle?) {
-
+        
         args.pingData?.let {
-            Log.d(TAG, "initView: $it")
             dataFromMain = it
             latlngFromMain = LatLng(dataFromMain.latitude, dataFromMain.longitude)
         }
-
+        
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this@PingMapFragment)
         locationSource =
             FusedLocationSource(this, GPS_ENABLE_REQUEST_CODE)
-
+        
         lifecycleScope.launch {
             initUi(viewModel.isExist(dataFromMain, loginViewModel.getUid()))
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
                         binding.apply {
+                            val organizer = dataFromMain.organizer
+                            
                             mapDataOrganizer.text = getString(
                                 R.string.map_data_title,
-                                dataFromMain.organizer
+                                organizer+findFinality(organizer.last())
                             )
-                            mapDataWhere.text = if (currentLocation.distanceTo(latlngFromMain) < 10) {
-                                getString(R.string.arrive_near)
-                            } else {
-                                val dist = currentLocation.distanceTo(latlngFromMain).toInt().toString() + "m"
-                                getString(R.string.ping_map_location, dataFromMain.title, dist)
-                            }
+                            mapDataWhere.text =
+                                if (currentLocation.distanceTo(latlngFromMain) < 10) {
+                                    getString(R.string.arrive_near)
+                                } else {
+                                    val dist = currentLocation.distanceTo(latlngFromMain).toInt()
+                                        .toString() + "m"
+                                    getString(R.string.ping_map_location, dataFromMain.title, dist)
+                                }
                             
                             mapDataContent.text =
                                 getString(R.string.map_data_content, dataFromMain.content)
@@ -104,17 +107,18 @@ class PingMapFragment :
             }
         }
     }
-
+    
     @SuppressLint("ClickableViewAccessibility")
     @UiThread
     override fun onMapReady(map: NaverMap) {
         // 이 화면은 일정을 누르면 나올것이기 때문에 객체로 넘어오는 lat, lng값을 지도의 초기 위치로 잡고, 마커를 띄운다.
         naverMap = map
         mapView.setOnTouchListener { v, event ->
-            when(event.action){
+            when (event.action) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                     mapView.parent.requestDisallowInterceptTouchEvent(true)
                 }
+                
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     mapView.parent.requestDisallowInterceptTouchEvent(false)
                 }
@@ -143,7 +147,7 @@ class PingMapFragment :
                 pingPosition.offset(-MAP_BOUNDS, -MAP_BOUNDS),
                 pingPosition.offset(MAP_BOUNDS, MAP_BOUNDS)
             )
-
+            
             addOnCameraIdleListener {
                 val scale = round(cameraPosition.zoom - 16.0, 1) * MAP_BOUNDS
                 extent = LatLngBounds(
@@ -178,10 +182,10 @@ class PingMapFragment :
             findNavController().popBackStack()
         }
     }
-
+    
     private fun initUi(stateJoin: Boolean) {
         val pingAlert = PingAlertDialog(binding.root.context)
-
+        
         if (dataFromMain.gatheringTime.toLong() < System.currentTimeMillis()) {
             binding.mapBtnGathering.apply {
                 text = "종료"
@@ -256,40 +260,40 @@ class PingMapFragment :
             }
         }
     }
-
+    
     override fun onStart() {
         super.onStart()
         mapView.onStart()
     }
-
+    
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
-
+    
     override fun onPause() {
         super.onPause()
         mapView.onPause()
     }
-
+    
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-
+    
     override fun onStop() {
         super.onStop()
         mapView.onStop()
     }
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
     }
-
+    
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
-
+    
 }
