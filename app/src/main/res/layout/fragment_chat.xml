@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:paddingTop="10dp"
+            android:layout_marginBottom="?attr/actionBarSize"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/chat_frag_cl"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,12 +29,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/chat_frag_cl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="#F7FDFF"
             android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chat_frag_rv">
+            app:layout_constraintStart_toStartOf="parent">
             
             <EditText
                 android:id="@+id/chat_frag_ed"

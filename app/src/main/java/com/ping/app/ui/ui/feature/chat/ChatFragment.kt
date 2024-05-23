@@ -8,8 +8,6 @@ import com.ping.app.databinding.FragmentChatBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
 import com.ping.app.ui.presentation.chat.ChatViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "ChatFragment_싸피"
@@ -32,26 +30,27 @@ class ChatFragment :
         }
         
         binding.apply {
-            chatFragRv.adapter = chatAdapter
+            chatFragRv.apply {
+                adapter = chatAdapter
+            }
+            
             chatFragSend.setOnClickListener {
                 viewModel.chatList(chatFragEd.text.toString(), 1)
                 
                 lifecycleScope.launch {
                     viewModel.callChatGpt(chatFragEd.text.toString())
-                    CoroutineScope(Dispatchers.Main).launch {
-                        binding.chatFragRv.scrollToPosition(
-                            viewModel.chatList.value?.size?.minus(1) ?: 0
-                        )
-                    }
                 }
                 
                 chatFragEd.text.clear()
-                binding.chatFragRv.scrollToPosition(viewModel.chatList.value?.size?.minus(1) ?: 0)
+                binding.chatFragRv.smoothScrollToPosition(
+                    viewModel.chatList.value?.size?.minus(1) ?: 0
+                )
             }
         }
         
         viewModel.chatList.observe(viewLifecycleOwner) { chatList ->
             chatAdapter.submitList(chatList)
+            binding.chatFragRv.smoothScrollToPosition(viewModel.chatList.value?.size?.minus(1) ?: 0)
         }
     }
 }
