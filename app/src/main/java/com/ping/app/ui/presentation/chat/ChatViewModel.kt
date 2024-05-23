@@ -1,7 +1,6 @@
 package com.ping.app.ui.presentation.chat
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -9,19 +8,18 @@ import com.ping.app.data.model.gpt.ChatBubble
 import com.ping.app.data.model.gpt.Message
 import com.ping.app.data.repository.chatgpt.ChatGPTRepoImpl
 import com.ping.app.data.repository.map.PingMapRepoImpl
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 private const val TAG = "ChatViewModel_싸피"
 
 class ChatViewModel : ViewModel() {
     private val mapInstance = PingMapRepoImpl.getInstance()
-    private val _chatList = MutableLiveData<List<ChatBubble>>()
-    val chatList: LiveData<List<ChatBubble>>
-        get() = _chatList
-    
-    init {
-        chatList("안녕하세요. :)", 2)
-    }
+    private val _chatList = MutableStateFlow<List<ChatBubble>>(listOf())
+    val chatList: StateFlow<List<ChatBubble>> get() = _chatList.asStateFlow()
     
     suspend fun initChatMsgSetting(latLng: LatLng) {
         val msg =
@@ -30,15 +28,20 @@ class ChatViewModel : ViewModel() {
     }
     
     fun chatList(msg: String, type: Int) {
-        val currentList = _chatList.value.orEmpty().toMutableList()
-        currentList.add(ChatBubble(msg, type))
-        _chatList.value = currentList
+        viewModelScope.launch {
+            Log.d(TAG, "chatList: ${_chatList.value.toMutableList()}")
+            val currentList = _chatList.value.toMutableList()
+            currentList.add(ChatBubble(msg, type))
+            _chatList.emit(currentList)
+        }
     }
     
     fun clearGpt() {
-        val currentList = mutableListOf<ChatBubble>()
-        currentList.add(ChatBubble("안녕하세요. :)", 2))
-        _chatList.value = currentList
+        viewModelScope.launch {
+            val currentList = _chatList.value.toMutableList()
+            currentList.add(ChatBubble("안녕하세요. :)", 2))
+            _chatList.emit(currentList)
+        }
     }
     
     suspend fun callChatGpt(msg: String) {
