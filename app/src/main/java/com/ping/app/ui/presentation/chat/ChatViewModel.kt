@@ -35,6 +35,12 @@ class ChatViewModel : ViewModel() {
         _chatList.value = currentList
     }
     
+    fun clearGpt() {
+        val currentList = mutableListOf<ChatBubble>()
+        currentList.add(ChatBubble("안녕하세요. :)", 2))
+        _chatList.value = currentList
+    }
+    
     suspend fun callChatGpt(msg: String) {
         viewModelScope.launch {
             val messages = listOf(
@@ -43,7 +49,8 @@ class ChatViewModel : ViewModel() {
                 Message(role = "user", content = msg)
             )
             runCatching {
-                ChatGPTRepoImpl.getInstance().getChatCompletion(messages).choices.first().message.content
+                ChatGPTRepoImpl.getInstance()
+                    .getChatCompletion(messages).choices.first().message.content
             }.onSuccess {
                 chatList(it, 2)
             }.onFailure {

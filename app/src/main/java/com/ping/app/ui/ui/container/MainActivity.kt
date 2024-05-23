@@ -25,6 +25,7 @@ import com.ping.app.PingApplication
 import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
+import com.ping.app.ui.presentation.chat.ChatViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.feature.chat.ChatFragment
 import com.ping.app.ui.ui.util.FCM
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var navController: NavController
-    private val pingMapViewModel: PingMapViewModel by viewModels()
+    private val gptViewModel: ChatViewModel by viewModels()
     private lateinit var splashScreen: SplashScreen
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, arguments ->
                 when (destination.id) {
                     R.id.loginFragment -> {
+                        gptViewModel.clearGpt()
                         mainGpt.visibility = View.GONE
                     }
                     
