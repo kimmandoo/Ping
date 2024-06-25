@@ -3,12 +3,11 @@ package com.ping.app.ui.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
-import com.ping.app.data.model.Gathering
 import com.ping.app.data.repository.login.LoginRepoImpl
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val loginRepoInstance = LoginRepoImpl.get()
+    private val loginRepoInstance = LoginRepoImpl.getInstance()
     
     // update 고차함수 UI state로 이전시켜야됨
     suspend fun requestGoogleLogin(update: (FirebaseUser?) -> Unit) {
@@ -33,6 +32,6 @@ class LoginViewModel : ViewModel() {
     fun getLoginUserName() = loginRepoInstance.getUserInfo()!!.displayName!!
     
     fun userTableCheck(user: FirebaseUser) {
-        loginRepoInstance.userTableCheck(user)
+        loginRepoInstance.checkUserTableCreated(user)
     }
 }

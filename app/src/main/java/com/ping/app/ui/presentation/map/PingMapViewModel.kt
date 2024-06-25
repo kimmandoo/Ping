@@ -29,16 +29,14 @@ class PingMapViewModel : ViewModel() {
         }
     }
     
-    fun setUserLocation(currentLocation: LatLng?) {
+    private fun setUserLocation(currentLocation: LatLng?) {
         viewModelScope.launch(Dispatchers.IO) {
             _userLocation.emit(currentLocation)
         }
     }
-    
-    suspend fun getUserName(uid: String) = pingMapInstance.getUserName(uid)
-    
-    fun organizercancellationOfParticipantsMeetingTable(gathering: Gathering, uid: String) {
-        pingMapInstance.organizercancellationOfParticipantsMeetingTable(gathering, uid)
+
+    fun organizerCancellationOfParticipantsMeetingTable(gathering: Gathering, uid: String) {
+        pingMapInstance.organizerCancellationOfParticipantsMeetingTable(gathering, uid)
     }
     
     fun cancellationOfParticipantsMeetingDetailTable(gathering: Gathering, uid: String) {
@@ -49,13 +47,13 @@ class PingMapViewModel : ViewModel() {
         pingMapInstance.participantsMeetingDetailTable(gathering, uid)
     }
     
-    suspend fun isExist(gathering: Gathering, uid: String) =
-        MainRepoImpl.get().detailMeetingDuplicateCheck(gathering, uid)
+    suspend fun checkDetailMeetingDuplicate(gathering: Gathering, uid: String) =
+        MainRepoImpl.getInstance().checkDetailMeetingDuplicate(gathering, uid)
     
     suspend fun requestAddress(lat: Double, lng: Double) = pingMapInstance.requestAddress(lat, lng)
     
-    fun sendPingInfo(gathering: Gathering) {
-        pingMapInstance.sendPingInfo(
+    fun setPingInfo(gathering: Gathering) {
+        pingMapInstance.setPingInfo(
             gathering
         )
     }

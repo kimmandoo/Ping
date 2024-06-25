@@ -20,7 +20,7 @@ class PingApplication : Application() {
         super.onCreate()
         locationHelper = LocationHelper.initialize(this)
         pingMapRepo = PingMapRepoImpl.initialize(this)
-        mainRepo = MainRepoImpl.initialize(this)
+        mainRepo = MainRepoImpl.initialize()
         gptRepo = ChatGPTRepoImpl.initialize()
     }
     

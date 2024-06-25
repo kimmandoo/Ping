@@ -19,6 +19,20 @@ import com.ping.app.R
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
+fun Boolean.doOnTrue(func: () -> Unit): Boolean {
+    if (this) {
+        func()
+    }
+    return this
+}
+
+fun Boolean.doOnFalse(func: () -> Unit): Boolean {
+    if (this.not()) {
+        func()
+    }
+    return this
+}
+
 fun round(number: Double, scale: Int): Double {
     val factor = 10.0.pow(scale.toDouble())
     return (number * factor).roundToInt() / factor

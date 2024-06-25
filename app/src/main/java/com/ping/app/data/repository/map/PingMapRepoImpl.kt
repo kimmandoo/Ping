@@ -23,14 +23,14 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     private val db = Firebase.firestore
 
     
-    override fun sendPingInfo(data: Gathering) {
+    override fun setPingInfo(data: Gathering) {
         Log.d(TAG, "sendPingInfo: $data")
         
         db.collection("MEETING")
             .add(data)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-                makeMeetingDetailTable(data)
+                createMeetingDetailTable(data)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
@@ -65,7 +65,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     /**
      * 해당 함수는 주최자가 meeting을 생성한 경우 그에 따른 DetailTable도 만들어 주는 함수입니다.
      */
-    override fun makeMeetingDetailTable(data: Gathering) {
+    override fun createMeetingDetailTable(data: Gathering) {
         
         db.collection("DETAILMEETING")
             .document(data.uuid)
@@ -100,7 +100,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
     override fun cancellationOfParticipantsMeetingDetailTable(data: Gathering, userUid: String) {
         
         if (data.uid == userUid) {
-            organizercancellationOfParticipantsMeetingTable(data, userUid)
+            organizerCancellationOfParticipantsMeetingTable(data, userUid)
         } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(data.uuid).addOnSuccessListener {
                 Log.d(TAG, "participantsMeetingDetailTable: success unsubscribed")
@@ -111,7 +111,7 @@ class PingMapRepoImpl private constructor(context: Context) : PingMapRepo {
         }
     }
     
-    override fun organizercancellationOfParticipantsMeetingTable(data: Gathering, userUid: String) {
+    override fun organizerCancellationOfParticipantsMeetingTable(data: Gathering, userUid: String) {
         db.collection("DETAILMEETING")
             .document(data.uuid)
             .delete()

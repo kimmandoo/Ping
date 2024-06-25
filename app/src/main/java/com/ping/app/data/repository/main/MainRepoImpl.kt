@@ -1,6 +1,5 @@
 package com.ping.app.data.repository.main
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -9,14 +8,14 @@ import kotlinx.coroutines.CompletableDeferred
 
 private const val TAG = "MainRepoImpl_싸피"
 
-class MainRepoImpl(context: Context) : MainRepo {
+class MainRepoImpl : MainRepo {
 
     private val db = Firebase.firestore
 
     /**
      * 현재 사용자의 위치를 기준으로 모든 반경에서 1km 위치에 포함되는 모든 좌표들을 보여줘야함
      */
-    override suspend fun getMeetingTable(lng: Double, lat: Double): List<Gathering> {
+    override suspend fun getMeetingTableWithPosition(lng: Double, lat: Double): List<Gathering> {
         val meetingTable = db.collection("MEETING")
         val getMeetingTableDeffer = CompletableDeferred<List<Gathering>>()
         meetingTable
@@ -51,7 +50,7 @@ class MainRepoImpl(context: Context) : MainRepo {
      * 해당 로직은 userUid를 통해 DetailMeeting 테이블에 접근하여 해당 userUid가 포함된 DetailMeeting Table의 id를 가져온 후
      * 해당 id를 통해 Meeting Table에 해당 id가 포함된 정보를 가져오는 로직입니다.
      */
-    override suspend fun meetingsToAttend(userUid: String): Gathering? {
+    override suspend fun getMeetingsToAttend(userUid: String): Gathering? {
         val joinedGathering = CompletableDeferred<Gathering>()
         val detailMeetingTable = db.collection("DETAILMEETING")
 
@@ -104,7 +103,7 @@ class MainRepoImpl(context: Context) : MainRepo {
         }
     }
 
-    override suspend fun detailMeetingDuplicateCheck(
+    override suspend fun checkDetailMeetingDuplicate(
         gathering: Gathering,
         userUid: String
     ): Boolean {
@@ -121,7 +120,7 @@ class MainRepoImpl(context: Context) : MainRepo {
         return duplicateResult.await()
     }
 
-    override suspend fun meetingDuplicateCheck(userUid: String): Boolean {
+    override suspend fun checkMeetingDuplicate(userUid: String): Boolean {
         val duplicateResult = CompletableDeferred<Boolean>()
         val meetingTable = db.collection("MEETING").whereEqualTo("uid", userUid)
         val currentTime = System.currentTimeMillis()
@@ -143,11 +142,9 @@ class MainRepoImpl(context: Context) : MainRepo {
         return duplicateResult.await()
     }
 
-    override suspend fun organizerMeetingTableCheck(userUid: String): Gathering? {
+    override suspend fun checkOrganizerMeetingTable(userUid: String): Gathering? {
         val meetingTable = db.collection("MEETING")
         val waitingOrganizerMeeting = CompletableDeferred<Gathering>()
-
-//        delay(1000)
 
         meetingTable
             .whereEqualTo("uid", userUid)
@@ -200,21 +197,21 @@ class MainRepoImpl(context: Context) : MainRepo {
 
 
     companion object {
-        private var INSTANCE: MainRepoImpl? = null
+        private var instance: MainRepoImpl? = null
 
-        fun initialize(context: Context): MainRepoImpl {
-            if (INSTANCE == null) {
+        fun initialize(): MainRepoImpl {
+            if (instance == null) {
                 synchronized(MainRepoImpl::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = MainRepoImpl(context)
+                    if (instance == null) {
+                        instance = MainRepoImpl()
                     }
                 }
             }
-            return INSTANCE!!
+            return instance!!
         }
 
-        fun get(): MainRepoImpl {
-            return INSTANCE!!
+        fun getInstance(): MainRepoImpl {
+            return instance!!
         }
     }
 }

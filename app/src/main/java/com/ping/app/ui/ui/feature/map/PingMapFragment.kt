@@ -70,7 +70,7 @@ class PingMapFragment :
             FusedLocationSource(this, GPS_ENABLE_REQUEST_CODE)
         
         lifecycleScope.launch {
-            initUi(viewModel.isExist(dataFromMain, loginViewModel.getUid()))
+            initUi(viewModel.checkDetailMeetingDuplicate(dataFromMain, loginViewModel.getUid()))
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userLocation.collectLatest { currentLocation ->
                     currentLocation?.let {
@@ -213,7 +213,7 @@ class PingMapFragment :
                             dialog.showDialog()
                             dialog.alertDialog.setOnCancelListener {
                                 if (dataFromMain.uid == uid) {
-                                    viewModel.organizercancellationOfParticipantsMeetingTable(
+                                    viewModel.organizerCancellationOfParticipantsMeetingTable(
                                         dataFromMain,
                                         uid
                                     )

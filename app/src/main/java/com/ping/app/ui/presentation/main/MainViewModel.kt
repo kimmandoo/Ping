@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "MainViewModel_싸피"
 
 class MainViewModel() : ViewModel() {
-    private val mainInstance = MainRepoImpl.get()
-    private val loginInstance = LoginRepoImpl.get()
+    private val mainInstance = MainRepoImpl.getInstance()
+    private val loginInstance = LoginRepoImpl.getInstance()
     private val _meetingList = MutableLiveData<List<Gathering>>()
     val meetingList: LiveData<List<Gathering>> get() = _meetingList
     
@@ -31,30 +31,30 @@ class MainViewModel() : ViewModel() {
     fun organizerShortCutInit(){
         _organizerShortCut.value = null
         viewModelScope.launch {
-            _organizerShortCut.value = mainInstance.organizerMeetingTableCheck(loginInstance.getAccessToken())
+            _organizerShortCut.value = mainInstance.checkOrganizerMeetingTable(loginInstance.getAccessToken())
         }
     }
     
     fun mainToMapShortCutInit() {
         _mainToMapShortCut.value = null
         viewModelScope.launch {
-            _mainToMapShortCut.value = mainInstance.meetingsToAttend(loginInstance.getAccessToken())
+            _mainToMapShortCut.value = mainInstance.getMeetingsToAttend(loginInstance.getAccessToken())
         }
     }
     
     fun getMeetingList(lat: Double, lng: Double) {
         viewModelScope.launch {
-            _meetingList.value = mainInstance.getMeetingTable(lng, lat)
+            _meetingList.value = mainInstance.getMeetingTableWithPosition(lng, lat)
             _duplicatedState.emit(isUserDuplicated())
         }
     }
     
-    fun getUserInfo() = LoginRepoImpl.get().getUserInfo()!!
+    fun getUserInfo() = LoginRepoImpl.getInstance().getUserInfo()!!
     
-    suspend fun getUid() = LoginRepoImpl.get().getAccessToken()
+    private suspend fun getUid() = LoginRepoImpl.getInstance().getAccessToken()
     
-    private suspend fun isUserDuplicated() = MainRepoImpl.get().meetingDuplicateCheck(getUid())
+    private suspend fun isUserDuplicated() = MainRepoImpl.getInstance().checkMeetingDuplicate(getUid())
     
-    suspend fun logout() = LoginRepoImpl.get().logout()
+    suspend fun logout() = LoginRepoImpl.getInstance().logout()
     
 }
