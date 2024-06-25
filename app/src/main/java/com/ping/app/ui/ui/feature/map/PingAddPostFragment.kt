@@ -1,10 +1,8 @@
 package com.ping.app.ui.ui.feature.map
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
@@ -80,7 +78,7 @@ class PingAddPostFragment:
                         // 코드가 있을때만 참여가능
                         val enterCode = binding.addPostCode.text.toString()
                         if (enterCode.isNotEmpty()) {
-                            viewModel.sendPingInfo(
+                            viewModel.setPingInfo(
                                 Gathering(
                                     uid = uid,
                                     uuid = UUID.randomUUID().toString(),
@@ -101,7 +99,7 @@ class PingAddPostFragment:
                         }
                     } else {
                         // 모두 참여가능
-                        viewModel.sendPingInfo(
+                        viewModel.setPingInfo(
                             Gathering(
                                 uid = uid,
                                 uuid = UUID.randomUUID().toString(),

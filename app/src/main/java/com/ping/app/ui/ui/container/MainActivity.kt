@@ -26,7 +26,6 @@ import com.ping.app.R
 import com.ping.app.data.repository.login.LoginRepoImpl
 import com.ping.app.databinding.ActivityMainBinding
 import com.ping.app.ui.presentation.chat.ChatViewModel
-import com.ping.app.ui.presentation.map.PingMapViewModel
 import com.ping.app.ui.ui.feature.chat.ChatFragment
 import com.ping.app.ui.ui.util.FCM
 import com.ping.app.ui.ui.util.easyToast
@@ -34,17 +33,18 @@ import com.ping.app.ui.ui.util.easyToast
 private const val TAG = "MainActivity_싸피"
 
 class MainActivity : AppCompatActivity() {
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private lateinit var navController: NavController
-    private val gptViewModel: ChatViewModel by viewModels()
     private lateinit var splashScreen: SplashScreen
-    
+    private val gptViewModel: ChatViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         splashScreen = installSplashScreen()
         PingApplication.loginRepo = LoginRepoImpl.initialize(this)
-        LoginRepoImpl.get().authInit()
+        LoginRepoImpl.getInstance().authInit()
         startAnimation()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -133,5 +133,4 @@ class MainActivity : AppCompatActivity() {
                 .check()
         }
     }
-    
 }

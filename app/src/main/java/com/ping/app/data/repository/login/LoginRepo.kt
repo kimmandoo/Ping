@@ -14,13 +14,13 @@ interface LoginRepo {
 
     suspend fun firebaseAuthWithGoogle(idToken: String): FirebaseUser?
 
-    suspend fun userTableCheckQuery(UID : String) : Boolean
+    suspend fun checkUserTable(UID : String) : Boolean
 
     suspend fun createUserTable(user: FirebaseUser) : Boolean
 
-    fun userMeetingGetQuery(UID : String)
+    fun checkUserMeetingValidation(UID : String)
 
-    fun userTableCheck(user: FirebaseUser)
+    fun checkUserTableCreated(user: FirebaseUser)
     suspend fun requestGoogleLogin(onSuccessListener: (FirebaseUser?) -> Unit)
     fun getUserInfo(): FirebaseUser?
     suspend fun setAccessToken(uid: String)

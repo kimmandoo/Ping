@@ -10,6 +10,7 @@ import com.ping.app.databinding.FragmentChatBinding
 import com.ping.app.ui.base.BaseBottomSheetDialogFragment
 import com.ping.app.ui.presentation.chat.ChatViewModel
 import com.ping.app.ui.presentation.map.PingMapViewModel
+import com.ping.app.ui.ui.util.doOnTrue
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,12 +44,12 @@ class ChatFragment :
             }
             
             chatFragSend.setOnClickListener {
-                if(chatFragEd.text.isNotEmpty()){
+                chatFragEd.text.isNotEmpty().doOnTrue {
                     viewModel.chatList(chatFragEd.text.toString(), 1)
                     lifecycleScope.launch {
                         viewModel.callChatGpt(chatFragEd.text.toString())
                     }
-                    
+
                     chatFragEd.text.clear()
                 }
             }

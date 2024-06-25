@@ -129,14 +129,14 @@ class LoginRepoImpl private constructor(context: Context) : LoginRepo {
      * 해당 함수에서는 유저 테이블을 학인하고 테이블이 존재한다면 메인으로 넘어가는 함수입니다.
      * 다만 해당 유저의 테이블이 존재하지 않는 다면 해당 유저의 테이블을 만들어 주는 역할을 하는 함수입니다.
      */
-    override fun userTableCheck(user: FirebaseUser) {
+    override fun checkUserTableCreated(user: FirebaseUser) {
         
         CoroutineScope(Dispatchers.IO).launch {
-            if (userTableCheckQuery(user.uid) == true) { // 해당 UID를 가지는 유저 테이블이 있을 경우
+            if (checkUserTable(user.uid) == true) { // 해당 UID를 가지는 유저 테이블이 있을 경우
                 // 테이블이 있다면 메인 프래그먼트로 넘어 감
                 Log.d(TAG, "userTableCheck: user table mounted")
                 
-                userMeetingGetQuery(user.uid)
+                checkUserMeetingValidation(user.uid)
             } else { // 해당 UID를 가지는 유저 테이블이 없는 경우
                 // 없을 경우 해당 테이블을 만들어야 함
                 CoroutineScope(Dispatchers.IO).launch {
@@ -166,7 +166,7 @@ class LoginRepoImpl private constructor(context: Context) : LoginRepo {
      * return -> false
      * UID에 해당하는 유저 테이블이 없을 경우와 디비 접근에 실패 했을 경우에는 false를 반환합니다.
      */
-    override suspend fun userTableCheckQuery(UID: String): Boolean {
+    override suspend fun checkUserTable(UID: String): Boolean {
         val getUserTable = CompletableDeferred<Task<DocumentSnapshot>>()
         val uidDocRef = db.collection("USER").document(UID)
         var userTableChecker = false
@@ -218,7 +218,7 @@ class LoginRepoImpl private constructor(context: Context) : LoginRepo {
     /**
      * 본 함수는 USER UID로 Meeting Table의 정보를 가져 올 수 있는지 확인 하는 함수입니다.
      */
-    override fun userMeetingGetQuery(UID: String) {
+    override fun checkUserMeetingValidation(UID: String) {
         val docRef = db.collection("MEETING").document(UID)
         docRef.get()
             .addOnSuccessListener { document ->
@@ -248,21 +248,21 @@ class LoginRepoImpl private constructor(context: Context) : LoginRepo {
     
     
     companion object {
-        private var INSTANCE: LoginRepoImpl? = null
+        private var instance: LoginRepoImpl? = null
         
         fun initialize(context: Context): LoginRepoImpl {
-            if (INSTANCE == null) {
+            if (instance == null) {
                 synchronized(LoginRepoImpl::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = LoginRepoImpl(context)
+                    if (instance == null) {
+                        instance = LoginRepoImpl(context)
                     }
                 }
             }
-            return INSTANCE!!
+            return instance!!
         }
         
-        fun get(): LoginRepoImpl {
-            return INSTANCE!!
+        fun getInstance(): LoginRepoImpl {
+            return instance!!
         }
     }
 }
